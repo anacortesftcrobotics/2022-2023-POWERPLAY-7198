@@ -1,5 +1,4 @@
-//work in progress, need to add I & D.
-//account for initial value of 0.0 on oldE?
+//Working PID class
 
 public class PIDKai
 {
@@ -9,6 +8,7 @@ public class PIDKai
     public double kD; //derivative constant
 
     public double lastE; //last error value
+    public double totalE; //integral of errors
 
     //Constructor Method
     public PIDKai(double porportionalConstant, double integralConstant, double derivativeConstant)
@@ -25,17 +25,24 @@ public class PIDKai
         double u;
         
         e = expectedValue - actualValue; //r-y
-        u = kP*e; //+ getI(e) + getD(e)
+        u = kP * e + kI * getI(e) + kD * getD(e);
 
-        //System.out.println("e: " + e);
-
-        lastE = e; //stores the newer error value as the older at end of method.
+        lastE = e; //stores the newer error value as the older. (at end of method)
         return u;
     }
 
-    //multiplies input by porportional constant.
-    public double getP(double error)
+    //adds derivative between error and lastE to total derivative
+    //private to safegaurd accidental additions to totalE
+    private double getI(double error)
     {
-        return kP*error;
+        totalE += 0.5*(lastE + error); //0.5*(lastE-error) + error simplified
+        return totalE;
     }
+
+    //returns derivative between error and lastE
+    public double getD(double error)
+    {
+        return error-lastE;
+    }
+
 }
