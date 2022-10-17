@@ -49,7 +49,10 @@ public class PIDKai
         double u;
         
         e = expectedValue - actualValue; //r-y
-        u = kP * e + kI * getI(e) + kD * getD(e);
+
+        u = kP * e;
+        u += kI * getI(e);
+        u += kD * getD(e);
 
         lastE = e; //stores the newer error value as the older. (at end of method)
         return u;
