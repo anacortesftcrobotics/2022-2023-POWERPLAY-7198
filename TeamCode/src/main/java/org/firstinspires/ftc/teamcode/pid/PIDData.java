@@ -10,7 +10,7 @@ public class PIDKai
     public double lastE; //last error value
     public double totalE; //integral of errors
 
-    public String log = "Time(ms) Loops Porportional Integral Derivative/n"; //initializes log of PID
+    public String log = "Time(ms) Loops Error Porportional Integral Derivative/n"; //initializes log of PID
     private int loops;
 
     //Constructor Methods
@@ -84,7 +84,7 @@ public class PIDKai
         return error-lastE;
     }
 
-    //
+    //retuns string of recorded log
     public String getLog()
     {
         return log;
