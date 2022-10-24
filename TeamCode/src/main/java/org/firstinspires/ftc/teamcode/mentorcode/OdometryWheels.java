@@ -1,62 +1,88 @@
 package org.firstinspires.ftc.teamcode.mentorcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.mentorcode.XyhVector;
+// import org.firstinspires.ftc.teamcode.mentorcode.XyhVector;
+/**
+ * OdometryWheels class used to keep track of robot movement on field using
+ * odometry wheels.
+ * @author Coach Jenkins
+ */
 
 public class OdometryWheels {
-    public DcMotor encoderLeft = null;
-    public DcMotor encoderRight = null;
-    public DcMotor encoderAux = null;
+    /**
+     * private properties for each limit switch
+     */
+    public DcMotor encoderXLeft, encoderXRight, encoderCenter;
 
-    private final static double L = 20.12;      // distance between encoder 1 and encoder 2 in cm
-    private final static double B = 11.5;       // distance between the midpoint of encoder 1 and encoder 2 and 3 in cm
-    private final static double R = 3.0;        // wheel radius in cm
-    private final static double N = 8192;       // encoder ticks per revolution REV encoder
-    private final static double cm_per_tick = 2.0 * Math.PI * R / N;
+    // distance between left and right parallel encoders (in cm)
+    private double trackwidth;
+    // distance between the midpoint of encoder 1 and encoder 2 and 3 in cm
+    private double forwardOffset;
+    private double diameter;    // odometry wheel diameter in cm
+    //private double ticksPerRevolution;       // encoder ticks per revolution REV encoder
+    private double cm_per_tick;
 
-    public int currentRightPosition = 0;
-    public int currentLeftPosition = 0;
-    public int currentAuxPosition = 0;
+    public int prev_left_encoder_pos = 0;
+    public int prev_right_encoder_pos = 0;
+    public int prev_center_encoder_pos = 0;
 
-    public int oldRightPosition = 0;
-    public int oldLeftPosition = 0;
-    public int oldAuxPosition = 0;
-
-    public XyhVector START_POS = null;
     public XyhVector pos;
 
-    /* Constructor
-
+    /**
+     * Constructor for XyhVector
+     *
+     * @param xLeft     left x odometry motor
+     * @param xRight    right x odometry motor
+     * @param center    y axis odometry motor
+     * @param trackwidth    distance in cm between left and right odometry wheels (center to center)
+     * @param forwardOffset distance in cm robot center of rotation to perpendicular (y) odometry wheel
+     *                      back of robot is negative offset, front of robot is positive offset
+     * @param wheeldiameter diameter in cm of odometry wheel
+     * @param ticksPerRevolution how many ticks odometry encoder has per one revolution of wheel
      */
-    public OdometryWheels(DcMotor xLeft, DcMotor xRight, DcMotor y) {
-        encoderLeft = xLeft;
-        encoderRight = xRight;
-        encoderAux = y;
+    public OdometryWheels(DcMotor xLeft, DcMotor xRight, DcMotor center,
+                          double trackwidth, double forwardOffset,
+                          double wheeldiameter, int ticksPerRevolution) {
 
-        START_POS = new XyhVector(213,102,Math.toRadians(-174));
-        pos = new XyhVector(213,102,Math.toRadians(-174));
+        encoderXLeft = xLeft;
+        encoderXRight = xRight;
+        encoderCenter = center;
+        this.trackwidth = trackwidth;
+        this.forwardOffset = forwardOffset;
+        this.diameter = wheeldiameter;
+        this.cm_per_tick = Math.PI * diameter / ticksPerRevolution;
+
+        // declare first value of each position vector
+        // should get set to starting position of robot relative to field?
+        pos = new XyhVector(0,0,Math.toRadians(0), cm_per_tick);
     }
 
+    /**
+     * pose() sets the most recent version of location of robot on field
+     *
+     */
     public void pose() {
-        oldRightPosition = currentRightPosition;
-        oldLeftPosition = currentLeftPosition;
-        oldAuxPosition = currentAuxPosition;
+        int left_encoder_pos = encoderXLeft.getCurrentPosition();
+        int right_encoder_pos = encoderXRight.getCurrentPosition();
+        int center_encoder_pos = encoderCenter.getCurrentPosition();
 
-        currentRightPosition = -encoderRight.getCurrentPosition();
-        currentLeftPosition = -encoderLeft.getCurrentPosition();
-        currentAuxPosition = -encoderAux.getCurrentPosition();
+        int delta_left_encoder_pos = left_encoder_pos - prev_left_encoder_pos;
+        int delta_right_encoder_pos = right_encoder_pos - prev_right_encoder_pos;
+        int delta_center_encoder_pos = center_encoder_pos - prev_center_encoder_pos;
 
-        int dn1 = currentLeftPosition - oldLeftPosition;
-        int dn2 = currentRightPosition - oldRightPosition;
-        int dn3 = currentAuxPosition - oldAuxPosition;
+        double phi = (delta_left_encoder_pos - delta_right_encoder_pos) / trackwidth;
+        double delta_middle_pos = (delta_left_encoder_pos + delta_right_encoder_pos) / 2;
+        double delta_perp_pos = delta_center_encoder_pos - forwardOffset * phi;
 
-        double dtheta = cm_per_tick * (dn2 - dn1) / L;
-        double dx = cm_per_tick * (dn1 + dn2) / 2.0;
-        double dy = cm_per_tick * (dn3 - (dn2-dn1) * B / L);
+        double delta_x = delta_middle_pos * pos.hcos() - delta_perp_pos * pos.hsin();
+        double delta_y = delta_middle_pos * pos.hsin() + delta_perp_pos * pos.hcos();
 
-        double theta = pos.h + (dtheta / 2.0);
-        pos.x += dx * Math.cos(theta) - dy * Math.sin(theta);
-        pos.y += dx * Math.sin(theta) + dy * Math.cos(theta);
-        pos.h += dtheta;
+        pos.setX(pos.getX() + delta_x);
+        pos.setY(pos.getY() + delta_y);
+        pos.h += phi;
+
+        prev_left_encoder_pos = left_encoder_pos;
+        prev_right_encoder_pos = right_encoder_pos;
+        prev_center_encoder_pos = center_encoder_pos;
     }
 }

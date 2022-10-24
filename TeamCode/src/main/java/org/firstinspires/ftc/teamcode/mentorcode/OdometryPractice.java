@@ -2,15 +2,11 @@ package org.firstinspires.ftc.teamcode.mentorcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+// import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name = "Odometry Practise", group = "Coach")
-public class OdometryPractise extends LinearOpMode {
+@TeleOp(name = "Odometry Practice", group = "Coach")
+public class OdometryPractice extends LinearOpMode {
 
     // Create a CoachHardware object to be used to access robot hardware.
     // Prefix any hardware functions with "robot." to access this class.
@@ -47,6 +43,7 @@ public class OdometryPractise extends LinearOpMode {
 //            }
             boolean testSingleMotor = false; //true;
 
+            /*
             if ((!runningMotor) && (testSingleMotor)) {
                 for (int port = 0; port < 4; port++) {
                     // give motor power
@@ -73,6 +70,7 @@ public class OdometryPractise extends LinearOpMode {
                 sleep(300);
                 runningMotor = true;
             }
+            */
 
             robot.odometrywheels.pose();
             robot.setRobotTelemetry();

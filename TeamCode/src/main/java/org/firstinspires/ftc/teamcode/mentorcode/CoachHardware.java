@@ -171,7 +171,8 @@ public class CoachHardware {
         //encoderAux = rightback;
         //encoderRight = leftback;
         if (hasOdometryWheels) {
-            odometrywheels = new OdometryWheels(rightfront, leftback, rightback);
+            odometrywheels = new OdometryWheels(rightfront, leftback, rightback,
+                    22.8, 16.8, 3.5, 8192);
         }
 
         // Set all motors to zero power
@@ -314,14 +315,19 @@ public class CoachHardware {
         myOpMode.telemetry.addLine(liftlimitlow.toString());
 
         myOpMode.telemetry.addLine("Odometry pos | ")
-                .addData("x", odometrywheels.pos.x)
-                .addData("y", odometrywheels.pos.y)
-                .addData("h", Math.toDegrees(odometrywheels.pos.h));
-        myOpMode.telemetry.addLine("Odometry current | ")
-                .addData("left", odometrywheels.currentRightPosition)
-                .addData("right", odometrywheels.currentLeftPosition)
-                .addData("aux", odometrywheels.currentAuxPosition);
-
+                .addData("x(cm)", "%.2f", odometrywheels.pos.x_cm)
+                .addData("y(cm)", "%.2f", odometrywheels.pos.y_cm)
+                .addData("x", "%.2f", odometrywheels.pos.getX())
+                .addData("y", odometrywheels.pos.getY())
+                .addData("h", "%.2f", Math.toDegrees(odometrywheels.pos.h));
+        myOpMode.telemetry.addLine("Odometry prev pos | ")
+                .addData("x", odometrywheels.prev_left_encoder_pos)
+                .addData("y", odometrywheels.prev_right_encoder_pos)
+                .addData("h", odometrywheels.prev_center_encoder_pos);
+//        myOpMode.telemetry.addLine("Odometry current | ")
+//                .addData("left", odometrywheels.currentRightPosition)
+//                .addData("right", odometrywheels.currentLeftPosition)
+//                .addData("aux", odometrywheels.currentAuxPosition);
         /* do the telemetry update inside main opmode, instead of here inside robot hardware class */
         // myOpMode.telemetry.update();
 
