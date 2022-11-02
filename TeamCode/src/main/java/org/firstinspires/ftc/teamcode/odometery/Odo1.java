@@ -1,7 +1,4 @@
 //made by Kai Wallis
-import java.lang.Math.*;
-
-import javax.xml.transform.ErrorListener;
 
 public class Odo1 {
 
@@ -81,6 +78,18 @@ public class Odo1 {
 
     public double getHPosDeg() {
         return Math.toDegrees(hPosRad);
+    }
+
+    public double getMagnitude() {
+        return Math.sqrt(Math.pow(deltaX, 2), Math.power(deltaY, 2));
+    }
+
+    public double getVectorAngleRad() {
+        return Math.atan(deltaY/deltaX);
+    }
+
+    public double getVectorAngleDeg() {
+        return Math.toDegrees(Math.atan(deltaY/deltaX));
     }
 
     //sets coordinate position to custom value
