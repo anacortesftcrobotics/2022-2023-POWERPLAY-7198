@@ -14,11 +14,11 @@ public class Odo1 {
     private double deltaY;
     private double deltaHRad;
 
-    private double distanceLtoR = 1;         //distance between left and right encoders in cm
-    private double centerForwardOffset = 1;  //distance between midpoint of the left & right encoders and center encoderin cm
-    private double encoderRadius = 1;        //radius of encoder wheels in cm
-    private int ticksPerRev = 100;           //encoder ticks per revolution
-    private double cmPerTick = encoderRadius/ticksPerRev;
+    private double distanceLtoR = 11.0;         //distance between left and right encoders in cm
+    private double centerForwardOffset = 10.5;  //distance between midpoint of the left & right encoders and center encoderin cm
+    private double encoderDiameter = 2.0;        //radius of encoder wheels in cm
+    private int ticksPerRev = 8192;           //encoder ticks per revolution
+    private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
 
 
     //Constructor with default values
