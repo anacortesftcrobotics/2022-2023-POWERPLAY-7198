@@ -24,26 +24,13 @@ public class Odo1 {
     //Constructor with default values
     public Odo1() {}
 
-    //Constructor with custom encoder distance
-    public Odo1(double disLtoR, double disMidtoC) {
+    //Construnctor with custom values
+    public Odo1(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
         distanceLtoR = disLtoR;
         centerForwardOffset = disMidtoC;
-    }
-
-    //Constructor with custom cord values
-    public Odo1(double x, double y, double hDeg) {
-        xPos = x;
-        yPos = y;
-        hPosRad = Math.toRadians(hDeg);
-    }
-
-    //Construnctor with full custom values
-    public Odo1(double disLtoR, double disMidtoC, double x, double y, double hDeg) {
-        distanceLtoR = disLtoR;
-        centerForwardOffset = disMidtoC;
-        xPos = x;
-        yPos = y;
-        hPosRad = Math.toRadians(hDeg);
+        encoderDiameter = diameter;
+        ticksPerRev = ticksPerRevolution;
+        cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
     }
 
     public double getDeltaX() {
@@ -97,12 +84,6 @@ public class Odo1 {
         xPos = x;
         yPos = y;
         hPosRad = hDeg*Math.PI/180;
-    }
-
-    //sets distance between encoders to custom length
-    public void setEncoderDistance(double disLtoR, double disMidtoC) {
-        distanceLtoR = disLtoR;
-        centerForwardOffset = disMidtoC;
     }
 
     //updates function with new encoder position
