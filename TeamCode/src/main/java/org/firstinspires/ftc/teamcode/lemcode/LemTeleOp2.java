@@ -405,6 +405,7 @@ public class LemTeleOp2 extends OpMode
     }
     public void gamepad2()
     {
+
     }
     public void telemetry()
     {
