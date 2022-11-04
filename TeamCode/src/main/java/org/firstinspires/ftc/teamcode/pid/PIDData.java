@@ -3,7 +3,7 @@
  * @author      Kai Wallis
  * @version     %I%, %G%
  */
-public class PIDKai {
+public class PIDData {
     private double kP;
     private double kI;
     private double kD;
