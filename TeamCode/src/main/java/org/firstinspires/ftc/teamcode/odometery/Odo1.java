@@ -64,9 +64,7 @@ public class Odo1 {
      * Returns the distance traveled between the last 2 setEncoderPos.
      * @return      the robot's current heading in degrees
      */
-    public double getDeltaDistance() {
-        return Math.sqrt(Math.pow(deltaX, 2), Math.power(deltaY, 2));
-    }
+    public double getDeltaDistance() {return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));}
 
     /**
      * Returns the robot's heading change in radians between the last 2 setEncoderPos.
@@ -152,14 +150,14 @@ public class Odo1 {
      * @param eCenter   new position of the center encoder.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
-        for (i = 2; i >= 0; i--)
+        for (int i = 2; i >= 0; i--)
             encodersLast[i] = encoders[i];
 
         encoders[0] = eLeft;
         encoders[1] = eRight;
         encoders[2] = eCenter;
  
-        for (i = 2; i >= 0; i--)
+        for (int i = 2; i >= 0; i--)
             deltaEncoders[i] = encodersLast[i] - encoders[i];
 
         double rDeltaX = cmPerTick * (encoders[1] + encoders[0]) / 2.0;
