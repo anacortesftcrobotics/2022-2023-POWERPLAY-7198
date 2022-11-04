@@ -24,7 +24,7 @@ public class PIDData {
      * @param derivativeConstant    applied coefficent for the derivative corrections.
      * @param devalue               modifier to old integral values (range 1.0-0). Try ~0.66 if using, 1 default.
      */
-    public PIDKai(double porportionalConstant, double integralConstant, double derivativeConstant, double devalue) {
+    public PIDData(double porportionalConstant, double integralConstant, double derivativeConstant, double devalue) {
         kP = porportionalConstant;
         kI = integralConstant;
         kD = derivativeConstant;
@@ -37,7 +37,7 @@ public class PIDData {
      * @param integralConstant      applied coefficent for the integral corrections.
      * @param derivativeConstant    applied coefficent for the derivative corrections.
      */
-    public PIDKai(double porportionalConstant, double integralConstant, double derivativeConstant) {
+    public PIDData(double porportionalConstant, double integralConstant, double derivativeConstant) {
         kP = porportionalConstant;
         kI = integralConstant;
         kD = derivativeConstant;
@@ -48,7 +48,7 @@ public class PIDData {
      * @param porportionalConstant  applied coefficent for the porportional corrections.
      * @param integralConstant      applied coefficent for the integral corrections.
      */
-    public PIDKai(double porportionalConstant, double integralConstant) {
+    public PIDData(double porportionalConstant, double integralConstant) {
         kP = porportionalConstant;
         kI = integralConstant;
         kD = 0;
@@ -58,7 +58,7 @@ public class PIDData {
      * Class constructor with a Porportional based correction.
      * @param porportionalConstant  applied coefficent for the porportional corrections.
      */
-    public PIDKai(double porportionalConstant) {
+    public PIDData(double porportionalConstant) {
         kP = porportionalConstant;
         kI = 0;
         kD = 0;
@@ -68,7 +68,7 @@ public class PIDData {
      * Class constructor disabling P, I, and D corrections.
      * Output is always 0, use to disable output of class.
      */
-    public PIDKai() {
+    public PIDData() {
         kP = 0;
         kI = 0;
         kD = 0;
