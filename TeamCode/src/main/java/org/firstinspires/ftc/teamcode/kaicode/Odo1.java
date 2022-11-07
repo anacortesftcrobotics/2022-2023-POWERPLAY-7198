@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode.kaicode;
+
 /**
  * This class provides odometry tracking for an FTC Robot
  * @author      Kai Wallis
@@ -64,7 +66,9 @@ public class Odo1 {
      * Returns the distance traveled between the last 2 setEncoderPos.
      * @return      the robot's current heading in degrees
      */
-    public double getDeltaDistance() {return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));}
+    public double getDeltaDistance() {
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    }
 
     /**
      * Returns the robot's heading change in radians between the last 2 setEncoderPos.
@@ -145,9 +149,9 @@ public class Odo1 {
     /**
      * Updates the object based on updated encoder positions.
      * 
-     * @param eLeft     new position of the left encoder.
-     * @param eRight    new position of the right encoder.
-     * @param eCenter   new position of the center encoder.
+     * @param eLeft     new tick position of the left encoder.
+     * @param eRight    new tick position of the right encoder.
+     * @param eCenter   new tick position of the center encoder.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
         for (int i = 2; i >= 0; i--)
