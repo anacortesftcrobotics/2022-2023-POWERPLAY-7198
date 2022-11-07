@@ -277,11 +277,12 @@ public class LemTeleOp2Player extends OpMode
             leftGrab.setPosition(0);
             rightGrab.setPosition(1);
         }
+        /*
         if(color.getDistance(DistanceUnit.INCH) < 0.5 && liftLevel == 0 && !grabbed)
         {
             grabbed = true;
         }
-
+        */
         //lift mechanism
         //initialize color sensor as distance sensor, detect when cones are at perfect distance? maybe make controller rumble
         //once a cone is grabbed, move lift to holding height and move MPCR into pole position
@@ -352,7 +353,7 @@ public class LemTeleOp2Player extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 4;
-                    liftHeight = (2982);
+                    liftHeight = (3066);
                 }
                 if(!grabbed)
                     liftLevel = 0;

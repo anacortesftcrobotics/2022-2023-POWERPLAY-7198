@@ -22,6 +22,11 @@ public class LemTeleOp2 extends OpMode
     boolean hasZeroed = false;
     double grabberConstant = 0.60;
     double whenGrabbed;
+    double lastTime;
+    double time;
+    double rLast;
+    double lLast;
+    double bad = 0;
     /*
     the hasChanged arrays are for the boolean buttons on the controllers.
     0 - a
@@ -365,7 +370,20 @@ public class LemTeleOp2 extends OpMode
             if(grabbed &&  System.currentTimeMillis() >= whenGrabbed + 500)
                 liftHeight = 84;
             else
-                liftHeight = 20;
+                liftHeight = 30;
+
+
+        lastTime = time;
+        time = System.currentTimeMillis();
+
+        if(liftLevel == 0 && (leftLift.getCurrentPosition() - lLast) / ((time - lastTime) / 1000) == 0)
+        {
+            bad = 0.0;
+        }
+        else
+            bad = 1.0;
+
+        lLast = leftLift.getCurrentPosition();
 
         leftLift.setTargetPosition((int) liftHeight + num);
         rightLift.setTargetPosition((int) liftHeight + num);
@@ -377,26 +395,26 @@ public class LemTeleOp2 extends OpMode
         if (Math.abs(liftHeight) > actual)
         {
             if (lActual > rActual) {
-                leftLift.setPower(0.715);
+                leftLift.setPower(0.715 * bad);
                 rightLift.setPower(0.685);
             } else if (lActual < rActual) {
-                leftLift.setPower(0.685);
+                leftLift.setPower(0.685 * bad);
                 rightLift.setPower(0.715);
             } else {
-                leftLift.setPower(0.7);
+                leftLift.setPower(0.7 * bad);
                 rightLift.setPower(0.7);
             }
         }
         if (Math.abs(liftHeight) < actual)
         {
             if (lActual > rActual) {
-                leftLift.setPower(0.685);
+                leftLift.setPower(0.685 * bad);
                 rightLift.setPower(0.715);
             } else if (lActual < rActual) {
-                leftLift.setPower(0.715);
+                leftLift.setPower(0.715 * bad);
                 rightLift.setPower(0.685);
             } else {
-                leftLift.setPower(0.7);
+                leftLift.setPower(0.7 * bad);
                 rightLift.setPower(0.7);
             }
         }
@@ -427,6 +445,10 @@ public class LemTeleOp2 extends OpMode
         telemetry.addData("Speed",100 * speedCoefficient + "%");
         telemetry.addData("zero", zero.isPressed());
         telemetry.addData("lift Level", liftLevel);
+        telemetry.addData("left lift current", ((DcMotorEx)leftLift).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("right lift current", ((DcMotorEx)rightLift).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("left lift velocity", ((DcMotorEx)leftLift).getVelocity());
+        telemetry.addData("right lift current", ((DcMotorEx)rightLift).getVelocity());
         telemetry.update();
     }
     public void resetDriveEncoder()

@@ -124,7 +124,7 @@ public class PIDData {
         log += kI * getI() + " "; // logs I
 
         u += kD * getD(e);
-        log += kD * getD(error) + "/n"; //logs D
+        log += kD * getD(e) + "/n"; //logs D
 
         lastE = e; //stores the newer error value as the older. (at end of method)
         return u;

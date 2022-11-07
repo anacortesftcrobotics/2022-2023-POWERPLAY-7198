@@ -39,6 +39,8 @@ public class LemAutoOp extends LinearOpMode
     Orientation angles;
     Acceleration gravity;
 
+    //Library
+    private LemLibrary robob;
     //Put the function library here
     /*
 
@@ -46,10 +48,14 @@ public class LemAutoOp extends LinearOpMode
 
     public void runOpMode() throws InterruptedException
     {
-        //init lemlibrary here
+        robob = new LemLibrary(hardwareMap, this, telemetry);
+        robob.init();
         waitForStart();
-        //code goes here
-
+        waitForStart();
+        robob.move(20);
+        robob.turn(90);
+        robob.grab();
+        robob.grab();
         //allStop here
     }
 }
