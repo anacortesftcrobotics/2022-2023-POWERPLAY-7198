@@ -52,10 +52,13 @@ public class LemAutoOp extends LinearOpMode
         robob.init();
         waitForStart();
         waitForStart();
-        robob.move(20);
-        robob.turn(90);
+        robob.move(26);
+        robob.move(-26);
+        //robob.strafe(10);
+        //robob.turn(45);
         robob.grab();
         robob.grab();
+
         //allStop here
     }
 }

@@ -164,27 +164,45 @@ public class LemLibrary
         //~1304 encoder ticks per cm
         //~3312 encoder ticks per inch
         resetDriveEncoder();
-        double expected = units * 3312;
-        while(encoderRight.getCurrentPosition() <= expected - 10 || encoderRight.getCurrentPosition() >= expected + 10 || encoderLeft.getCurrentPosition() <= expected - 10 || encoderLeft.getCurrentPosition() >= expected + 10)
+        double expected = units * 1892;
+        while(linearOpMode.opModeIsActive() && (-encoderRight.getCurrentPosition() <= expected - 500 || -encoderRight.getCurrentPosition() >= expected + 500 || encoderLeft.getCurrentPosition() <= expected - 500 || encoderLeft.getCurrentPosition() >= expected + 500))
         {
-            double leftPower = deadZone(Math.max(-0.5,Math.min(0.5,(expected - encoderLeft.getCurrentPosition()))));
-            double rightPower = deadZone(Math.max(-0.5,Math.min(0.5,(expected - encoderRight.getCurrentPosition()))));
+            double leftPower = deadZone(Math.max(-0.4,Math.min(0.4,(expected - encoderLeft.getCurrentPosition()) / (4444 + Math.abs(expected - encoderLeft.getCurrentPosition())))));
+            double rightPower = deadZone(Math.max(-0.4,Math.min(0.4,(expected - -encoderRight.getCurrentPosition()) / (4444 + Math.abs(expected - -encoderRight.getCurrentPosition())))));
             leftBack.setPower(leftPower);
             leftFront.setPower(leftPower);
             rightBack.setPower(rightPower);
             rightFront.setPower(rightPower);
-            telemetry.addData("Target:", units * 3312);
-            telemetry.addData("Actual:", (-encoderRight.getCurrentPosition() + encoderLeft.getCurrentPosition()) / 2);
+            telemetry.addData("Target:", units * 1892);
+            telemetry.addData("Right Actual:", (-encoderRight.getCurrentPosition()));
+            telemetry.addData("Left Actual:", (encoderLeft.getCurrentPosition()));
+            telemetry.addData("Right Dif:", (expected - -encoderRight.getCurrentPosition()));
+            telemetry.addData("Left Dif:", (expected - encoderLeft.getCurrentPosition()));
+            telemetry.addData("rightPower",rightPower);
+            telemetry.addData("leftPower",leftPower);
             telemetry.update();
         }
+        leftBack.setPower(0);
+        leftFront.setPower(0);
+        rightBack.setPower(0);
+        rightFront.setPower(0);
     }
     public void strafe(int units)
     {
         resetDriveEncoder();
         double expected = units * 3312;
-        while(encoderBack.getCurrentPosition() <= expected - 10 || encoderBack.getCurrentPosition() >= expected + 10)
+        while(encoderBack.getCurrentPosition() <= expected - 50 || encoderBack.getCurrentPosition() >= expected + 50)
         {
-            //morop
+            double frontPower = deadZone(Math.max(-0.5,Math.min(0.5,(expected - encoderBack.getCurrentPosition()) / 750)));
+            double backPower = -deadZone(Math.max(-0.5,Math.min(0.5,(expected - encoderBack.getCurrentPosition()) / 750)));
+            leftBack.setPower(backPower);
+            leftFront.setPower(frontPower);
+            rightBack.setPower(backPower);
+            rightFront.setPower(frontPower);
+            telemetry.addData("Target:", units * 3312);
+            telemetry.addData("Right Actual:", (encoderBack.getCurrentPosition()));
+            telemetry.addData("Difference", units * 3312 - encoderBack.getCurrentPosition());
+            telemetry.update();
         }
     }
     public void turn(double degrees)
@@ -197,10 +215,15 @@ public class LemLibrary
         {
             angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             angle = angles.firstAngle;
+            direction = (angle - degrees) / Math.abs(angle - degrees);
             leftBack.setPower(motorPower * direction);
             leftFront.setPower(motorPower * direction);
             rightBack.setPower(motorPower * -direction);
             rightFront.setPower(motorPower * -direction);
+            telemetry.addData("Expected: ", degrees);
+            telemetry.addData("Actual:", angle);
+            telemetry.addData("Difference:", degrees - angle);
+            telemetry.update();
         }
     }
     public void exMove(double x, double y, double rx, int time)
@@ -370,7 +393,7 @@ public class LemLibrary
     }
     public double deadZone(double input)
     {
-        if (Math.abs(input) < 0.05)
+        if (Math.abs(input) < 0.1)
         {
             return  0;
         }
