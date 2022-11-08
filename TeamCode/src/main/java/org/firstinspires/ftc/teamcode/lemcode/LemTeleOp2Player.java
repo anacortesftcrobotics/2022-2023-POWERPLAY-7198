@@ -253,7 +253,7 @@ public class LemTeleOp2Player extends OpMode
     }
     public void gamepad2()
     {
-        //Grabber right bumper
+        //Grabber
         if(gamepad2.right_bumper)
         {
             if(!hasChanged2[11])

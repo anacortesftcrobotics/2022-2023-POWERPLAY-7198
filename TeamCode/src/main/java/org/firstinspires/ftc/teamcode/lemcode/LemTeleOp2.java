@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 public class LemTeleOp2 extends OpMode
 {
     //Variables
+    boolean singlePlayer = false;
     boolean grabbed = false;
     double posMPCR = 1;
     double speedCoefficient = 0.6;
@@ -47,6 +48,11 @@ public class LemTeleOp2 extends OpMode
      */
     boolean[] hasChanged1 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     boolean[] hasChanged2 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+    Gamepad control1 = gamepad1;
+    Gamepad control2 = gamepad2;
+    boolean[] changed1 = hasChanged1;
+    boolean[] changed2 = hasChanged2;
+
 
     //Motors
     private DcMotor leftBack, leftFront, rightBack, rightFront, leftLift, rightLift;
@@ -162,271 +168,31 @@ public class LemTeleOp2 extends OpMode
             }
             hasZeroed = true;
         }
-        gamepad1();
-        gamepad2();
+        playerCheck(gamepad1,hasChanged1);
+        if(!singlePlayer)
+        {
+            control1 = gamepad1;
+            changed1 = hasChanged1;
+            control2 = gamepad2;
+            changed2 = hasChanged2;
+        }
+        else
+        {
+            control1 = gamepad1;
+            changed1 = hasChanged1;
+            control2 = gamepad1;
+            changed2 = hasChanged2;
+        }
+        driveControl(control1,hasChanged1);
+        MPCRControl(control1,hasChanged1);
+        grabControl(control2,hasChanged2);
+        liftControl(control2,hasChanged2);
         telemetry();
-    }
-    public void gamepad1()
-    {
-        //drive code
-        double leftBackPower;
-        double rightBackPower;
-        double leftFrontPower;
-        double rightFrontPower;
-
-        double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
-        double rx = gamepad1.right_stick_x;
-
-        x = deadZone(x);
-        y = deadZone(y);
-        rx = deadZone(rx);
-
-        rx += poleCenter();
-
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx),1);
-
-        leftBackPower = (y - x + rx) / denominator;
-        rightBackPower = (y + x - rx) / denominator;
-        leftFrontPower = (y + x + rx) / denominator;
-        rightFrontPower = (y - x - rx) / denominator;
-
-        leftBackPower = Math.cbrt(leftBackPower);
-        rightBackPower = Math.cbrt(rightBackPower);
-        leftFrontPower = Math.cbrt(leftFrontPower);
-        rightFrontPower = Math.cbrt(rightFrontPower);
-
-        leftBackPower = (leftBackPower * speedCoefficient * 0.75);
-        rightBackPower = (rightBackPower * speedCoefficient * 0.75);
-        leftFrontPower = (leftFrontPower  * speedCoefficient * 0.75);
-        rightFrontPower = (rightFrontPower * speedCoefficient * 0.75);
-
-        leftBack.setPower(leftBackPower);
-        rightBack.setPower(rightBackPower);
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-
-        //Speed coefficient dpad up n down
-        if(gamepad1.dpad_up)
-        {
-            if(!hasChanged1[7])
-            {
-                if(speedCoefficient < 1)
-                    speedCoefficient += 0.2;
-                hasChanged1[7] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[7] = false;
-        }
-        if(gamepad1.dpad_down)
-        {
-            if(!hasChanged1[4])
-            {
-                if(speedCoefficient > 0.2)
-                    speedCoefficient -= 0.2;
-                hasChanged1[4] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[4] = false;
-        }
-
-        //MPCR
-        if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1200 + num)
-            posMPCR = 0;
-        else
-            posMPCR = 0.6;
-        if(tempMPCR)
-            posMPCR = 0.17;
-        if(gamepad1.left_bumper)
-        {
-            if(!hasChanged1[10])
-            {
-                tempMPCR = !tempMPCR;
-                hasChanged1[10] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[10] = false;
-        }
-        rightMPCR.setPosition(posMPCR + 0.02);
-        leftMPCR.setPosition(1 - posMPCR - 0.02);
-
-        //Grabber right bumper
-        if(gamepad1.right_bumper)
-        {
-            if(!hasChanged1[11])
-            {
-                grabbed = !grabbed;
-                hasChanged1[11] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[11] = false;
-        }
-        if(grabbed)
-        {
-            whenGrabbed = System.currentTimeMillis();
-            leftGrab.setPosition(grabberConstant + 0.02);
-            rightGrab.setPosition(1 - grabberConstant + 0.02);
-        }
-        else
-        {
-            leftGrab.setPosition(0);
-            rightGrab.setPosition(1);
-        }
-        if(color.getDistance(DistanceUnit.INCH) < 0.5 && liftLevel == 0 && !grabbed)
-        {
-            grabbed = true;
-        }
-
-        //lift mechanism
-            //initialize color sensor as distance sensor, detect when cones are at perfect distance? maybe make controller rumble
-            //once a cone is grabbed, move lift to holding height and move MPCR into pole position
-            //a is ground, b is low, y is medium, x is high
-            //the button press includes moving to pole, depositing on pole, backing away from pole to starting position.
-            //the lift then goes back to zero (bottom (grabbing position)) and the MPCR goes to standby position
-        if(gamepad1.a)
-        {
-            if(!hasChanged1[0])
-            {
-                if(grabbed)
-                {
-                    liftLevel = 1;
-                    liftHeight = (252);
-                }
-                if(!grabbed)
-                {
-                    liftLevel = 0;
-
-                }
-                hasChanged1[0] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[0] = false;
-        }
-        if(gamepad1.b)
-        {
-            if(!hasChanged1[1])
-            {
-                if(grabbed)
-                {
-                    liftLevel = 2;
-                    liftHeight = (1302);
-                }
-                if(!grabbed)
-                    liftLevel = 0;
-                hasChanged1[1] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[1] = false;
-        }
-        if(gamepad1.x)
-        {
-            if(!hasChanged1[2])
-            {
-                if(grabbed)
-                {
-                    liftLevel = 3;
-                    liftHeight = (2142);
-                }
-                if(!grabbed)
-                    liftLevel = 0;
-                hasChanged1[2] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[2] = false;
-        }
-        if(gamepad1.y)
-        {
-            if(!hasChanged1[3])
-            {
-                if(grabbed)
-                {
-                    liftLevel = 4;
-                    liftHeight = (2982);
-                }
-                if(!grabbed)
-                    liftLevel = 0;
-                hasChanged1[3] = true;
-            }
-        }
-        else
-        {
-            hasChanged1[3] = false;
-        }
-        if(liftLevel == 0)
-            if(grabbed &&  System.currentTimeMillis() >= whenGrabbed + 500)
-                liftHeight = 84;
-            else
-                liftHeight = 30;
-
-
-        lastTime = time;
-        time = System.currentTimeMillis();
-
-        if(liftLevel == 0 && (leftLift.getCurrentPosition() - lLast) / ((time - lastTime) / 1000) == 0)
-        {
-            bad = 0.0;
-        }
-        else
-            bad = 1.0;
-
-        lLast = leftLift.getCurrentPosition();
-
-        leftLift.setTargetPosition((int) liftHeight + num);
-        rightLift.setTargetPosition((int) liftHeight + num);
-
-        int actual = Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2);
-        int rActual = Math.abs(rightLift.getCurrentPosition());
-        int lActual = Math.abs(leftLift.getCurrentPosition());
-
-        if (Math.abs(liftHeight) > actual)
-        {
-            if (lActual > rActual) {
-                leftLift.setPower(0.715 * bad);
-                rightLift.setPower(0.685);
-            } else if (lActual < rActual) {
-                leftLift.setPower(0.685 * bad);
-                rightLift.setPower(0.715);
-            } else {
-                leftLift.setPower(0.7 * bad);
-                rightLift.setPower(0.7);
-            }
-        }
-        if (Math.abs(liftHeight) < actual)
-        {
-            if (lActual > rActual) {
-                leftLift.setPower(0.685 * bad);
-                rightLift.setPower(0.715);
-            } else if (lActual < rActual) {
-                leftLift.setPower(0.715 * bad);
-                rightLift.setPower(0.685);
-            } else {
-                leftLift.setPower(0.7 * bad);
-                rightLift.setPower(0.7);
-            }
-        }
-        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void gamepad2()
-    {
-
     }
     public void telemetry()
     {
+        if(singlePlayer)
+            telemetry.addData("Single player", singlePlayer);
         telemetry.addData("encoderLeft", encoderLeft.getCurrentPosition());
         telemetry.addData("encoderRight", encoderRight.getCurrentPosition());
         telemetry.addData("encoderBack", encoderBack.getCurrentPosition());
@@ -501,6 +267,284 @@ public class LemTeleOp2 extends OpMode
             Thread.sleep((long) input);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+    public void driveControl(Gamepad gamepadX, boolean[] hasChangedX)
+    {
+        //drive code
+        double leftBackPower;
+        double rightBackPower;
+        double leftFrontPower;
+        double rightFrontPower;
+
+        double x = gamepadX.left_stick_x;
+        double y = -gamepadX.left_stick_y;
+        double rx = gamepadX.right_stick_x;
+
+        x = deadZone(x);
+        y = deadZone(y);
+        rx = deadZone(rx);
+
+        rx += poleCenter();
+
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx),1);
+
+        leftBackPower = (y - x + rx) / denominator;
+        rightBackPower = (y + x - rx) / denominator;
+        leftFrontPower = (y + x + rx) / denominator;
+        rightFrontPower = (y - x - rx) / denominator;
+
+        leftBackPower = Math.cbrt(leftBackPower);
+        rightBackPower = Math.cbrt(rightBackPower);
+        leftFrontPower = Math.cbrt(leftFrontPower);
+        rightFrontPower = Math.cbrt(rightFrontPower);
+
+        leftBackPower = (leftBackPower * speedCoefficient * 0.75);
+        rightBackPower = (rightBackPower * speedCoefficient * 0.75);
+        leftFrontPower = (leftFrontPower  * speedCoefficient * 0.75);
+        rightFrontPower = (rightFrontPower * speedCoefficient * 0.75);
+
+        leftBack.setPower(leftBackPower);
+        rightBack.setPower(rightBackPower);
+        leftFront.setPower(leftFrontPower);
+        rightFront.setPower(rightFrontPower);
+
+        //Speed coefficient dpad up n down
+        if(gamepadX.dpad_up)
+        {
+            if(!hasChangedX[7])
+            {
+                if(speedCoefficient < 1)
+                    speedCoefficient += 0.2;
+                hasChangedX[7] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[7] = false;
+        }
+        if(gamepadX.dpad_down)
+        {
+            if(!hasChanged1[4])
+            {
+                if(speedCoefficient > 0.2)
+                    speedCoefficient -= 0.2;
+                hasChangedX[4] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[4] = false;
+        }
+    }
+    public void MPCRControl(Gamepad gamepadX, boolean[] hasChangedX)
+    {
+        //MPCR
+        if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1200 + num)
+            posMPCR = 0;
+        else
+            posMPCR = 0.5;
+        if(tempMPCR)
+            posMPCR = 1;
+        if(gamepadX.left_bumper)
+        {
+            if(!hasChangedX[10])
+            {
+                tempMPCR = !tempMPCR;
+                hasChangedX[10] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[10] = false;
+        }
+        rightMPCR.setPosition(posMPCR + 0.02);
+        leftMPCR.setPosition(1 - posMPCR - 0.02);
+    }
+    public void grabControl(Gamepad gamepadX, boolean[] hasChangedX)
+    {
+        //Grabber right bumper
+        if(gamepadX.right_bumper)
+        {
+            if(!hasChangedX[11])
+            {
+                grabbed = !grabbed;
+                hasChangedX[11] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[11] = false;
+        }
+        if(grabbed)
+        {
+            whenGrabbed = System.currentTimeMillis();
+            leftGrab.setPosition(grabberConstant);
+            rightGrab.setPosition(1 - grabberConstant);
+        }
+        else
+        {
+            leftGrab.setPosition(0);
+            rightGrab.setPosition(1);
+        }
+        if(color.getDistance(DistanceUnit.INCH) < 0.5 && liftLevel == 0 && !grabbed)
+        {
+            //make it do the rumble thing
+        }
+    }
+    public void liftControl(Gamepad gamepadX, boolean[] hasChangedX)
+    {
+        //lift mechanism
+        //initialize color sensor as distance sensor, detect when cones are at perfect distance? maybe make controller rumble
+        //once a cone is grabbed, move lift to holding height and move MPCR into pole position
+        //a is ground, b is low, y is medium, x is high
+        //the button press includes moving to pole, depositing on pole, backing away from pole to starting position.
+        //the lift then goes back to zero (bottom (grabbing position)) and the MPCR goes to standby position
+        if(gamepadX.a)
+        {
+            if(!hasChangedX[0])
+            {
+                if(grabbed)
+                {
+                    liftLevel = 1;
+                    liftHeight = (252);
+                }
+                if(!grabbed)
+                {
+                    liftLevel = 0;
+
+                }
+                hasChangedX[0] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[0] = false;
+        }
+        if(gamepadX.b)
+        {
+            if(!hasChangedX[1])
+            {
+                if(grabbed)
+                {
+                    liftLevel = 2;
+                    liftHeight = (1302);
+                }
+                if(!grabbed)
+                    liftLevel = 0;
+                hasChangedX[1] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[1] = false;
+        }
+        if(gamepadX.x)
+        {
+            if(!hasChangedX[2])
+            {
+                if(grabbed)
+                {
+                    liftLevel = 3;
+                    liftHeight = (2142);
+                }
+                if(!grabbed)
+                    liftLevel = 0;
+                hasChangedX[2] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[2] = false;
+        }
+        if(gamepadX.y)
+        {
+            if(!hasChangedX[3])
+            {
+                if(grabbed)
+                {
+                    liftLevel = 4;
+                    liftHeight = (2982);
+                }
+                if(!grabbed)
+                    liftLevel = 0;
+                hasChangedX[3] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[3] = false;
+        }
+        if(liftLevel == 0)
+            if(grabbed &&  System.currentTimeMillis() >= whenGrabbed + 500)
+                liftHeight = 84;
+            else
+                liftHeight = 30;
+
+
+        lastTime = time;
+        time = System.currentTimeMillis();
+
+        if(liftLevel == 0 && (leftLift.getCurrentPosition() - lLast) / ((time - lastTime) / 1000) == 0)
+        {
+            bad = 0.0;
+        }
+        else
+            bad = 1.0;
+
+        lLast = leftLift.getCurrentPosition();
+
+        leftLift.setTargetPosition((int) liftHeight + num);
+        rightLift.setTargetPosition((int) liftHeight + num);
+
+        int actual = Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2);
+        int rActual = Math.abs(rightLift.getCurrentPosition());
+        int lActual = Math.abs(leftLift.getCurrentPosition());
+
+        if (Math.abs(liftHeight) > actual)
+        {
+            if (lActual > rActual) {
+                leftLift.setPower(0.715 * bad);
+                rightLift.setPower(0.685);
+            } else if (lActual < rActual) {
+                leftLift.setPower(0.685 * bad);
+                rightLift.setPower(0.715);
+            } else {
+                leftLift.setPower(0.7 * bad);
+                rightLift.setPower(0.7);
+            }
+        }
+        if (Math.abs(liftHeight) < actual)
+        {
+            if (lActual > rActual) {
+                leftLift.setPower(0.685 * bad);
+                rightLift.setPower(0.715);
+            } else if (lActual < rActual) {
+                leftLift.setPower(0.715 * bad);
+                rightLift.setPower(0.685);
+            } else {
+                leftLift.setPower(0.7 * bad);
+                rightLift.setPower(0.7);
+            }
+        }
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void playerCheck(Gamepad gamepadX, boolean[] hasChangedX) {
+        if (gamepadX.start) {
+            if (!hasChangedX[13]) {
+                if (gamepadX.y) {
+                    if (!hasChangedX[3]) {
+                        singlePlayer = !singlePlayer;
+                        hasChangedX[3] = true;
+                    }
+                } else {
+                    hasChangedX[3] = false;
+                }
+            }
+            hasChangedX[13] = true;
+        } else {
+            hasChangedX[13] = false;
         }
     }
 }
