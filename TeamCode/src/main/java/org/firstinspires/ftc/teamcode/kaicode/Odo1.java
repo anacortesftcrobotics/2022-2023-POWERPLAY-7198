@@ -7,32 +7,32 @@ package org.firstinspires.ftc.teamcode.kaicode;
  */
 public class Odo1 {
 
-    private double x = 0;     //x Position on feild in cm
-    private double y = 0;     //y Position on feild in cm
-    private double hRad = 0;  //heading angle on feild in degrees, 0 is straight relitive to start
+    private double x = 0;     //x Position on field in cm
+    private double y = 0;     //y Position on field in cm
+    private double hRad = 0;  //heading angle on field in degrees, 0 is straight relative to start
 
-    private double encodersLast[];  //left, right, center
-    private double encoders[];      //l,r,c
-    private double deltaEncoders[]; //l,r,c
+    private double[] encodersLast = {0.0,0.0,0.0};  //left, right, center
+    private double[] encoders = {0.0,0.0,0.0};      //l,r,c
+    private double[] deltaEncoders = {0.0,0.0,0.0}; //l,r,c
 
     private double deltaX;
     private double deltaY;
     private double deltaHRad;
 
     private double distanceLtoR = 11.0;
-    private double forwardOffset = 10.5;
-    private double encoderDiameter = 2.0;
+    private double forwardOffset = 17.83;
+    private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
     private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
 
 
     /**
-     * Class constructor using default encoder distances & dimentions.
+     * Class constructor using default encoder distances & dimensions.
      */
     public Odo1() {}
 
     /**
-     * Class constructor using custom encoder distances & dimentions.
+     * Class constructor using custom encoder distances & dimensions.
      * @param disLtoR       the distance between left and right encoders in cm.
      * @param disMidtoC     the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
      * @param diameter      the radius of encoder wheels in cm.
@@ -135,10 +135,42 @@ public class Odo1 {
     }
 
     /**
+     * Resets encoder history & delta values.
+     */
+    public void reset() {
+        for (int i = 2; i >= 0; i--)
+            encodersLast[i] = 0.0;
+            encoders[i] = 0.0;
+            deltaEncoders[i] = 0.0;
+
+        deltaX = 0.0;
+        deltaY = 0.0;
+        deltaHRad = 0.0;
+    }
+
+    /**
+     * Resets field coords, encoder history & delta values.
+     */
+    public void resetAll() {
+        x = 0;
+        y = 0;
+        hRad = 0;
+
+        for (int i = 2; i >= 0; i--)
+            encodersLast[i] = 0.0;
+            encoders[i] = 0.0;
+            deltaEncoders[i] = 0.0;
+
+        deltaX = 0.0;
+        deltaY = 0.0;
+        deltaHRad = 0.0;
+    }
+
+    /**
      * Sets the current position & heading on a coordinate grid.
-     * @param x     new position on the x axis.
-     * @param y     new position on the y axis.
-     * @param hDeg  new heading in degrees.
+     * @param newX     new position on the x axis.
+     * @param newY     new position on the y axis.
+     * @param newHDeg  new heading in degrees.
      */
     public void setCoords(double newX, double newY, double newHDeg) {
         x = newX;
@@ -161,14 +193,14 @@ public class Odo1 {
         encoders[2] = cmPerTick * eCenter;
  
         for (int i = 2; i >= 0; i--)
-            deltaEncoders[i] = encodersLast[i] - encoders[i];
+            deltaEncoders[i] =  encoders[i] - encodersLast[i];
         
-        deltaHRad = (encoders[1] - encoders[0]) / distanceLtoR;
-        double deltaF = (encoders[1] + encoders[0]) / 2.0;
-        double deltaR = encoders[2] - forwardOffset * deltaHRad;
+        deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
+        double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
+        double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
 
-        deltaX += deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
-        deltaY += deltaF * Math.cos(hRad) + deltaR * Math.sin(hRad);
+        deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
+        deltaY = deltaF * Math.sin(hRad) + deltaR * Math.cos(hRad);
 
         x += deltaX;
         y += deltaY;
