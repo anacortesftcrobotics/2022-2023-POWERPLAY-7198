@@ -5,8 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.teamcode.kaicode.Odo1;
 
-@TeleOp(name = "LemTeleOp1Player", group = "TeleOps")
+@TeleOp(name = "LemTeleOp", group = "TeleOp")
 
 public class LemTeleOp2 extends OpMode
 {
@@ -28,6 +29,7 @@ public class LemTeleOp2 extends OpMode
     double rLast;
     double lLast;
     double bad = 0;
+    boolean cvd = false;
     /*
     the hasChanged arrays are for the boolean buttons on the controllers.
     0 - a
@@ -45,9 +47,11 @@ public class LemTeleOp2 extends OpMode
     12 - back
     13 - start
     14 - guide
+    15 - left trigger
+    16 - right trigger
      */
-    boolean[] hasChanged1 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-    boolean[] hasChanged2 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+    boolean[] hasChanged1 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+    boolean[] hasChanged2 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     Gamepad control1 = gamepad1;
     Gamepad control2 = gamepad2;
     boolean[] changed1 = hasChanged1;
@@ -68,6 +72,7 @@ public class LemTeleOp2 extends OpMode
 
     //Color Sensors
     private DistanceSensor color;
+    //private ColorSensor color;
 
     //Touch Sensors
     private TouchSensor zero;
@@ -76,6 +81,13 @@ public class LemTeleOp2 extends OpMode
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
+
+    //Rumbles
+    Gamepad.RumbleEffect singlePlayerRumble;
+    Gamepad.RumbleEffect theresAConeRumble;
+
+    //Odometry
+    Odo1 odometryTracker = new Odo1();
 
     public void init()
     {
@@ -135,6 +147,7 @@ public class LemTeleOp2 extends OpMode
 
         //Color Sensors
         color = hardwareMap.get(DistanceSensor.class, "color");
+        //color = hardwareMap.get(ColorSensor.class, "color");
 
         //Limit switches
         zero = hardwareMap.get(TouchSensor.class, "bottomLimit");
@@ -148,6 +161,15 @@ public class LemTeleOp2 extends OpMode
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        //Rumbles
+        singlePlayerRumble = new Gamepad.RumbleEffect.Builder()
+                .addStep(1.0, 0.0, 500)
+                .build();
+
+        theresAConeRumble = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0,1.0,1000)
+                .build();
     }
     public void loop()
     {
@@ -191,30 +213,36 @@ public class LemTeleOp2 extends OpMode
     }
     public void telemetry()
     {
-        if(singlePlayer)
+        telemetry.addData("grabbed", grabbed);
+        if(singlePlayer) {
             telemetry.addData("Single player", singlePlayer);
-        telemetry.addData("encoderLeft", encoderLeft.getCurrentPosition());
-        telemetry.addData("encoderRight", encoderRight.getCurrentPosition());
-        telemetry.addData("encoderBack", encoderBack.getCurrentPosition());
-        telemetry.addData("color", color.getDistance(DistanceUnit.INCH));
-        telemetry.addData("leftDistance",leftDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("rightDistance", rightDistance.getDistance(DistanceUnit.CM));
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("angles", angles);
-        telemetry.addData("Heading",angles.firstAngle);
-        telemetry.addData("MPCR Position", posMPCR);
-        telemetry.addData("grabbed",grabbed);
-        telemetry.addData("leftServo",leftMPCR.getPosition());
-        telemetry.addData("rightServo",rightMPCR.getPosition());
-        telemetry.addData("lift height", "Left: " + leftLift.getCurrentPosition() + " and Right: " + rightLift.getCurrentPosition());
-        telemetry.addData("liftpower: ", leftLift.getPower() + " " + rightLift.getPower());
-        telemetry.addData("Speed",100 * speedCoefficient + "%");
-        telemetry.addData("zero", zero.isPressed());
-        telemetry.addData("lift Level", liftLevel);
-        telemetry.addData("left lift current", ((DcMotorEx)leftLift).getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("right lift current", ((DcMotorEx)rightLift).getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("left lift velocity", ((DcMotorEx)leftLift).getVelocity());
-        telemetry.addData("right lift current", ((DcMotorEx)rightLift).getVelocity());
+            telemetry.addData("lift Level", liftLevel);
+            odometryTracker.setEncoderPos(encoderLeft.getCurrentPosition(), -encoderRight.getCurrentPosition(), encoderBack.getCurrentPosition());
+            telemetry.addData("X position", odometryTracker.getX());
+            telemetry.addData("Y position", odometryTracker.getY());
+            telemetry.addData("heading", odometryTracker.getHDeg());
+            telemetry.addData("encoderLeft", encoderLeft.getCurrentPosition());
+            telemetry.addData("encoderRight", encoderRight.getCurrentPosition());
+            telemetry.addData("encoderBack", encoderBack.getCurrentPosition());
+            telemetry.addData("color", color.getDistance(DistanceUnit.INCH));
+            //telemetry.addData("color", "red: " + color.red() + " green: " + color.green() + " blue: " + color.blue());
+            telemetry.addData("leftDistance", leftDistance.getDistance(DistanceUnit.CM));
+            telemetry.addData("rightDistance", rightDistance.getDistance(DistanceUnit.CM));
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("angles", angles);
+            telemetry.addData("Heading", angles.firstAngle);
+            telemetry.addData("MPCR Position", posMPCR);
+            telemetry.addData("leftServo", leftMPCR.getPosition());
+            telemetry.addData("rightServo", rightMPCR.getPosition());
+            telemetry.addData("lift height", "Left: " + leftLift.getCurrentPosition() + " and Right: " + rightLift.getCurrentPosition());
+            telemetry.addData("liftpower: ", leftLift.getPower() + " " + rightLift.getPower());
+            telemetry.addData("Speed", 100 * speedCoefficient + "%");
+            telemetry.addData("zero", zero.isPressed());
+            telemetry.addData("left lift current", ((DcMotorEx) leftLift).getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("right lift current", ((DcMotorEx) rightLift).getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("left lift velocity", ((DcMotorEx) leftLift).getVelocity());
+            telemetry.addData("right lift current", ((DcMotorEx) rightLift).getVelocity());
+        }
         telemetry.update();
     }
     public void resetDriveEncoder()
@@ -285,7 +313,7 @@ public class LemTeleOp2 extends OpMode
         y = deadZone(y);
         rx = deadZone(rx);
 
-        rx += poleCenter();
+        //rx += poleCenter();
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx),1);
 
@@ -310,42 +338,42 @@ public class LemTeleOp2 extends OpMode
         rightFront.setPower(rightFrontPower);
 
         //Speed coefficient dpad up n down
-        if(gamepadX.dpad_up)
+        if(gamepadX.right_trigger > 0.5)
         {
-            if(!hasChangedX[7])
+            if(!hasChangedX[16])
             {
                 if(speedCoefficient < 1)
                     speedCoefficient += 0.2;
-                hasChangedX[7] = true;
+                hasChangedX[16] = true;
             }
         }
         else
         {
-            hasChangedX[7] = false;
+            hasChangedX[16] = false;
         }
-        if(gamepadX.dpad_down)
+        if(gamepadX.left_trigger > 0.5)
         {
-            if(!hasChanged1[4])
+            if(!hasChanged1[15])
             {
                 if(speedCoefficient > 0.2)
                     speedCoefficient -= 0.2;
-                hasChangedX[4] = true;
+                hasChangedX[15] = true;
             }
         }
         else
         {
-            hasChangedX[4] = false;
+            hasChangedX[15] = false;
         }
     }
     public void MPCRControl(Gamepad gamepadX, boolean[] hasChangedX)
     {
         //MPCR
-        if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1200 + num)
-            posMPCR = 0;
-        else
-            posMPCR = 0.5;
-        if(tempMPCR)
+        if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1300 + num)
             posMPCR = 1;
+        else
+            posMPCR = 0.45;
+        if(tempMPCR)
+            posMPCR = 0.14;
         if(gamepadX.left_bumper)
         {
             if(!hasChangedX[10])
@@ -383,13 +411,14 @@ public class LemTeleOp2 extends OpMode
             rightGrab.setPosition(1 - grabberConstant);
         }
         else
+
         {
             leftGrab.setPosition(0);
             rightGrab.setPosition(1);
         }
         if(color.getDistance(DistanceUnit.INCH) < 0.5 && liftLevel == 0 && !grabbed)
         {
-            //make it do the rumble thing
+            gamepadX.runRumbleEffect(theresAConeRumble);
         }
     }
     public void liftControl(Gamepad gamepadX, boolean[] hasChangedX)
@@ -407,7 +436,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 1;
-                    liftHeight = (252);
+                    liftHeight = (260);
                 }
                 if(!grabbed)
                 {
@@ -428,7 +457,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 2;
-                    liftHeight = (1302);
+                    liftHeight = (1330);
                 }
                 if(!grabbed)
                     liftLevel = 0;
@@ -446,7 +475,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 3;
-                    liftHeight = (2142);
+                    liftHeight = (2150);
                 }
                 if(!grabbed)
                     liftLevel = 0;
@@ -464,7 +493,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 4;
-                    liftHeight = (2982);
+                    liftHeight = (3000);
                 }
                 if(!grabbed)
                     liftLevel = 0;
@@ -531,20 +560,17 @@ public class LemTeleOp2 extends OpMode
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void playerCheck(Gamepad gamepadX, boolean[] hasChangedX) {
-        if (gamepadX.start) {
-            if (!hasChangedX[13]) {
-                if (gamepadX.y) {
-                    if (!hasChangedX[3]) {
-                        singlePlayer = !singlePlayer;
-                        hasChangedX[3] = true;
-                    }
-                } else {
-                    hasChangedX[3] = false;
-                }
+        if (gamepadX.start && gamepadX.y) {
+            if (!hasChangedX[13] && !hasChangedX[3]) {
+
+                singlePlayer = !singlePlayer;
+                gamepadX.runRumbleEffect(singlePlayerRumble);
+                hasChangedX[13] = true;
+                hasChangedX[3] = true;
+            } else {
+                hasChangedX[13] = false;
+                hasChangedX[3] = false;
             }
-            hasChangedX[13] = true;
-        } else {
-            hasChangedX[13] = false;
         }
     }
 }
