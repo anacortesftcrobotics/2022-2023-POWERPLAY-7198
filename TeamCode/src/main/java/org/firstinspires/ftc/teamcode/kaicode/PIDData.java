@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.kaicode;
 
 /**
- * This class calculates and outputs corrections against an error value and records data for analysis
+ * This class calculates and outputs corrections against an error value and records data for analysis.
  * @author      Kai Wallis
  * @version     %I%, %G%
  */
@@ -15,53 +15,53 @@ public class PIDData {
     private double lastE; //last error value
     private double integral; //integral of all recorded errors
 
-    public String log = "Time(ms) Loops Error Porportional Integral Derivative/n"; //initializes log of PID
+    public String log = "Time(ms) Loops Error Proportional Integral Derivative/n"; //initializes log of PID
     private int loops;
 
     /**
-     * Class contructor with a Porportional, Integral, and Derivative based corrections,
-     * plus a setting for devaluing old integral values instead of concidering them fully.
-     * @param porportionalConstant  applied coefficent for the porportional corrections.
-     * @param integralConstant      applied coefficent for the integral corrections.
-     * @param derivativeConstant    applied coefficent for the derivative corrections.
+     * Class constructor with a Proportional, Integral, and Derivative based corrections,
+     * plus a setting for devaluing old integral values instead of considering them fully.
+     * @param proportionalConstant  the applied coefficient for the proportional corrections.
+     * @param integralConstant      the applied coefficient for the integral corrections.
+     * @param derivativeConstant    the applied coefficient for the derivative corrections.
      * @param devalue               modifier to old integral values (range 1.0-0). Try ~0.66 if using, 1 default.
      */
-    public PIDData(double porportionalConstant, double integralConstant, double derivativeConstant, double devalue) {
-        kP = porportionalConstant;
+    public PIDData(double proportionalConstant, double integralConstant, double derivativeConstant, double devalue) {
+        kP = proportionalConstant;
         kI = integralConstant;
         kD = derivativeConstant;
         devaluePastI = devalue;
     }
 
     /**
-     * Class contructor with a Porportional, Integral, and Derivative based corrections.
-     * @param porportionalConstant  applied coefficent for the porportional corrections.
-     * @param integralConstant      applied coefficent for the integral corrections.
-     * @param derivativeConstant    applied coefficent for the derivative corrections.
+     * Class constructor with a Proportional, Integral, and Derivative based corrections.
+     * @param proportionalConstant  the applied coefficient for the proportional corrections.
+     * @param integralConstant      the applied coefficient for the integral corrections.
+     * @param derivativeConstant    the applied coefficient for the derivative corrections.
      */
-    public PIDData(double porportionalConstant, double integralConstant, double derivativeConstant) {
-        kP = porportionalConstant;
+    public PIDData(double proportionalConstant, double integralConstant, double derivativeConstant) {
+        kP = proportionalConstant;
         kI = integralConstant;
         kD = derivativeConstant;
     }
 
     /**
-     * Class contructor with a Porportional and Integral based corrections.
-     * @param porportionalConstant  applied coefficent for the porportional corrections.
-     * @param integralConstant      applied coefficent for the integral corrections.
+     * Class constructor with a Proportional and Derivative based corrections.
+     * @param proportionalConstant  the applied coefficient for the proportional corrections.
+     * @param derivativeConstant    the applied coefficient for the derivative corrections.
      */
-    public PIDData(double porportionalConstant, double integralConstant) {
-        kP = porportionalConstant;
-        kI = integralConstant;
-        kD = 0;
+    public PIDData(double proportionalConstant, double derivativeConstant) {
+        kP = proportionalConstant;
+        kI = 0;
+        kD = derivativeConstant;
     }
 
     /**
-     * Class constructor with a Porportional based correction.
-     * @param porportionalConstant  applied coefficent for the porportional corrections.
+     * Class constructor with a Proportional based correction.
+     * @param proportionalConstant  the applied coefficient for the proportional corrections.
      */
-    public PIDData(double porportionalConstant) {
-        kP = porportionalConstant;
+    public PIDData(double proportionalConstant) {
+        kP = proportionalConstant;
         kI = 0;
         kD = 0;
     }
@@ -158,14 +158,14 @@ public class PIDData {
     }
 
     /**
-     * Updates the integral to inlude latest error value.
+     * Updates the integral to include latest error value.
      * @param error     most recent error value    
      */
     private void setI(double error) {
         integral = devaluePastI*integral + 0.5*(lastE + error); //0.5*(lastE-error) + error simplified + last integral value
     }
 
-    //retuns string of recorded log
+    //returns string of recorded log
     public String getLog()
     {
         return log;
