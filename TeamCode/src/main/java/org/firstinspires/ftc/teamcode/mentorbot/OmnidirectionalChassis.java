@@ -14,9 +14,9 @@ public interface OmnidirectionalChassis extends Chassis {
      * Sets the power of the motors on the chassis based on dimensioned normal vectors.
      * Assumes that the positive x-axis of the robot is forward pointing.
      *
-     * @param x - the x vector size
-     * @param y - the y vector size
-     * @param r - the rotation vector size
+     * @param x the x vector size
+     * @param y the y vector size
+     * @param r the rotation vector size
      */
     void setPowerXYR(double x, double y, double r);
 
@@ -25,9 +25,9 @@ public interface OmnidirectionalChassis extends Chassis {
      * The size of vectors x and y are in this Chassis' current {@link DistanceUnit}, and r is in this Chassis'
      * current {@link AngleUnit}
      *
-     * @param x - the x vector size
-     * @param y - the y vector size
-     * @param r - the rotation vector size
+     * @param x the x vector size
+     * @param y the y vector size
+     * @param r the rotation vector size
      */
     void moveDistanceXYR(double x, double y, double r);
 }

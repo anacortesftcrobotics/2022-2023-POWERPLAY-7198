@@ -19,7 +19,15 @@ public interface Loggable {
         ERROR
     }
 
+    /**
+     * Resisters a log to send messages to
+     * @param log the RobotLog to populate
+     */
     void registerLogger(RobotLog log);
 
+    /**
+     * Sets the logger to send all messages as or more important
+     * @param level the LoggingLevel minimum to send
+     */
     void setLoggingLevel(LoggingLevel level);
 }
