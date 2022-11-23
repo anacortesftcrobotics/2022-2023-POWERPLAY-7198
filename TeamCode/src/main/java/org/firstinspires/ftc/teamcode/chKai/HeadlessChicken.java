@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,11 +8,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cAddrConfig;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "HeadlessChicken")
@@ -23,10 +16,10 @@ public class HeadlessChicken extends LinearOpMode
     BNO055IMU imu;
     Orientation angles;
 
-    private DcMotor backLeft;
-    private DcMotor frontLeft;
-    private DcMotor backRight;
-    private DcMotor frontRight;
+    private DcMotor leftBack;
+    private DcMotor leftFront;
+    private DcMotor rightBack;
+    private DcMotor rightFront;
     //private ColorSensor colorDown;
     //private Servo scythe;
     private double powerSetting = 1;
@@ -45,14 +38,14 @@ public class HeadlessChicken extends LinearOpMode
     public void runOpMode()
     {
         //scythe = hardwareMap.get(Servo.class, "scythe");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack = hardwareMap.get(DcMotor.class, "backLeft");
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack = hardwareMap.get(DcMotor.class, "backRight");
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront = hardwareMap.get(DcMotor.class, "frontRight");
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit =BNO055IMU.AngleUnit.DEGREES;
@@ -68,8 +61,8 @@ public class HeadlessChicken extends LinearOpMode
         if (opModeIsActive())
         {
             // Put run blocks here.
-            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
             //colorDown = hardwareMap.get(ColorSensor.class, "colorDown");
 
             while (opModeIsActive())
@@ -97,18 +90,18 @@ public class HeadlessChicken extends LinearOpMode
                     BR=BR/maxPower;
                 }
 
-                frontLeft.setPower(FL);
+                leftFront.setPower(FL);
 
-                frontRight.setPower(FR);
+                rightFront.setPower(FR);
 
-                backLeft.setPower(BL);
+                leftBack.setPower(BL);
 
-                backRight.setPower(BR);
+                rightBack.setPower(BR);
 
-                telemetry.addData("FL",frontLeft.getPower() );
-                telemetry.addData("FR",frontRight.getPower() );
-                telemetry.addData("BL",backLeft.getPower() );
-                telemetry.addData("BR",backRight.getPower() );
+                telemetry.addData("FL", leftFront.getPower() );
+                telemetry.addData("FR", rightFront.getPower() );
+                telemetry.addData("BL", leftBack.getPower() );
+                telemetry.addData("BR", rightBack.getPower() );
                 telemetry.update();
 
             }

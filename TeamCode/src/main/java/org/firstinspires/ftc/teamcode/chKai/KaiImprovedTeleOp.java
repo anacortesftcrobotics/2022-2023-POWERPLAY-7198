@@ -18,10 +18,10 @@ public class KaiImprovedTeleOp extends LinearOpMode {
 
     BNO055IMU imu;
     Orientation angles;
-    private DcMotor backRight;
-    private DcMotor backLeft;
-    private DcMotor frontRight;
-    private DcMotor frontLeft;
+    private DcMotor rightBack;
+    private DcMotor leftBack;
+    private DcMotor rightFront;
+    private DcMotor leftFront;
     private DistanceSensor distance;
 
     private Servo scythe;
@@ -34,19 +34,19 @@ public class KaiImprovedTeleOp extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        rightBack = hardwareMap.get(DcMotor.class, "frontLeft");
         distance = hardwareMap.get(DistanceSensor.class, "distance");
         distance.getDistance(DistanceUnit.CM);
         scythe = hardwareMap.get(Servo.class, "scythe");
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit =BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
@@ -85,10 +85,10 @@ public class KaiImprovedTeleOp extends LinearOpMode {
 
                 }
                 if (stickActive){
-                    backRight.setPower(gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x);
-                    backLeft.setPower(gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
-                    frontRight.setPower(gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x);
-                    frontLeft.setPower(gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x);
+                    leftFront.setPower(gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x);
+                    leftBack.setPower(gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
+                    rightFront.setPower(gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x);
+                    rightBack.setPower(gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x);
 
                 }
                 else
@@ -127,16 +127,16 @@ public class KaiImprovedTeleOp extends LinearOpMode {
         boolean hasChanged = false;
         stopReset();
 
-        backLeft.setTargetPosition((int)(input*850));
-        backRight.setTargetPosition((int)(input*850));
-        frontLeft.setTargetPosition((int)(input*850));
-        frontRight.setTargetPosition((int)(input*850));
+        leftBack.setTargetPosition((int)(input*850));
+        rightBack.setTargetPosition((int)(input*850));
+        leftFront.setTargetPosition((int)(input*850));
+        rightBack.setTargetPosition((int)(input*850));
 
         runPosition();
 
         setMotors(0.5);
         input =0;
-        while(opModeIsActive() && backLeft.isBusy() && !stickActive) {
+        while(opModeIsActive() && leftBack.isBusy() && !stickActive) {
             telemetry.addData("x",input);
             if (Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y)+Math.abs(gamepad1.left_stick_x)+Math.abs(gamepad1.left_stick_y)>0.1){
                 stickActive = true;
@@ -154,10 +154,10 @@ public class KaiImprovedTeleOp extends LinearOpMode {
                 hasChanged = false;
             }
             if(input!=lastInput){
-                backLeft.setTargetPosition((int)(input*850));
-                backRight.setTargetPosition((int)(input*850));
-                frontLeft.setTargetPosition((int)(input*850));
-                frontRight.setTargetPosition((int)(input*850));
+                leftBack.setTargetPosition((int)(input*850));
+                rightBack.setTargetPosition((int)(input*850));
+                leftFront.setTargetPosition((int)(input*850));
+                rightFront.setTargetPosition((int)(input*850));
             }
             lastInput = input;
             telemetry.update();
@@ -173,16 +173,16 @@ public class KaiImprovedTeleOp extends LinearOpMode {
         boolean hasChanged = false;
         stopReset();
 
-        backLeft.setTargetPosition((int)(-input*850));
-        backRight.setTargetPosition((int)(input*850));
-        frontLeft.setTargetPosition((int)(input*850));
-        frontRight.setTargetPosition((int)(-input*850));
+        leftBack.setTargetPosition((int)(-input*850));
+        rightBack.setTargetPosition((int)(input*850));
+        leftFront.setTargetPosition((int)(input*850));
+        rightFront.setTargetPosition((int)(-input*850));
 
         runPosition();
 
         setMotors(0.5);
         input =0;
-        while(opModeIsActive() && backLeft.isBusy() && !stickActive) {
+        while(opModeIsActive() && leftBack.isBusy() && !stickActive) {
             telemetry.addData("x",input);
             if (Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y)+Math.abs(gamepad1.left_stick_x)+Math.abs(gamepad1.left_stick_y)>0.1){
                 stickActive = true;
@@ -200,10 +200,10 @@ public class KaiImprovedTeleOp extends LinearOpMode {
                 hasChanged = false;
             }
             if(input!=lastInput){
-                backLeft.setTargetPosition((int)(-input*850));
-                backRight.setTargetPosition((int)(input*850));
-                frontLeft.setTargetPosition((int)(input*850));
-                frontRight.setTargetPosition((int)(-input*850));
+                leftBack.setTargetPosition((int)(-input*850));
+                rightBack.setTargetPosition((int)(input*850));
+                leftFront.setTargetPosition((int)(input*850));
+                rightFront.setTargetPosition((int)(-input*850));
             }
             lastInput = input;
             telemetry.update();
@@ -217,16 +217,16 @@ public class KaiImprovedTeleOp extends LinearOpMode {
         boolean hasChanged = false;
         stopReset();
 
-        backLeft.setTargetPosition((int)(input*850));
-        backRight.setTargetPosition((int)(-input*850));
-        frontLeft.setTargetPosition((int)(input*850));
-        frontRight.setTargetPosition((int)(-input*850));
+        leftBack.setTargetPosition((int)(input*850));
+        rightBack.setTargetPosition((int)(-input*850));
+        leftFront.setTargetPosition((int)(input*850));
+        rightFront.setTargetPosition((int)(-input*850));
 
         runPosition();
 
         setMotors(0.5);
         input =0;
-        while(opModeIsActive() && backLeft.isBusy() && !stickActive) {
+        while(opModeIsActive() && leftBack.isBusy() && !stickActive) {
             telemetry.addData("x",input);
             if (Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y)+Math.abs(gamepad1.left_stick_x)+Math.abs(gamepad1.left_stick_y)>0.1){
                 stickActive = true;
@@ -244,10 +244,10 @@ public class KaiImprovedTeleOp extends LinearOpMode {
                 hasChanged = false;
             }
             if(input!=lastInput){
-                backLeft.setTargetPosition((int)(input*850));
-                backRight.setTargetPosition((int)(-input*850));
-                frontLeft.setTargetPosition((int)(input*850));
-                frontRight.setTargetPosition((int)(-input*850));
+                leftBack.setTargetPosition((int)(input*850));
+                rightBack.setTargetPosition((int)(-input*850));
+                leftFront.setTargetPosition((int)(input*850));
+                rightFront.setTargetPosition((int)(-input*850));
             }
             lastInput = input;
             telemetry.update();
@@ -293,50 +293,50 @@ public class KaiImprovedTeleOp extends LinearOpMode {
                 stickActive = false;
             }
             if (heading1 > goal2){
-                backLeft.setPower(0.1);
+                leftBack.setPower(0.1);
 
-                backRight.setPower(-0.1);
+                rightBack.setPower(-0.1);
 
-                frontLeft.setPower(0.1);
+                leftFront.setPower(0.1);
 
-                frontRight.setPower(-0.5);
+                rightFront.setPower(-0.5);
 
             }
             if (heading1 < goal2){
-                backLeft.setPower(-0.1);
+                leftBack.setPower(-0.1);
 
-                backRight.setPower(0.1);
+                rightBack.setPower(0.1);
 
-                frontLeft.setPower(-0.1);
+                leftFront.setPower(-0.1);
 
-                frontRight.setPower(0.1);
+                rightFront.setPower(0.1);
             }
 
         }
         setMotors(0);
     }
     public void stopReset(){
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void runPosition(){
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void runEncoder(){
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setMotors(double input){
-        backLeft.setPower(input);
-        backRight.setPower(input);
-        frontLeft.setPower(input);
-        frontRight.setPower(input);
+        leftBack.setPower(input);
+        rightBack.setPower(input);
+        leftFront.setPower(input);
+        rightFront.setPower(input);
     }
 }
