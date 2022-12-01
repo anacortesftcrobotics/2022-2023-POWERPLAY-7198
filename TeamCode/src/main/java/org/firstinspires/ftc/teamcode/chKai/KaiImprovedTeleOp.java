@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chKai;
+/*package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -22,7 +22,7 @@ public class KaiImprovedTeleOp extends LinearOpMode {
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor leftFront;
-    private DistanceSensor distance;
+
 
     private Servo scythe;
     private boolean stickActive = false;
@@ -32,14 +32,14 @@ public class KaiImprovedTeleOp extends LinearOpMode {
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
+/*
     @Override
     public void runOpMode() {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBack = hardwareMap.get(DcMotor.class, "frontLeft");
-        distance = hardwareMap.get(DistanceSensor.class, "distance");
-        distance.getDistance(DistanceUnit.CM);
+        rightBack = hardwareMap.get(DcMotor.class, "leftFront");
+
         scythe = hardwareMap.get(Servo.class, "scythe");
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -62,7 +62,7 @@ public class KaiImprovedTeleOp extends LinearOpMode {
             while (opModeIsActive()) {
                 // Put loop blocks here
 
-                telemetry.addData("distance",distance.getDistance(DistanceUnit.CM));
+
 
                 if (Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y)+Math.abs(gamepad1.left_stick_x)+Math.abs(gamepad1.left_stick_y)>0.1){
                     stickActive = true;
@@ -106,13 +106,7 @@ public class KaiImprovedTeleOp extends LinearOpMode {
                         turn(1);
                     }else if (gamepad1.left_bumper){
                         turn(-1);
-                    }else if(gamepad1.right_stick_button){
-                        getCone();
 
-                    }else if (gamepad1.x){
-                        center();
-
-                    }
 
 
                     telemetry.update();
@@ -255,22 +249,7 @@ public class KaiImprovedTeleOp extends LinearOpMode {
         runEncoder();
         setMotors(0);
     }
-    public void getCone()
-    {
-        while (distance.getDistance(DistanceUnit.CM)>3 && !stickActive){
-            scythe.setPosition(0);
 
-            setMotors(-0.3);
-            if (Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y)+Math.abs(gamepad1.left_stick_x)+Math.abs(gamepad1.left_stick_y)>0.1){
-                stickActive = true;
-            }else{
-                stickActive = false;
-            }
-        }
-        setMotors(0);
-        scythe.setPosition(1);
-
-    }
     public void center(){
         double goal1 = Math.round(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle/90.0);
         double goal2 = 0;
@@ -340,3 +319,4 @@ public class KaiImprovedTeleOp extends LinearOpMode {
         rightFront.setPower(input);
     }
 }
+*/
