@@ -38,13 +38,13 @@ public class HeadlessChicken extends LinearOpMode
     public void runOpMode()
     {
         //scythe = hardwareMap.get(Servo.class, "scythe");
-        leftBack = hardwareMap.get(DcMotor.class, "backLeft");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFront = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack = hardwareMap.get(DcMotor.class, "backRight");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront = hardwareMap.get(DcMotor.class, "frontRight");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
