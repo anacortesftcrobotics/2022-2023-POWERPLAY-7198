@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode.kaicode;
  * @author      Kai Wallis
  * @version     %I%, %G%
  */
-public class Odo1 {
+public class Odo1Offset {
 
     private double x = 0;     //x Position on field in cm
     private double y = 0;     //y Position on field in cm
@@ -19,7 +19,8 @@ public class Odo1 {
     private double deltaY;
     private double deltaHRad;
 
-    private double distanceLtoR = 11.0;
+    private double distanceLtoC;
+    private double distanceRtoC;
     private double forwardOffset = 17.83;
     private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
@@ -29,28 +30,28 @@ public class Odo1 {
     /**
      * Class constructor using default encoder distances & dimensions.
      */
-    public Odo1() {}
+    //public Odo1Offset() {}
 
     /**
      * Class constructor using custom encoder distances & dimensions.
      * @param disLtoR       the distance between left and right encoders in cm.
      * @param disMidtoC     the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
-     * @param diameter      the diameter of encoder wheels in cm.
+     * @param diameter      the radius of encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
-        distanceLtoR = disLtoR;
+    public Odo1Offset(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
+        distanceRtoC = distanceLtoC = disLtoR/2.0;
         forwardOffset = disMidtoC;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
     }
-
+    
     /**
      * Class constructor using the encoder outputs after being spun counterclockwise 10 times. 
      *      If not in range, input negative values into the code when running. 
-     * @param rightEncoder      (+) ticks traveled by the right encoder.
-     * @param leftEncoder       (-) ticks traveled by the left encoder.
+     * @param rightEncoder      (+/-) ticks traveled by the right encoder.
+     * @param leftEncoder       (+/-) ticks traveled by the left encoder.
      * @param centerEncoder     (+/-) ticks traveled by the center encoder.
      * @param diameter          the diameter of the encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
@@ -59,10 +60,10 @@ public class Odo1 {
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
-
-        distanceLtoR = Math.abs(cmFromCenter(rightEncoder, cmPerTick))
-            + Math.abs(cmFromCenter(leftEncoder, cmPerTick));
         
+        distanceLtoC = cmFromCenter(leftEncoder, cmPerTick);
+        distanceRtoC = cmFromCenter(rightEncoder, cmPerTick);
+
         forwardOffset = cmFromCenter(centerEncoder, ticksPerRevolution);
     }
 
@@ -177,11 +178,19 @@ public class Odo1 {
      * Resets field coords, encoder history & delta values.
      */
     public void resetAll() {
-        reset();
-
         x = 0;
         y = 0;
         hRad = 0;
+
+        for (int i = 2; i >= 0; i--) {
+            encodersLast[i] = 0.0;
+            encoders[i] = 0.0;
+            deltaEncoders[i] = 0.0;
+        }
+
+        deltaX = 0.0;
+        deltaY = 0.0;
+        deltaHRad = 0.0;
     }
 
     /**
@@ -203,7 +212,8 @@ public class Odo1 {
      * @param eCenter   new tick position of the center encoder, (+) when strafing right.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
-        encodersLast = encoders;
+        for (int i = 2; i >= 0; i--)
+            encodersLast[i] = encoders[i];
 
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
@@ -212,8 +222,9 @@ public class Odo1 {
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
         
-        deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
-        double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
+        //deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
+        deltaHRad = (deltaEncoders[0] / distanceLtoC) - (deltaEncoders[1] / distanceRtoC);
+        double deltaF = ((deltaEncoders[1] + deltaEncoders[0]) / 2.0) + deltaHRad;
         double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
 
         deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
