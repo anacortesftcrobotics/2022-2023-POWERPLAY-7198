@@ -10,11 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Odometry implements SubsystemManager{
 
-    public static HardwareMap hardwareMap;
-
-    public Odometry (HardwareMap hwMap)
+    public Odometry ()
     {
-        hardwareMap = hwMap;
+
     }
 
     double[] storage = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
@@ -26,7 +24,7 @@ public class Odometry implements SubsystemManager{
     /**
      * This method registers the hardware used by this class.
      */
-    public void initializeHardware ()
+    public void initializeHardware (HardwareMap hardwareMap)
     {
         //leftBack
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");

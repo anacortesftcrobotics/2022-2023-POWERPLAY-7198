@@ -11,10 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
  */
 
 public class Gyro implements SubsystemManager{
-    public static HardwareMap hardwareMap;
-    public Gyro(HardwareMap hwMap)
+
+    public Gyro()
     {
-        hardwareMap = hwMap;
+
     }
 
     //variables
@@ -31,7 +31,7 @@ public class Gyro implements SubsystemManager{
      * The method in all subsystem classes to register the hardware that this class uses.
      * In this case it's the IMU for the robot.
      */
-    public void initializeHardware()
+    public void initializeHardware(HardwareMap hardwareMap)
     {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;

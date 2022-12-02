@@ -11,10 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 
 public class CDS implements SubsystemManager {
-    public static HardwareMap hardwareMap;
-    public CDS (HardwareMap hwMap)
+
+    public CDS ()
     {
-        hardwareMap = hwMap;
+
     }
 
     private ColorRangeSensor color;
@@ -23,7 +23,7 @@ public class CDS implements SubsystemManager {
      * The method in all subsystem classes to register the hardware that this class uses.
      * In this case it's the color sensor for the robot.
      */
-    public void initializeHardware() {
+    public void initializeHardware(HardwareMap hardwareMap) {
         color = hardwareMap.get(ColorRangeSensor.class,"color");
     }
 

@@ -11,11 +11,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MPCR implements SubsystemManager{
 
-    public static HardwareMap hardwareMap;
-
-    public MPCR (HardwareMap hwMap)
+    public MPCR ()
     {
-        hardwareMap = hwMap;
+
     }
 
     private Servo leftMPCR, rightMPCR;
@@ -23,7 +21,7 @@ public class MPCR implements SubsystemManager{
     /**
      * This method registers the hardware used in this class.
      */
-    public void initializeHardware()
+    public void initializeHardware(HardwareMap hardwareMap)
     {
         leftMPCR = hardwareMap.get(Servo.class, "leftMPCR");
         rightMPCR = hardwareMap.get(Servo.class, "rightMPCR");

@@ -12,11 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  */
 public class Lift implements SubsystemManager{
 
-    public static HardwareMap hardwareMap;
-
-    public Lift(HardwareMap hwMap)
+    public Lift()
     {
-        hardwareMap = hwMap;
+
     }
 
     DcMotor leftLift, rightLift;
@@ -32,7 +30,7 @@ public class Lift implements SubsystemManager{
      * The method in all subsystem classes to register the hardware that this class uses.
      * In this case it's the lift motors for the robot and the limit switch at the bottom.
      */
-    public void initializeHardware ()
+    public void initializeHardware (HardwareMap hardwareMap)
     {
         leftLift = hardwareMap.get(DcMotor.class, "leftLift");
         leftLift.setDirection(DcMotor.Direction.REVERSE);

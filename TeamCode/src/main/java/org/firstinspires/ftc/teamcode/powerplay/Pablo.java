@@ -8,10 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * @author      Lemon
  */
 public class Pablo implements SubsystemManager{
-    public static HardwareMap hardwareMap;
 
-    public Pablo(HardwareMap hwMap) {
-        hardwareMap = hwMap;
+    public Pablo() {
+
     }
 
     DistanceSensor leftDistance, rightDistance;
@@ -19,7 +18,7 @@ public class Pablo implements SubsystemManager{
     /**
      * This method registers the distance sensors. Needs to be called in order to use the pablo class.
      */
-    public void initializeHardware() {
+    public void initializeHardware(HardwareMap hardwareMap) {
         leftDistance = hardwareMap.get(DistanceSensor.class, "leftDistance");
         rightDistance = hardwareMap.get(DistanceSensor.class, "rightDistance");
     }

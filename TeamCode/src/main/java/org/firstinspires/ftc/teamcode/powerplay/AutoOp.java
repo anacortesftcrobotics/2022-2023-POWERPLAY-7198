@@ -45,4 +45,29 @@ public class AutoOp {
     }
     "
     */
+
+    /*
+    Try Number 2
+    public void controlLoop ()
+    {
+        int i = 0;
+        switch(i) {
+            case 0:
+                if (powerplay.chassis.move(4))
+                    i++;
+                break;
+            case 1:
+                if (powerplay.chassis.strafe(4))
+                    i++;
+                break;
+            default:
+                powerplay.defaultPosition();
+                powerplay.chassis.brake();
+                break;
+        }
+        powerplay.gyro.updatePositon();
+        powerplay.odometry.updatePosition();
+        powerplay.telemetry();
+    }
+     */
 }

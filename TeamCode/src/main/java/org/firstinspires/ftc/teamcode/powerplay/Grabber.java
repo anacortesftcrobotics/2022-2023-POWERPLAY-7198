@@ -11,11 +11,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Grabber implements SubsystemManager{
 
-    public static HardwareMap hardwareMap;
-
-    public Grabber (HardwareMap hwMap)
+    public Grabber ()
     {
-        hardwareMap = hwMap;
+
     }
 
     private Servo leftGrab, rightGrab;
@@ -26,7 +24,7 @@ public class Grabber implements SubsystemManager{
      * The method in all subsystem classes to register the hardware that this class uses.
      * In this case it's the grabber servos for the robot.
      */
-    public void initializeHardware()
+    public void initializeHardware(HardwareMap hardwareMap)
     {
         leftGrab = hardwareMap.get(Servo.class,"leftGrab");
         rightGrab = hardwareMap.get(Servo.class, "rightGrab");

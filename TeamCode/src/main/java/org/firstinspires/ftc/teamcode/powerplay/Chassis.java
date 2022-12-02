@@ -13,11 +13,9 @@ import static java.lang.Thread.sleep;
 
 public class Chassis
 {
-    public static HardwareMap hardwareMap;
-
-    public Chassis (HardwareMap hwMap)
+    public Chassis ()
     {
-        hardwareMap = hwMap;
+
     }
 
     DcMotor leftFront;
@@ -37,7 +35,7 @@ public class Chassis
      * This method registers the hardware used by this class.
      * In this case, it's the four drive motors used by the robot.
      */
-    public void initializeHardware()
+    public void initializeHardware(HardwareMap hardwareMap)
     {
         //leftBack
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");

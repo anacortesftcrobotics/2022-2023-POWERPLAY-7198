@@ -16,71 +16,44 @@ public class Robot {
     put them all here, then call robob elsewhere
     should contain all possible functions (i.e move, MPCRToPosition), and some parameters for variability (i.e drive mode, controller mode, )
      */
-    public static HardwareMap hardwareMap;
 
-    public Robot (HardwareMap hwMap)
+    public Robot ()
     {
-        hardwareMap = hwMap;
+
     }
 
-    //Motors
-    private DcMotor leftBack, leftFront, rightBack, rightFront, leftLift, rightLift;
-
-    //Odometry
-    private DcMotor encoderRight, encoderLeft, encoderBack;
-
-    //Servos
-    private Servo leftGrab, rightGrab, leftMPCR, rightMPCR;
-
-    //Distance Sensors
-    private DistanceSensor leftDistance, rightDistance;
-
-    //Color Sensors
-    private DistanceSensor color;
-    //private ColorSensor color;
-
-    //Touch Sensors
-    private TouchSensor zero;
-
-    //IMU
-    BNO055IMU imu;
-    Orientation angles;
-    Acceleration gravity;
-
     //Subassembly Objects
-    Chassis chassis = new Chassis(hardwareMap);
-    Lift lift = new Lift(hardwareMap);
-    Grabber grabber = new Grabber(hardwareMap);
-    MPCR mpcr = new MPCR(hardwareMap);
+    Chassis chassis = new Chassis();
+    Lift lift = new Lift();
+    Grabber grabber = new Grabber();
+    MPCR mpcr = new MPCR();
 
-    CDS cds = new CDS(hardwareMap);
-    Pablo pablo = new Pablo(hardwareMap);
+    CDS cds = new CDS();
+    Pablo pablo = new Pablo();
 
-    Gyro gyro = new Gyro(hardwareMap);
-    Odometry odometry = new Odometry(hardwareMap);
+    Gyro gyro = new Gyro();
+    Odometry odometry = new Odometry();
 
-    public void initializeHardware ()
+    public void initializeHardware (HardwareMap hardwareMap)
     {
-        chassis.initializeHardware();
-        lift.initializeHardware();
-        grabber.initializeHardware();
-        mpcr.initializeHardware();
+        chassis.initializeHardware(hardwareMap);
+        lift.initializeHardware(hardwareMap);
+        grabber.initializeHardware(hardwareMap);
+        mpcr.initializeHardware(hardwareMap);
 
-        cds.initializeHardware();
-        pablo.initializeHardware();
+        cds.initializeHardware(hardwareMap);
+        pablo.initializeHardware(hardwareMap);
 
-        gyro.initializeHardware();
-        odometry.initializeHardware();
+        gyro.initializeHardware(hardwareMap);
+        odometry.initializeHardware(hardwareMap);
     }
 
     public void robotDefaultState()
     {
-        /*
-        zero out lift
-        put mpcr into place
-        open grabber
-        tell motors to stop
-         */
+        chassis.brake();
+        grabber.grab(false);
+        mpcr.preSetMPCR(1);
+        lift.liftZero();
     }
 
     public void controlLoop()
