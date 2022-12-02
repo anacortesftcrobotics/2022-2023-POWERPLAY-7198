@@ -33,7 +33,7 @@ public class CDS implements SubsystemManager {
      */
     public double getDistance ()
     {
-        return color.getDistance(DistanceUnit.CM);
+        return color.getDistance(DistanceUnit.INCH);
     }
 
     /**

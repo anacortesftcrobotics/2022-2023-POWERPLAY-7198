@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.powerplay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
+@TeleOp (name = "TeleOp", group = "TeleOp")
 
-public class TeleOp extends OpMode
+public class LemTeleOp extends OpMode
 {
     //Hardware stuff
     private DcMotor leftBack, leftFront, rightBack, rightFront, leftLift, rightLift;
@@ -33,14 +34,22 @@ public class TeleOp extends OpMode
     Orientation angles;
     Acceleration gravity;
 
+    //Robot
     Robot powerplay = new Robot();
 
-    public void init() {
+    //Controllers
+    Controller controller1 = new Controller(gamepad1);
+    Controller controller2 = new Controller(gamepad2);
+
+    public void init()
+    {
         powerplay.initializeHardware(hardwareMap);
         powerplay.robotDefaultState();
     }
-
-    public void loop() {
-        powerplay.chassis.xyrMovement(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+    public void loop()
+    {
+        powerplay.driveLoop(controller1, controller2);
+        powerplay.dataLoop();
+        powerplay.robotTelemetry(telemetry);
     }
 }

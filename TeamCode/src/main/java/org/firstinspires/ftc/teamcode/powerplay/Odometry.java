@@ -78,6 +78,33 @@ public class Odometry implements SubsystemManager{
         deltaH = (storage[6] / distA) - (storage[7] / distB);
         deltaX = ((storage[6] + storage[7]) / 2) * Math.cos(h) - (storage[8] - distC * deltaH) * Math.sin(h);
         deltaY = ((storage[6] + storage[7]) / 2) * Math.sin(h) + (storage[8] - distC * deltaH) * Math.cos(h);
+
+        x += deltaX;
+        y += deltaY;
+        h += deltaH;
+    }
+
+    /**
+     * This is an alternate method for updating the odometry values.
+     */
+    public void updatePosition()
+    {
+        double deltaH;
+        double deltaX;
+        double deltaY;
+        for(int i = 0; i <=2; i++) {
+            storage[i] = storage[i + 2];
+        }
+        storage[3] = encoderLeft.getCurrentPosition() * CMPT;
+        storage[4] = -encoderRight.getCurrentPosition() * CMPT;
+        storage[5] = encoderBack.getCurrentPosition() * CMPT;
+        for(int i = 0; i <=2; i++) {
+            storage[i + 6] = storage[i + 3] - storage[i];
+        }
+        deltaH = (storage[6] / distA) - (storage[7] / distB);
+        deltaX = ((storage[6] + storage[7]) / 2) * Math.cos(h) - (storage[8] - distC * deltaH) * Math.sin(h);
+        deltaY = ((storage[6] + storage[7]) / 2) * Math.sin(h) + (storage[8] - distC * deltaH) * Math.cos(h);
+
         x += deltaX;
         y += deltaY;
         h += deltaH;

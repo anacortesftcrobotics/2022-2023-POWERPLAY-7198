@@ -77,7 +77,7 @@ public class Lift implements SubsystemManager{
     {
         leftLift.setTargetPosition(levelToHeight(input) - liftChange);
         rightLift.setTargetPosition(levelToHeight(input) - liftChange);
-        lastPlace = levelToHeight(levelToHeight(input) - liftChange);
+        lastPlace = input;
 
         double liftError = (leftLift.getCurrentPosition() + liftChange) - (rightLift.getCurrentPosition() + liftChange);
         double leftPower = 0.5;
@@ -206,10 +206,10 @@ public class Lift implements SubsystemManager{
         int liftHeight = 0;
         switch (level) {
             case 0:
-                liftHeight = 30;
+                liftHeight = 0;
                 break;
             case 1:
-                liftHeight = 30;
+                liftHeight = 50;
                 break;
             case 2:
                 liftHeight = 148;
@@ -236,7 +236,7 @@ public class Lift implements SubsystemManager{
                 liftHeight = 3000;
                 break;
             default:
-                liftHeight = 30;
+                liftHeight = 50;
         }
         return liftHeight;
     }
