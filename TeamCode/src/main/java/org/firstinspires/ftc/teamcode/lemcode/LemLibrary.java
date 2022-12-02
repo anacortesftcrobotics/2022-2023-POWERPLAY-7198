@@ -11,33 +11,6 @@ import org.firstinspires.ftc.teamcode.kaicode.Odo1;
 import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
 
 @Disabled
-/*
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("Heading",angles.firstAngle);
-
-        if (deltaAngle < -180) {
-            deltaAngle += 360;
-        } else if (deltaAngle > 180) {
-            deltaAngle -= 360;
-        }
-
-        while ((poseTracker.getAngle() > (-degrees)) && (linearOpMode.opModeIsActive()))
-        {
-            double correction = 1 - Math.abs(poseTracker.getAngle() / degrees);
-            if (correction < 0.45) correction = 0.45;
-            lFront.setPower(motorPower * correction);
-            lBack.setPower(motorPower * correction);
-            rFront.setPower(-motorPower * correction);
-            rBack.setPower(-motorPower * correction);
-
-            telemetry.addData("Target:", degrees);
-            telemetry.addData("Angle:", poseTracker.getAngle());
-            telemetry.addData("Correction:", correction);
-            telemetry.update();
-        }
-
-
- */
 public class LemLibrary
 {
     //Variables
@@ -192,7 +165,6 @@ public class LemLibrary
             leftFront.setPower(deadZone(power + correction));
             rightBack.setPower(deadZone(power - correction));
             rightFront.setPower(deadZone(power - correction));
-
 
             telemetry.addData("expected", inches);
             telemetry.addData("actual", x);

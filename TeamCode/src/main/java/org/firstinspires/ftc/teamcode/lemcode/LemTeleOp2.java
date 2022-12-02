@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.kaicode.Odo1;
 import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
 
 /**
@@ -26,9 +25,9 @@ public class LemTeleOp2 extends OpMode
     double liftHeight = 0;
     boolean tempMPCR = false;
     int num = 0;
-    int man = 0;
+    int manual = 0;
     boolean hasZeroed = false;
-    double grabberConstant = 0.60;
+    double grabberConstant = 0.55;
     double whenGrabbed;
     double lastTime;
     double time;
@@ -36,6 +35,7 @@ public class LemTeleOp2 extends OpMode
     double lLast;
     double bad = 0;
     boolean cvd = false;
+    double jeff = 0;
     /*
     the hasChanged arrays are for the boolean buttons on the controllers.
     0 - a
@@ -278,15 +278,16 @@ public class LemTeleOp2 extends OpMode
      */
     public double poleCenter()
     {
+        double leftDist = leftDistance.getDistance(DistanceUnit.CM);
+        double rightDist = rightDistance.getDistance(DistanceUnit.CM);
         if (grabbed && Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2) >= 800 + num) {
-            if (Math.min(leftDistance.getDistance(DistanceUnit.CM), 17) < 17)
+            if(leftDist < rightDist && leftDist < 17)
                 return 0.05;
-            else if (Math.min(rightDistance.getDistance(DistanceUnit.CM), 17) < 17)
+            if(rightDist < leftDist && rightDist < 17)
                 return -0.05;
-            else
-                return 0;
         } else
             return 0;
+        return 0;
     }
     /**
      * I don't completely remember what purpose this serves, but it will take an input value and divide it by 200, then make it sure it stays between -1 and 1
@@ -393,10 +394,13 @@ public class LemTeleOp2 extends OpMode
         //MPCR
         if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1300 + num)
             posMPCR = 1;
+        else if (leftLift.getCurrentPosition() <= 35)
+            posMPCR = 0.55;
         else
             posMPCR = 0.45;
+
         if(tempMPCR)
-            posMPCR = 0.14;
+            posMPCR = 0.16;
         if(gamepadX.left_bumper)
         {
             if(!hasChangedX[10])
@@ -420,6 +424,7 @@ public class LemTeleOp2 extends OpMode
      */
     public void grabControl(Gamepad gamepadX, boolean[] hasChangedX)
     {
+        double grabberAffector = (gamepadX.left_stick_x / 10);
         //Grabber right bumper
         if(gamepadX.right_bumper)
         {
@@ -436,14 +441,13 @@ public class LemTeleOp2 extends OpMode
         if(grabbed)
         {
             whenGrabbed = System.currentTimeMillis();
-            leftGrab.setPosition(grabberConstant);
-            rightGrab.setPosition(1 - grabberConstant);
+            leftGrab.setPosition(1 - grabberConstant - grabberAffector);
+            rightGrab.setPosition(grabberConstant - grabberAffector);
         }
         else
-
         {
-            leftGrab.setPosition(0);
-            rightGrab.setPosition(1);
+            leftGrab.setPosition(0.6);
+            rightGrab.setPosition(0.3);
         }
         if(color.getDistance(DistanceUnit.INCH) < 0.5 && liftLevel == 0 && !grabbed)
         {
@@ -463,19 +467,19 @@ public class LemTeleOp2 extends OpMode
         //a is ground, b is low, y is medium, x is high
         //the button press includes moving to pole, depositing on pole, backing away from pole to starting position.
         //the lift then goes back to zero (bottom (grabbing position)) and the MPCR goes to standby position
+        if(gamepadX.dpad_up)
+            manual += 10;
+        if(gamepadX.dpad_down)
+            manual -= 10;
+
         if(gamepadX.a)
         {
-            if(gamepadX.dpad_up)
-                man += 10;
-            if(gamepadX.dpad_down)
-                man -= 10;
-
             if(!hasChangedX[0])
             {
                 if(grabbed)
                 {
                     liftLevel = 1;
-                    man = 0;
+                    manual = 0;
                     liftHeight = (260);
                 }
                 if(!grabbed)
@@ -497,7 +501,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 2;
-                    man = 0;
+                    manual = 0;
                     liftHeight = (1330);
                 }
                 if(!grabbed)
@@ -516,7 +520,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 3;
-                    man = 0;
+                    manual = 0;
                     liftHeight = (2150);
                 }
                 if(!grabbed)
@@ -535,7 +539,7 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 4;
-                    man = 0;
+                    manual = 0;
                     liftHeight = (3000);
                 }
                 if(!grabbed)
@@ -548,17 +552,15 @@ public class LemTeleOp2 extends OpMode
             hasChangedX[3] = false;
         }
         if(liftLevel == 0)
-            if(grabbed &&  System.currentTimeMillis() >= whenGrabbed + 500)
-            {
+        {
+            if (grabbed && System.currentTimeMillis() >= whenGrabbed + 500) {
                 liftHeight = 84;
-                man = 0;
-            }
-            else
-            {
+                manual = 0;
+            } else {
                 liftHeight = 30;
-                man = 0;
+                manual = 0;
             }
-
+        }
 
         lastTime = time;
         time = System.currentTimeMillis();
@@ -569,10 +571,18 @@ public class LemTeleOp2 extends OpMode
         }
         else
             bad = 1.0;
+
         lLast = leftLift.getCurrentPosition();
 
-        leftLift.setTargetPosition((int) liftHeight + num + man);
-        rightLift.setTargetPosition((int) liftHeight + num + man);
+        if(gamepadX.left_trigger > 0)
+            jeff = 250;
+        if(gamepadX.left_trigger == 0)
+            jeff = 0;
+        if(liftLevel == 0)
+            jeff = 0;
+
+        leftLift.setTargetPosition((int) liftHeight + num + manual - (int) jeff);
+        rightLift.setTargetPosition((int) liftHeight + num + manual - (int) jeff);
 
         int actual = Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2);
         int rActual = Math.abs(rightLift.getCurrentPosition());
