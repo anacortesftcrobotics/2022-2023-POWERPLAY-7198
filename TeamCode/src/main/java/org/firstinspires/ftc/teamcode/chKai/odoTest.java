@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chKai;
+/*package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -36,7 +36,7 @@ public class odoTest extends LinearOpMode {
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
-     */
+     *//*
     @Override
     public void runOpMode() {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
@@ -78,14 +78,8 @@ public class odoTest extends LinearOpMode {
     public double getAngle(){ //gets angle in radian form. 0* is 90* to the right of the starting orientation, and value adds when turning counterclockwise.
         //use for trig stuff
         float angle1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
-        float angle2 = 0;
-        if (angle1<0){
-            angle2=angle1+450;
-        }else if (angle1>=0){
-            angle2=angle1+90;
-        }
-        telemetry.addData("angle",angle2 );
-        double radians=Math.toRadians(angle2);
+        double angle2 = Math.toRadians(angle1)
+
         return radians;
     }
     public int getX(){ //gets current position on the x-axis. Assumes that starting point is 0,0. Must be continually called.
@@ -103,3 +97,4 @@ public class odoTest extends LinearOpMode {
         return y;
     }
 }
+*/

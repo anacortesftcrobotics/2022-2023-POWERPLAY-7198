@@ -138,10 +138,11 @@ public class Odo1 {
      * Resets encoder history & delta values.
      */
     public void reset() {
-        for (int i = 2; i >= 0; i--)
+        for (int i = 2; i >= 0; i--) {
             encodersLast[i] = 0.0;
             encoders[i] = 0.0;
             deltaEncoders[i] = 0.0;
+        }
 
         deltaX = 0.0;
         deltaY = 0.0;
@@ -156,10 +157,11 @@ public class Odo1 {
         y = 0;
         hRad = 0;
 
-        for (int i = 2; i >= 0; i--)
+        for (int i = 2; i >= 0; i--) {
             encodersLast[i] = 0.0;
             encoders[i] = 0.0;
             deltaEncoders[i] = 0.0;
+        }
 
         deltaX = 0.0;
         deltaY = 0.0;

@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.hardware.rev.RevSPARKMini;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @TeleOp(name = "basic")
 public class basic extends LinearOpMode {
@@ -61,7 +57,8 @@ public class basic extends LinearOpMode {
         imu.initialize(parameters);
 
         LEDManager p = new LEDManager();
-        p.initializeHardware(hardwareMap);
+        p.setUp(hardwareMap);
+
         // Put initialization blocks here.
         waitForStart();
         if (opModeIsActive()) {
@@ -74,7 +71,9 @@ public class basic extends LinearOpMode {
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
 
                 p.signal();
+
                 telemetry.addLine(p.colorTelemetry());
+                telemetry.update();
             }
 
 
