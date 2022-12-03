@@ -52,8 +52,12 @@ public class Gyro implements SubsystemManager{
         a = angles.firstAngle;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         deltaA = angles.firstAngle - a;
-        if (Math.abs(deltaA) > 300)
-            deltaA = deltaA - 360;
+
+        if (deltaA < -180)
+            deltaA += 360;
+        else if (deltaA > 180)
+            deltaA -= 360;
+
         h += deltaA;
     }
 
