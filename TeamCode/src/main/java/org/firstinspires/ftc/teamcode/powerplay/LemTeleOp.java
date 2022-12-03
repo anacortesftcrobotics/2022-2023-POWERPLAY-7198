@@ -11,6 +11,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class LemTeleOp extends OpMode
 {
+    //Variables
+    boolean once = false;
+
     //Hardware stuff
     private DcMotor leftBack, leftFront, rightBack, rightFront, leftLift, rightLift;
 
@@ -38,17 +41,21 @@ public class LemTeleOp extends OpMode
     Robot powerplay = new Robot();
 
     //Controllers
-    Controller controller1 = new Controller(gamepad1);
-    Controller controller2 = new Controller(gamepad2);
+    Controller controller1 = new Controller();
+    Controller controller2 = new Controller();
 
     public void init()
     {
         powerplay.initializeHardware(hardwareMap);
-        powerplay.robotDefaultState();
     }
     public void loop()
     {
-        powerplay.driveLoop(controller1, controller2);
+        if(!once)
+        {
+            powerplay.robotDefaultState();
+            once = true;
+        }
+        powerplay.driveLoop(gamepad1, gamepad2);
         powerplay.dataLoop();
         powerplay.robotTelemetry(telemetry);
     }

@@ -23,6 +23,7 @@ public class Lift implements SubsystemManager{
 
     //int liftHeight = 0; //The motor encoder ticks
     int liftChange = 0; //The shift from a preset height, combo of manual adjustment, jeff, and lift zeroing.
+    int liftManual = 0; //The new jeff. It wouldn't work with just the one.
     int[] storage = {0,0};
     int lastPlace;
 
@@ -54,7 +55,7 @@ public class Lift implements SubsystemManager{
     {
         while(!zero.isPressed())
         {
-            setShift(getShift() - 10);
+            setShift(liftChange - 10);
             liftSet(0);
         }
     }
@@ -75,11 +76,12 @@ public class Lift implements SubsystemManager{
      */
     public void liftSet(int input)
     {
-        leftLift.setTargetPosition(levelToHeight(input) - liftChange);
-        rightLift.setTargetPosition(levelToHeight(input) - liftChange);
+        leftLift.setTargetPosition(levelToHeight(input) + liftChange + liftManual);
+        rightLift.setTargetPosition(levelToHeight(input) + liftChange + liftManual);
+
         lastPlace = input;
 
-        double liftError = (leftLift.getCurrentPosition() + liftChange) - (rightLift.getCurrentPosition() + liftChange);
+        double liftError = (leftLift.getCurrentPosition() + liftChange) - (rightLift.getCurrentPosition() + liftChange + liftManual);
         double leftPower = 0.5;
         double rightPower = 0.5;
 
@@ -110,10 +112,10 @@ public class Lift implements SubsystemManager{
     public void liftSafetyCheck()
     {
         if((Math.abs(leftLift.getCurrentPosition()) - lastPlace) > 10)
-            if((leftLift.getCurrentPosition() - storage[0]) < 5 && (leftLift.getCurrentPosition() + liftChange) < 50)
+            if((leftLift.getCurrentPosition() - storage[0]) < 5 && (leftLift.getCurrentPosition() + liftChange + liftManual) < 50)
                 leftLift.setPower(0.0);
         if((Math.abs(rightLift.getCurrentPosition()) - lastPlace) > 10)
-            if((rightLift.getCurrentPosition() - storage[0]) < 5 && (rightLift.getCurrentPosition() + liftChange) < 50)
+            if((rightLift.getCurrentPosition() - storage[0]) < 5 && (rightLift.getCurrentPosition() + liftChange + liftManual) < 50)
                 leftLift.setPower(0.0);
 
         storage[0] = leftLift.getCurrentPosition();
@@ -251,12 +253,6 @@ public class Lift implements SubsystemManager{
         liftChange = input;
     }
 
-    /**
-     * This gets the lift change variable and passes it back.
-     * @return the lift change variable.
-     */
-    public int getShift()
-    {
-        return liftChange;
-    }
+
+    public void setManual(int input) {liftManual = input;}
 }

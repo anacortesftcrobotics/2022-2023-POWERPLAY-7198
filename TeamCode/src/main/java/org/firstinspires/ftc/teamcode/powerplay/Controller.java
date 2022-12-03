@@ -30,9 +30,8 @@ public class Controller {
     boolean[] hasChanged = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     Gamepad gamepad;
 
-    Controller(Gamepad gamepadX)
+    Controller()
     {
-        gamepad = gamepadX;
     }
 
     Gamepad.RumbleEffect rumbleA;

@@ -19,6 +19,7 @@ public class LemTeleOp2 extends OpMode
     //Variables
     boolean singlePlayer = false;
     boolean grabbed = false;
+    boolean beacon = false;
     double posMPCR = 1;
     double speedCoefficient = 0.6;
     int liftLevel = 0;
@@ -27,7 +28,7 @@ public class LemTeleOp2 extends OpMode
     int num = 0;
     int manual = 0;
     boolean hasZeroed = false;
-    double grabberConstant = 0.55;
+    double grabberConstant = 0.54;
     double whenGrabbed;
     double lastTime;
     double time;
@@ -207,6 +208,8 @@ public class LemTeleOp2 extends OpMode
     public void telemetry()
     {
         telemetry.addData("grabbed", grabbed);
+        telemetry.addData("finger 1", "(" + gamepad1.touchpad_finger_1_x + ", " + gamepad1.touchpad_finger_1_y + ")");
+        telemetry.addData("finger 2", "(" + gamepad1.touchpad_finger_2_x + ", " + gamepad1.touchpad_finger_2_y + ")");
         if(singlePlayer) {
             telemetry.addData("Single player", singlePlayer);
             telemetry.addData("lift Level", liftLevel);
@@ -393,14 +396,14 @@ public class LemTeleOp2 extends OpMode
     {
         //MPCR
         if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1300 + num)
-            posMPCR = 1;
-        else if (leftLift.getCurrentPosition() <= 35)
+            posMPCR = 0.92;
+        else if (leftLift.getCurrentPosition() + num <= 5)
             posMPCR = 0.55;
         else
             posMPCR = 0.45;
 
         if(tempMPCR)
-            posMPCR = 0.16;
+            posMPCR = 0.2;
         if(gamepadX.left_bumper)
         {
             if(!hasChangedX[10])
@@ -438,11 +441,31 @@ public class LemTeleOp2 extends OpMode
         {
             hasChangedX[11] = false;
         }
+
+        if(gamepadX.start)
+        {
+            if(!hasChangedX[13])
+            {
+                beacon = !beacon;
+                hasChangedX[13] = true;
+            }
+        }
+        else
+        {
+            hasChangedX[13] = false;
+        }
+
         if(grabbed)
         {
             whenGrabbed = System.currentTimeMillis();
-            leftGrab.setPosition(1 - grabberConstant - grabberAffector);
-            rightGrab.setPosition(grabberConstant - grabberAffector);
+            if(beacon) {
+                leftGrab.setPosition(1 - 0.5 - grabberAffector);
+                rightGrab.setPosition(0.5 - grabberAffector);
+            } else
+            {
+                leftGrab.setPosition(1 - 0.54 - grabberAffector);
+                rightGrab.setPosition(0.54 - grabberAffector);
+            }
         }
         else
         {

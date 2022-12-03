@@ -38,8 +38,8 @@ public class Grabber implements SubsystemManager{
     {
         if(open)
         {
-            leftGrab.setPosition(0.45 - grabberShift);
-            rightGrab.setPosition(0.55 - grabberShift);
+            leftGrab.setPosition(0.46 - grabberShift);
+            rightGrab.setPosition(0.54 - grabberShift);
         }
         else
         {

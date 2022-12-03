@@ -39,8 +39,8 @@ public class MPCR implements SubsystemManager{
     {
         switch (position) {
             case 0:
-                rightMPCR.setPosition(1);
-                leftMPCR.setPosition(0);
+                rightMPCR.setPosition(0.92);
+                leftMPCR.setPosition(0.08);
                 break;
             case 1:
                 rightMPCR.setPosition(0.55);
@@ -51,8 +51,8 @@ public class MPCR implements SubsystemManager{
                 leftMPCR.setPosition(0.55);
                 break;
             case 3:
-                rightMPCR.setPosition(0.17);
-                leftMPCR.setPosition(0.83);
+                rightMPCR.setPosition(0.2);
+                leftMPCR.setPosition(0.8);
                 break;
             default:
                 rightMPCR.setPosition(0.45);
