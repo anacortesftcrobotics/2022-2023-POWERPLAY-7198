@@ -114,10 +114,17 @@ public class Odometry implements SubsystemManager{
         h += deltaH;
     }
 
-    public Heading convertToHeading()
+    public Heading getOdoHeading()
     {
         Heading temp = new Heading();
-        temp.setHeading(this.getX(), this.getY(), this.getH());
+        temp.setHeading(getX(), getY(), getH());
+        return temp;
+    }
+
+    public Heading convertToHeading(double x, double y, double h)
+    {
+        Heading temp = new Heading();
+        temp.setHeading(x, y, h);
         return temp;
     }
 

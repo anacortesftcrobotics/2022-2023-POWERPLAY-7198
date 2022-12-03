@@ -191,7 +191,7 @@ public class Robot {
      */
     public void robotTelemetry(Telemetry telemetryIn)
     {
-        Heading temp = odometry.convertToHeading();
+        Heading temp = odometry.getOdoHeading();
         telemetryIn.addData( "Speed Coefficient: ", chassis.speedCoefficient);
         telemetryIn.addData( "X: ", temp.x);
         telemetryIn.addData( "Y: ", temp.y);
