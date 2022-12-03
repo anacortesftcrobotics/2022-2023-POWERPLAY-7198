@@ -4,16 +4,17 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.*;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class LEDManager
 {
 
     private RevBlinkinLedDriver led;
-    private ColorSensor color;
+    private ColorRangeSensor color;
 
     public void setUp(HardwareMap hardwareMap)
     {
-        color = hardwareMap.get(ColorSensor.class,"color");
+        color = hardwareMap.get(ColorRangeSensor.class,"color");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
     }
     public void teamColors()
@@ -30,24 +31,24 @@ public class LEDManager
             led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         } else if (identify()==0) {
             teamColors();
-        } /*else if (identify()==4){
-            led.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-        }*/
+        } else if (identify()==4){
+            led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        }
     }
     public int identify (){ //x=s 1 if red, 2 if green, 3 if blue, 4 if white and 0 if nothing.
         int x=0;
-        if(color.red() < 150 && color.green()< 150 && color.blue() < 150){
+        if(color.getDistance(DistanceUnit.CM)>2){
             x= 0;
         }else{
-            if (color.red() > color.blue()&& color.red()> color.green()){
-                x= 1;
-            } else if (color.green()>color.blue()&&color.green()> color.red()){
-                x= 2;
-            }else if (color.blue()>color.red()&&color.blue()> color.green()){
-                if (color.green()<900){
-                    x= 3;
+            if (color.red() > color.blue() && color.red() > color.green()){
+                x = 1;
+            } else if (color.green() > color.blue() && color.green() > color.red()){
+                x = 2;
+            }else if (color.blue() > color.red() && color.blue() > color.green()){
+                if (color.blue()-color.green()>(color.red()+color.green()+color.blue())/5){
+                    x = 3;
                 }else{
-                    x= 4;
+                    x = 4;
                 }
             }
         }
@@ -72,6 +73,7 @@ public class LEDManager
         int red = color.red();
         int green = color.green();
         int blue = color.blue();
-        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue);
+        double dist = color.getDistance(DistanceUnit.CM);
+        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue+"\ndistance -"+dist);
     }
 }
