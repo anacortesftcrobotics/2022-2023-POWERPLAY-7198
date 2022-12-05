@@ -34,15 +34,17 @@ public class odoTest extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    /**
-     * This function is executed when this Op Mode is selected from the Driver Station.
-     *//*
+    
     @Override
     public void runOpMode() {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        rightBack.setMode(RUN_USING_ENCODERS);
+        leftBack.setMode(RUN_USING_ENCODERS);
+        rightFront.setMode(RUN_USING_ENCODERS);
+        leftFront.setMode(RUN_USING_ENCODERS);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -71,6 +73,7 @@ public class odoTest extends LinearOpMode {
                 telemetry.addData("X",getX());
                 telemetry.addData("Y",getY());
                 telemetry.addData("angle",getAngle());
+
                 telemetry.update();
             }
         }
@@ -80,21 +83,95 @@ public class odoTest extends LinearOpMode {
         float angle1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
         double angle2 = Math.toRadians(angle1)
 
-        return radians;
+        return angle2;
     }
     public int getX(){ //gets current position on the x-axis. Assumes that starting point is 0,0. Must be continually called.
         int x = positionx;
-        x += ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2)*Math.cos(getAngle());
-        x += ((rightFront.getCurrentPosition())/2)*Math.sin(getAngle());
+        //X +=(-sin(f)+cos(s))
+        x += ((-leftBack.getCurrentPosition()+rightBack.getCurrentPosition())/2)*(-Math.sin(getAngle()));
+        x += ((rightFront.getCurrentPosition())/2)*Math.cos(getAngle());
+        resetEncoders();
         positionx = x;
         return x;
     }
     public int getY(){ //gets current position on the y-axis. Assumes that starting point is 0,0. Must be continually called.
         int y = positiony;
-        y += ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2)*Math.sin(getAngle());
-        y += ((rightFront.getCurrentPosition())/2)*Math.cos(getAngle());
+        //Y +=(cos(f)+sin(s))
+        y += ((-leftBack.getCurrentPosition()+rightBack.getCurrentPosition())/2)*Math.cos(getAngle());
+        y += ((rightFront.getCurrentPosition())/2)*Math.sin(getAngle());
+        resetEncoders();
         positiony = y;
         return y;
+    }
+    public double getR(){
+        float angle1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
+        float angle2 = 0;
+        if (angle1<0){
+            angle2=angle1+450;
+        }else if (angle1>=0){
+            angle2=angle1+90;
+        }
+        return angle2;
+    }
+    public int goalX(int a){
+        //if a == 0, floor, if 1, round, if 2, ciel
+        double goal = 0;
+        if (a==0){
+            goal = (Math.floor(getX()/84000))*84000;
+            if (goal-getX()<3000 && goal-getX()<=0){
+                goal -=1;
+            }
+        }else if (a==2){
+            goal = (Math.ceil(getX()/84000))*84000;
+            if (goal-getX()<3000&&goal-getX()>=0){
+                goal +=1;
+            }
+        }else if (a==1){
+            goal = (Math.round(getX()/84000))*84000;
+        }
+        return (int) goal;
+    }
+    public int goalY(int a){
+        //if a == 0, floor, if 1, round, if 2, ciel
+        double goal = 0;
+        if (a==0){
+            goal = (Math.floor(getY()/84000))*84000;
+            if (goal-getY()<3000&&goal-getY()<=0){
+                goal -=1;
+            }
+        }else if (a==2){
+            goal = (Math.ceil(getY()/84000))*84000;
+            if (goal-getY()<3000&&goal-getY()<=0){
+                goal +=1;
+            }
+        }else if (a==1){
+            goal = (Math.round(getY()/84000))*84000;
+        }
+        return (int) goal;
+    }
+    public int goalR(int a){
+        //if a == 0, floor, if 1, round, if 2, ciel
+        double goal=0;
+        if (a==0){
+            goal = (Math.floor(getR()/45))*45;
+            if (goal-getR()<5&&goal-getR()<=0){
+                goal -=1;
+            }
+        }else if (a==2){
+            goal = (Math.ceil(getR()/45))*45;
+            if (goal-getR()<5&&goal-getR()>=0){
+                goal +=1;
+            }
+        }else if (a==1){
+            goal = (Math.round(getR()/45))*45;
+        }
+        return (int)goal;
+    }
+    public void resetEncoders(){
+        leftFront.setMode(STOP_AND _RESET_ENCODERS);
+        leftBack.setMode(STOP_AND _RESET_ENCODERS);
+        rightFront.setMode(STOP_AND _RESET_ENCODERS);
+        rightBack.setMode(STOP_AND _RESET_ENCODERS);
     }
 }
 */
