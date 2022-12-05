@@ -8,7 +8,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * @author Mentor Liam
  */
-public interface Chassis extends Subsystem {
+public abstract class Chassis extends Subsystem {
+
+    DistanceUnit distanceUnit;
+
+    AngleUnit angleUnit;
 
     /**
      *  Sets the power of the motors on the chassis based on dimensioned normal vectors.
@@ -17,7 +21,7 @@ public interface Chassis extends Subsystem {
      * @param x the x vector size
      * @param r the rotation vector size
      */
-    void setPowerXR(double x, double r);
+    public abstract void setPowerXR(double x, double r);
 
     /**
      *  Sets the distance the motors should travel automatically based on dimensioned vectors
@@ -27,11 +31,19 @@ public interface Chassis extends Subsystem {
      * @param x the x vector size
      * @param r the rotation vector size
      */
-    void moveDistanceXR(double x, double r);
+    public abstract void moveDistanceXR(double x, double r);
 
-    AngleUnit getAngleUnit();
-    void setAngleUnit(AngleUnit unit);
+    public AngleUnit getAngleUnit() {
+        return angleUnit;
+    }
+    public void setAngleUnit(AngleUnit unit) {
+        this.angleUnit = unit;
+    }
 
-    DistanceUnit getDistanceUnit();
-    void setDistanceUnit(DistanceUnit unit);
+    public DistanceUnit getDistanceUnit() {
+        return  distanceUnit;
+    }
+    public void setDistanceUnit(DistanceUnit unit) {
+        this.distanceUnit = unit;
+    }
 }

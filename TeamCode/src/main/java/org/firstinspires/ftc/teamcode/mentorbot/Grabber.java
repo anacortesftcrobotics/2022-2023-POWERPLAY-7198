@@ -5,9 +5,9 @@ package org.firstinspires.ftc.teamcode.mentorbot;
  *
  * @author Mentor Liam
  */
-public interface Grabber extends Subsystem {
+public abstract class Grabber extends Subsystem {
 
-    void grab();
+    public abstract void grab();
 
-    void release();
+    public abstract void release();
 }

@@ -10,18 +10,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
-public class PowerplayMecanum implements OmnidirectionalChassis, Loggable, Reportable {
+public class PowerplayMecanum extends OmnidirectionalChassis {
 
     DcMotorEx frontLeft;
     DcMotorEx frontRight;
     DcMotorEx backLeft;
     DcMotorEx backRight;
-
-    StringBuilder report;
-
-    PowerplayMecanum() {
-        report = new StringBuilder();
-    }
 
     /**
      * Sets the power for every motor on a 4 motor chassis.
@@ -48,7 +42,6 @@ public class PowerplayMecanum implements OmnidirectionalChassis, Loggable, Repor
                                          x + r, x - r);
         powers.normalize();
         setMotorPowers(powers);
-        report.append(powers.toString());
     }
 
     /**
@@ -61,58 +54,6 @@ public class PowerplayMecanum implements OmnidirectionalChassis, Loggable, Repor
      */
     @Override
     public void moveDistanceXR(double x, double r) {
-
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public AngleUnit getAngleUnit() {
-        return null;
-    }
-
-    /**
-     * @param unit
-     */
-    @Override
-    public void setAngleUnit(AngleUnit unit) {
-
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public DistanceUnit getDistanceUnit() {
-        return null;
-    }
-
-    /**
-     * @param unit
-     */
-    @Override
-    public void setDistanceUnit(DistanceUnit unit) {
-
-    }
-
-    /**
-     * Resisters a log to send messages to
-     *
-     * @param log the RobotLog to populate
-     */
-    @Override
-    public void registerLogger(RobotLog log) {
-
-    }
-
-    /**
-     * Sets the logger to send all messages as or more important
-     *
-     * @param level the LoggingLevel minimum to send
-     */
-    @Override
-    public void setLoggingLevel(LoggingLevel level) {
 
     }
 
@@ -130,7 +71,6 @@ public class PowerplayMecanum implements OmnidirectionalChassis, Loggable, Repor
                                          x + r - y, x - r + y);
         powers.normalize();
         setMotorPowers(powers);
-        report.append(powers.toString());
     }
 
     /**
@@ -145,18 +85,6 @@ public class PowerplayMecanum implements OmnidirectionalChassis, Loggable, Repor
     @Override
     public void moveDistanceXYR(double x, double y, double r) {
 
-    }
-
-    /**
-     * Gets all reports from the object
-     *
-     * @return the line-separated set of reports to put in telemetry
-     */
-    @Override
-    public String getReportUpdate() {
-        String result = report.toString();
-        report.delete(0, report.length() - 1);
-        return result;
     }
 
     /**

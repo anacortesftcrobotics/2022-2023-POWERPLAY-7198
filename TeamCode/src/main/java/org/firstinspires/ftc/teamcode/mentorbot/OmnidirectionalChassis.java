@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * @author Mentor Liam
  */
-public interface OmnidirectionalChassis extends Chassis {
+public abstract class OmnidirectionalChassis extends Chassis {
 
     /**
      * Sets the power of the motors on the chassis based on dimensioned normal vectors.
@@ -18,7 +18,7 @@ public interface OmnidirectionalChassis extends Chassis {
      * @param y the y vector size
      * @param r the rotation vector size
      */
-    void setPowerXYR(double x, double y, double r);
+    public abstract void setPowerXYR(double x, double y, double r);
 
     /**
      * Sets the distance the motors should travel automatically based on dimensioned vectors
@@ -29,5 +29,5 @@ public interface OmnidirectionalChassis extends Chassis {
      * @param y the y vector size
      * @param r the rotation vector size
      */
-    void moveDistanceXYR(double x, double y, double r);
+    public abstract void moveDistanceXYR(double x, double y, double r);
 }

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * @author Mentor Liam
  */
-public interface Extendable extends Subsystem {
+public abstract class PrismaticJoint extends Subsystem {
 
     /**
      * Registers a position for future reference via String
@@ -15,11 +15,11 @@ public interface Extendable extends Subsystem {
      * @param extensionDistance the distance of the position
      * @param unit the DistanceUnit of the extensionDistance
      */
-    void registerPosition(String name, double extensionDistance, DistanceUnit unit);
+    public abstract void registerPosition(String name, double extensionDistance, DistanceUnit unit);
 
-    boolean removePosition(String name);
+    public abstract boolean removePosition(String name);
 
-    void moveToRegisteredPosition(String name);
+    public abstract void moveToRegisteredPosition(String name);
 
-    void moveToPosition(double extensionDistance, DistanceUnit unit);
+    public abstract void moveToPosition(double extensionDistance, DistanceUnit unit);
 }

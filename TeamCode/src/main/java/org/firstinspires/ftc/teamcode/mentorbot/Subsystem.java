@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  *
  * @author Mentor Liam
  */
-public interface Subsystem {
+public abstract class Subsystem {
 
     /**
      * Registers the hardware devices used by the subsystem.
@@ -15,7 +15,7 @@ public interface Subsystem {
      *
      * @param hardwareMap the HardwareMap of the connected robot
      */
-    void registerHardware(HardwareMap hardwareMap);
+    public abstract void registerHardware(HardwareMap hardwareMap);
 
     /**
      * Checks the status of all devices required by the Subsystem and provides them as a string.
@@ -25,5 +25,7 @@ public interface Subsystem {
      *
      * @return the String of concatenated device statuses for this subsystem
      */
-    String getHardwareStatus();
+    public abstract String getHardwareStatus();
+
+    public abstract void stop();
 }
