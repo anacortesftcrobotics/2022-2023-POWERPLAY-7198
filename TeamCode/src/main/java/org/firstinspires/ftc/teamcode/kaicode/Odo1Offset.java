@@ -19,7 +19,8 @@ public class Odo1Offset {
     private double deltaY;
     private double deltaHRad;
 
-    private double distanceLtoR = 11.245;
+    private double distanceLtoC;
+    private double distanceRtoC;
     private double forwardOffset = 17.83;
     private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
@@ -29,7 +30,7 @@ public class Odo1Offset {
     /**
      * Class constructor using default encoder distances & dimensions.
      */
-    public Odo1Offset() {}
+    //public Odo1Offset() {}
 
     /**
      * Class constructor using custom encoder distances & dimensions.
@@ -39,11 +40,35 @@ public class Odo1Offset {
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
     public Odo1Offset(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
-        distanceLtoR = disLtoR;
+        distanceRtoC = distanceLtoC = disLtoR/2.0;
         forwardOffset = disMidtoC;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
+    }
+    
+    /**
+     * Class constructor using the encoder outputs after being spun counterclockwise 10 times. 
+     *      If not in range, input negative values into the code when running. 
+     * @param rightEncoder      (+/-) ticks traveled by the right encoder.
+     * @param leftEncoder       (+/-) ticks traveled by the left encoder.
+     * @param centerEncoder     (+/-) ticks traveled by the center encoder.
+     * @param diameter          the diameter of the encoder wheels in cm.
+     * @param ticksPerRevolution    the encoder ticks per revolution.
+     */
+    public Odo1(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, double ticksPerRevolution) {
+        encoderDiameter = diameter;
+        ticksPerRev = ticksPerRevolution;
+        cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
+        
+        distanceLtoC = cmFromCenter(leftEncoder, cmPerTick);
+        distanceRtoC = cmFromCenter(rightEncoder, cmPerTick);
+
+        forwardOffset = cmFromCenter(centerEncoder, ticksPerRevolution);
+    }
+
+    private static double cmFromCenter(int ticks, double cmPerTick) {
+        return ticks/10.0/cmPerTick/2.0/Math.PI;
     }
 
     /**
@@ -197,8 +222,9 @@ public class Odo1Offset {
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
         
-        deltaHRad = (deltaEncoders[0] * 1.039648 - deltaEncoders[1]) / distanceLtoR;
-        double deltaF = ((deltaEncoders[1] + deltaEncoders[0]) / 2.0) + 0.107207 * deltaHRad;
+        //deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
+        deltaHRad = (deltaEncoders[0] / distanceLtoC) - (deltaEncoders[1] / distanceRtoC);
+        double deltaF = ((deltaEncoders[1] + deltaEncoders[0]) / 2.0) + deltaHRad;
         double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
 
         deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);

@@ -35,7 +35,7 @@ public class Odo1 {
      * Class constructor using custom encoder distances & dimensions.
      * @param disLtoR       the distance between left and right encoders in cm.
      * @param disMidtoC     the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
-     * @param diameter      the radius of encoder wheels in cm.
+     * @param diameter      the diameter of encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
     public Odo1(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
@@ -44,6 +44,30 @@ public class Odo1 {
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
+    }
+
+    /**
+     * Class constructor using the encoder outputs after being spun counterclockwise 10 times. 
+     *      If not in range, input negative values into the code when running. 
+     * @param rightEncoder      (+) ticks traveled by the right encoder.
+     * @param leftEncoder       (-) ticks traveled by the left encoder.
+     * @param centerEncoder     (+/-) ticks traveled by the center encoder.
+     * @param diameter          the diameter of the encoder wheels in cm.
+     * @param ticksPerRevolution    the encoder ticks per revolution.
+     */
+    public Odo1(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, double ticksPerRevolution) {
+        encoderDiameter = diameter;
+        ticksPerRev = ticksPerRevolution;
+        cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
+
+        distanceLtoR = Math.abs(cmFromCenter(rightEncoder, cmPerTick))
+            + Math.abs(cmFromCenter(leftEncoder, cmPerTick));
+        
+        forwardOffset = cmFromCenter(centerEncoder, ticksPerRevolution);
+    }
+
+    private static double cmFromCenter(int ticks, double cmPerTick) {
+        return ticks/10.0/cmPerTick/2.0/Math.PI;
     }
 
     /**
@@ -153,19 +177,11 @@ public class Odo1 {
      * Resets field coords, encoder history & delta values.
      */
     public void resetAll() {
+        reset();
+
         x = 0;
         y = 0;
         hRad = 0;
-
-        for (int i = 2; i >= 0; i--) {
-            encodersLast[i] = 0.0;
-            encoders[i] = 0.0;
-            deltaEncoders[i] = 0.0;
-        }
-
-        deltaX = 0.0;
-        deltaY = 0.0;
-        deltaHRad = 0.0;
     }
 
     /**
@@ -187,8 +203,7 @@ public class Odo1 {
      * @param eCenter   new tick position of the center encoder, (+) when strafing right.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
-        for (int i = 2; i >= 0; i--)
-            encodersLast[i] = encoders[i];
+        encodersLast = encoders;
 
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
