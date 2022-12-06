@@ -70,7 +70,7 @@ public class basic extends LinearOpMode {
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
 
-                p.signal();
+                p.pole();
 
                 telemetry.addLine(p.colorTelemetry());
                 telemetry.update();

@@ -11,11 +11,14 @@ public class LEDManager
 
     private RevBlinkinLedDriver led;
     private ColorRangeSensor color;
+    private DistanceSensor leftDistance, rightDistance;
 
     public void setUp(HardwareMap hardwareMap)
     {
         color = hardwareMap.get(ColorRangeSensor.class,"color");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
+        leftDistance = hardwareMap.get(DistanceSensor.class, "leftDistance");
+        rightDistance = hardwareMap.get(DistanceSensor.class, "rightDistance");
     }
     public void teamColors()
     {
@@ -75,5 +78,30 @@ public class LEDManager
         int blue = color.blue();
         double dist = color.getDistance(DistanceUnit.CM);
         return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue+"\ndistance -"+dist);
+    }
+    public void pole(){
+        double left = leftDistance.getDistance(DistanceUnit.CM);
+        double right = rightDistance.getDistance(DistanceUnit.CM);
+        if (left-right>3){
+            if(left+right>6){
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
+            }else if(left+ right<3){
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
+            }
+        }else if (left-right<-3){
+            if(left+right>6){
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_PARTY_PALETTE);
+            }else if(left+ right<3){
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE);
+            }
+        }else{
+            if(left+right>6){
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_FOREST_PALETTE);
+            }else if(left+ right<3){
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE);
+            }else{
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+        }
     }
 }

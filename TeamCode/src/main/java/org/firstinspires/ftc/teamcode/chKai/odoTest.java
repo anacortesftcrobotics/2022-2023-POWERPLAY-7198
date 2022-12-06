@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -41,10 +41,10 @@ public class odoTest extends LinearOpMode {
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightBack.setMode(RUN_USING_ENCODERS);
-        leftBack.setMode(RUN_USING_ENCODERS);
-        rightFront.setMode(RUN_USING_ENCODERS);
-        leftFront.setMode(RUN_USING_ENCODERS);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -80,15 +80,18 @@ public class odoTest extends LinearOpMode {
     }
     public double getAngle(){ //gets angle in radian form. 0* is 90* to the right of the starting orientation, and value adds when turning counterclockwise.
         //use for trig stuff
+        //Y +=(cos(f)+sin(s))
+        //X +=(-sin(f)+cos(s))
+
         float angle1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
-        double angle2 = Math.toRadians(angle1)
+        double angle2 = Math.toRadians(angle1);
 
         return angle2;
     }
     public int getX(){ //gets current position on the x-axis. Assumes that starting point is 0,0. Must be continually called.
         int x = positionx;
         //X +=(-sin(f)+cos(s))
-        x += ((-leftBack.getCurrentPosition()+rightBack.getCurrentPosition())/2)*(-Math.sin(getAngle()));
+        x += ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2)*(-Math.sin(getAngle()));
         x += ((rightFront.getCurrentPosition())/2)*Math.cos(getAngle());
         resetEncoders();
         positionx = x;
@@ -97,7 +100,7 @@ public class odoTest extends LinearOpMode {
     public int getY(){ //gets current position on the y-axis. Assumes that starting point is 0,0. Must be continually called.
         int y = positiony;
         //Y +=(cos(f)+sin(s))
-        y += ((-leftBack.getCurrentPosition()+rightBack.getCurrentPosition())/2)*Math.cos(getAngle());
+        y += ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2)*Math.cos(getAngle());
         y += ((rightFront.getCurrentPosition())/2)*Math.sin(getAngle());
         resetEncoders();
         positiony = y;
@@ -168,10 +171,9 @@ public class odoTest extends LinearOpMode {
         return (int)goal;
     }
     public void resetEncoders(){
-        leftFront.setMode(STOP_AND _RESET_ENCODERS);
-        leftBack.setMode(STOP_AND _RESET_ENCODERS);
-        rightFront.setMode(STOP_AND _RESET_ENCODERS);
-        rightBack.setMode(STOP_AND _RESET_ENCODERS);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }
-*/
