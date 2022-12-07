@@ -66,15 +66,19 @@ public class Odometry implements SubsystemManager{
         double deltaH;
         double deltaX;
         double deltaY;
+
         for(int i = 0; i <=2; i++) {
             storage[i] = storage[i + 2];
         }
+
         storage[3] = left * CMPT;
         storage[4] = right * CMPT;
         storage[5] = back * CMPT;
+
         for(int i = 0; i <=2; i++) {
             storage[i + 6] = storage[i + 3] - storage[i];
         }
+
         deltaH = (storage[6] / distA) - (storage[7] / distB);
         deltaX = ((storage[6] + storage[7]) / 2) * Math.cos(h) - (storage[8] - distC * deltaH) * Math.sin(h);
         deltaY = ((storage[6] + storage[7]) / 2) * Math.sin(h) + (storage[8] - distC * deltaH) * Math.cos(h);
@@ -94,7 +98,7 @@ public class Odometry implements SubsystemManager{
         double deltaY;
 
         for(int i = 0; i <= 2; i++) {
-            storage[i] = storage[i + 2];
+            storage[i] = storage[i + 3];
         }
 
         storage[3] = encoderLeft.getCurrentPosition() * CMPT;
@@ -106,12 +110,16 @@ public class Odometry implements SubsystemManager{
         }
 
         deltaH = (storage[6] / distA) - (storage[7] / distB);
-        deltaX = (((storage[6] + storage[7]) / 2) + deltaH) * Math.cos(h) - (storage[8] - distC * deltaH) * Math.sin(h);
-        deltaY = (((storage[6] + storage[7]) / 2) + deltaH) * Math.sin(h) + (storage[8] - distC * deltaH) * Math.cos(h);
+
+        double deltaF = ((storage[6] + storage[7]) / 2);
+        double deltaR = (storage[8] - distC * deltaH);
+
+        deltaX = (deltaF * Math.cos(Math.toRadians(h))) - (deltaR * Math.sin(Math.toRadians(h)));
+        deltaY = (deltaF * Math.sin(Math.toRadians(h))) + (deltaR * Math.cos(Math.toRadians(h)));
 
         x += deltaX;
         y += deltaY;
-        h += deltaH;
+        h += Math.toDegrees(deltaH);
     }
 
     public Heading getOdoHeading()
@@ -152,7 +160,7 @@ public class Odometry implements SubsystemManager{
      */
     public double getH()
     {
-        return Math.toDegrees(h);
+        return h;
     }
 
     /**

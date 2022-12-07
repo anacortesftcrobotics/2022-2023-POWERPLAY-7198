@@ -55,7 +55,7 @@ public class Odo1 {
      * @param diameter          the diameter of the encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, double ticksPerRevolution) {
+    public Odo1(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, int ticksPerRevolution) {
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;

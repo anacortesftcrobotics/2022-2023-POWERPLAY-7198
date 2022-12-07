@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.sun.tools.javac.util.Pair;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /**
@@ -36,12 +37,14 @@ public class Lift implements SubsystemManager{
         leftLift = hardwareMap.get(DcMotor.class, "leftLift");
         leftLift.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         rightLift = hardwareMap.get(DcMotor.class, "rightLift");
         rightLift.setDirection(DcMotor.Direction.FORWARD);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -76,16 +79,28 @@ public class Lift implements SubsystemManager{
      */
     public void liftSet(int input)
     {
-        leftLift.setTargetPosition(levelToHeight(input) + liftChange + liftManual);
-        rightLift.setTargetPosition(levelToHeight(input) + liftChange + liftManual);
+        //left lift goes lower, the higher it goes
+        //also I think pid is too strong, and maybe inverted when going down?
+        Pair<Integer, Integer> pair = levelToHeight(input);
+
+        int lx = pair.fst + liftChange + liftManual;
+        int rx = pair.snd + liftChange + liftManual;
+        leftLift.setTargetPosition(lx);
+        rightLift.setTargetPosition(rx);
 
         lastPlace = input;
 
-        double liftError = (leftLift.getCurrentPosition() + liftChange) - (rightLift.getCurrentPosition() + liftChange + liftManual);
-        double leftPower = 0.5;
-        double rightPower = 0.5;
+        double leftLiftError = (leftLift.getTargetPosition() + liftChange + liftManual) - (leftLift.getCurrentPosition() + liftChange + liftManual);
+        double rightLiftError = (rightLift.getTargetPosition() + liftChange + liftManual) - (rightLift.getCurrentPosition() + liftChange + liftManual);
+        if(leftLift.getCurrentPosition() > leftLift.getTargetPosition())
+            leftLiftError = -leftLiftError;
+        if(rightLift.getCurrentPosition() > rightLift.getTargetPosition())
+            rightLiftError = -rightLiftError;
 
-        double error = Math.max(0.2, Math.min(-0.2, (liftError / 42)));
+        double leftPower = 0.7;
+        double rightPower = 0.7;
+        double error = Math.max(0.2, Math.min(-0.2, (leftLiftError / 100)));
+
         leftPower -= error;
         rightPower += error;
 
@@ -94,18 +109,26 @@ public class Lift implements SubsystemManager{
 
         if(leftAMP > 8 || rightAMP > 8)
         {
-            leftPower *= (1 - ((leftAMP - 7) / 10));
-            rightPower *= (1 - ((rightAMP - 7) / 10));
+            double v = 1 - ((Math.max(leftAMP, rightAMP) - 7) / 10);
+            leftPower *= v;
+            rightPower *= v;
         }
 
-        leftLift.setPower(leftPower);
-        rightLift.setPower(rightPower);
+        leftPower = Math.max(-1, Math.min(1, leftPower));
+        rightPower = Math.max(-1, Math.min(1, rightPower));
+
+        leftLift.setPower(leftPower); //left power
+        rightLift.setPower(rightPower); //right power
 
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-
+    //right left
+    //846 831,   838 840    13
+    //1709 1679, 1712 1675  23
+    //2563 2511, 2562 2506  33
+    //1 - 2624 2576         34
+    //2 - 2730 2663         35
     /**
      * This function should be run once every loop. This should hopefully stop motors from burning out at the bottom.
      */
@@ -192,7 +215,7 @@ public class Lift implements SubsystemManager{
      * @param level is the level number.
      * @return is the height in encoder ticks.
      */
-    public int levelToHeight (int level) {
+    public Pair<Integer, Integer> levelToHeight (int level) {
         /*
         0 - floor
         1 - stack 1
@@ -205,42 +228,52 @@ public class Lift implements SubsystemManager{
         8 - medium
         9 - high
          */
-        int liftHeight = 0;
-        switch (level) {
-            case 0:
-                liftHeight = 0;
-                break;
-            case 1:
-                liftHeight = 50;
-                break;
+        int leftLiftHeight = 0;
+        int rightLiftHeight = 0;
+        switch (level) {//stack 1
             case 2:
-                liftHeight = 148;
+            case 6:
+                //ground
+                //stack 2
+                leftLiftHeight = 105;
+                rightLiftHeight = 105;
                 break;
             case 3:
-                liftHeight = 253;
+                //stack 3
+                leftLiftHeight = 210;
+                rightLiftHeight = 210;
                 break;
             case 4:
-                liftHeight = 358;
+                //stack 4
+                leftLiftHeight = 315;
+                rightLiftHeight = 315;
                 break;
             case 5:
-                liftHeight = 484;
-                break;
-            case 6:
-                liftHeight = 260;
+                //stack 5
+                leftLiftHeight = 420;
+                rightLiftHeight = 420;
                 break;
             case 7:
-                liftHeight = 1230;
+                //low
+                leftLiftHeight = 1133;
+                rightLiftHeight = 1125;
                 break;
             case 8:
-                liftHeight = 2150;
+                //medium
+                leftLiftHeight = 2045;
+                rightLiftHeight = 2005;
                 break;
             case 9:
-                liftHeight = 3000;
+                //high
+                leftLiftHeight = 2912;
+                rightLiftHeight = 2851;
                 break;
             default:
-                liftHeight = 50;
+                //floor
+                leftLiftHeight = 10;
+                rightLiftHeight = 10;
         }
-        return liftHeight;
+        return new Pair<>(leftLiftHeight, rightLiftHeight);
     }
 
     /**

@@ -14,8 +14,9 @@ public class Robot {
     //Variables
     boolean coneRight = false;
     boolean grabbed = false;
+    boolean beaconed = false;
     boolean singlePlayer = false;
-    int stackIterator = 5;
+    int stackIterator = 6;
 
     //Subassembly Objects
     Chassis chassis = new Chassis();
@@ -29,10 +30,21 @@ public class Robot {
     Gyro gyro = new Gyro();
     Odometry odometry = new Odometry();
 
+    Led led = new Led();
+
     ElapsedTime time = new ElapsedTime();
 
     Controller controller1 = new Controller();
     Controller controller2 = new Controller();
+
+    //stuff
+    Gamepad.RumbleEffect rumbleA;
+    Gamepad.RumbleEffect rumbleB;
+    Gamepad.RumbleEffect rumbleC;
+
+    Gamepad.LedEffect ledA;
+    Gamepad.LedEffect ledB;
+    Gamepad.LedEffect ledC;
 
     /**
      * Initializes all hardware in all subsystem classes.
@@ -49,6 +61,49 @@ public class Robot {
 
         gyro.initializeHardware(hardwareMap);
         odometry.initializeHardware(hardwareMap);
+
+        led.initializeHardware(hardwareMap);
+
+        //stuff
+        rumbleA = new Gamepad.RumbleEffect.Builder()
+                .addStep(1.0, 0.0, 500)
+                .build();
+
+        rumbleB = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0,1.0,500)
+                .build();
+
+        rumbleC = new Gamepad.RumbleEffect.Builder()
+                .addStep(1.0,0.0,200)
+                .addStep(0.75,0.25,200)
+                .addStep(0.5,0.5,200)
+                .addStep(0.25,0.75,200)
+                .addStep(0.0,1.0,200)
+                .build();
+
+        ledA = new Gamepad.LedEffect.Builder()
+                .addStep(0.5,0.5,0.5,1000)
+                .build();
+
+        ledB = new Gamepad.LedEffect.Builder()
+                .addStep(1.0,0.0,0.0,1000)
+                .addStep(1.0,0.5,0.0,1000)
+                .addStep(1.0,1.0,0.0,1000)
+                .addStep(0.5,1.0,0.0,1000)
+                .addStep(0.0,1.0,0.0,1000)
+                .addStep(0.0,1.0,0.5,1000)
+                .addStep(0.0,1.0,1.0,1000)
+                .addStep(0.0,0.5,1.0,1000)
+                .addStep(0.0,0.0,1.0,1000)
+                .addStep(0.5,0.0,1.0,1000)
+                .addStep(1.0,0.0,1.0,1000)
+                .addStep(1.0,0.0,0.5,1000)
+                .build();
+
+        ledC = new Gamepad.LedEffect.Builder()
+                .addStep(1.0,1.0,1.0,500)
+                .addStep(0.0,0.0,0.0,500)
+                .build();
     }
 
     /**
@@ -56,9 +111,11 @@ public class Robot {
      */
     public void robotDefaultState()
     {
+        led.setLed("red");
+        cds.onOffLED(false);
         chassis.brake();
         lift.liftZero();
-        grabber.grab(false);
+        grabber.grab(false, false);
         mpcr.preSetMPCR(0);
     }
 
@@ -78,16 +135,21 @@ public class Robot {
         liftControl(gamepad2);
         grabberControl(gamepad2);
 
-        if(time.time() > 996)
+
+
+        if(time.time() > 12000)
         {
-            gamepad2.runLedEffect(controller1.ledB);
+            gamepad1.runLedEffect(ledB);
+            gamepad2.runLedEffect(ledB);
             time.reset();
         }
 
         if(cds.getDistance() < 0.5 && !grabbed && lift.lastPlace == 0)
         {
-            gamepad2.runRumbleEffect(controller1.rumbleA);
+            gamepad2.runRumbleEffect(rumbleA);
         }
+
+        led.setLed("violet");
 
         lift.liftSafetyCheck();
     }
@@ -110,7 +172,8 @@ public class Robot {
         {
             if (lift.lastPlace <= 7)
                 lift.liftSet(7);
-            mpcr.preSetMPCR(3);
+            if(lift.leftLift.getCurrentPosition()  > 1100)
+                mpcr.preSetMPCR(3);
         }
         else
             mpcr.preSetMPCR(0);
@@ -119,7 +182,7 @@ public class Robot {
     public void liftControl (Gamepad gamepad2)
     {
         if(!coneRight) {
-            lift.setManual((int) (-gamepad2.right_stick_y * 100));
+            lift.setManual((int) (-gamepad2.left_stick_y * 90));
             int level;
             if(grabbed)
             {
@@ -128,11 +191,7 @@ public class Robot {
                 level = lift.lastPlace;
                 if(controller2.button(0, gamepad2.a))
                 {
-                    if(stackIterator > 1)
-                        stackIterator--;
-                    else if(stackIterator == 1)
-                        stackIterator = 5;
-                    level = stackIterator;
+                    level = 5;
                 }
                 if(controller2.button(1, gamepad2.b))
                     level = 7;
@@ -145,7 +204,13 @@ public class Robot {
             {
                 level = lift.lastPlace;
                 if(controller2.button(0, gamepad2.a))
-                    level = 0;
+                {
+                    if(stackIterator > 1)
+                        stackIterator--;
+                    else if(stackIterator == 1)
+                        stackIterator = 5;
+                    level = stackIterator;
+                }
                 if(controller2.button(1, gamepad2.b))
                     level = 0;
                 if(controller2.button(2, gamepad2.x))
@@ -160,13 +225,23 @@ public class Robot {
     public void grabberControl(Gamepad gamepad2)
     {
         if(controller2.button(11, gamepad2.right_bumper))
+        {
             grabbed = !grabbed;
+            beaconed = !beaconed;
+        }
+
+        if(controller2.button(10, gamepad2.left_bumper))
+        {
+            grabbed = !grabbed;
+            beaconed = false;
+        }
+
         if(grabbed)
         {
             grabber.setShift(gamepad2.left_stick_x);
-            grabber.grab(true);
+            grabber.grab(true, beaconed);
         } else
-            grabber.grab(false);
+            grabber.grab(false, beaconed);
     }
 
     public void playerCheck(Gamepad gamepad1)

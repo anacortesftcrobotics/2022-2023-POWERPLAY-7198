@@ -56,19 +56,18 @@ public class Odo1Offset {
      * @param diameter          the diameter of the encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, double ticksPerRevolution) {
+    public Odo1Offset(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, int ticksPerRevolution) {
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
         
         distanceLtoC = cmFromCenter(leftEncoder, cmPerTick);
         distanceRtoC = cmFromCenter(rightEncoder, cmPerTick);
-
-        forwardOffset = cmFromCenter(centerEncoder, ticksPerRevolution);
+        forwardOffset = cmFromCenter(centerEncoder, cmPerTick);
     }
 
     private static double cmFromCenter(int ticks, double cmPerTick) {
-        return ticks/10.0/cmPerTick/2.0/Math.PI;
+        return ticks/10.0*cmPerTick/2.0/Math.PI;
     }
 
     /**
@@ -223,8 +222,9 @@ public class Odo1Offset {
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
         
         //deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
-        deltaHRad = (deltaEncoders[0] / distanceLtoC) - (deltaEncoders[1] / distanceRtoC);
-        double deltaF = ((deltaEncoders[1] + deltaEncoders[0]) / 2.0) + deltaHRad;
+        //deltaHRad = (deltaEncoders[1] / distanceRtoC) - (deltaEncoders[0] / distanceLtoC);
+        deltaHRad = (deltaEncoders[1] - deltaEncoders[0]) / (distanceRtoC + distanceLtoC);
+        double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0; // + deltaHRad
         double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
 
         deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
@@ -233,5 +233,17 @@ public class Odo1Offset {
         x += deltaX;
         y += deltaY;
         hRad += deltaHRad;
+    }
+    public double getDistanceLtoC()
+    {
+        return distanceLtoC;
+    }
+    public double getDistanceRtoC()
+    {
+        return distanceRtoC;
+    }
+    public double getForwardOffset()
+    {
+        return forwardOffset;
     }
 }

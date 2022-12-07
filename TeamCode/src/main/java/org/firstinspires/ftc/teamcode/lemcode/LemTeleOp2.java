@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
+import org.firstinspires.ftc.teamcode.kaicode.Odo2;
 
 /**
  * This class is the primary teleOp for the 2022-2023 power-play season.
@@ -94,7 +95,7 @@ public class LemTeleOp2 extends OpMode
     Gamepad.RumbleEffect theresAConeRumble;
 
     //Odometry
-    Odo1Offset odometryTracker = new Odo1Offset();
+    Odo2 odometryTracker = new Odo2();
 
     public void init()
     {
@@ -210,10 +211,14 @@ public class LemTeleOp2 extends OpMode
         telemetry.addData("grabbed", grabbed);
         telemetry.addData("finger 1", "(" + gamepad1.touchpad_finger_1_x + ", " + gamepad1.touchpad_finger_1_y + ")");
         telemetry.addData("finger 2", "(" + gamepad1.touchpad_finger_2_x + ", " + gamepad1.touchpad_finger_2_y + ")");
+        odometryTracker.setEncoderPos(encoderLeft.getCurrentPosition(), -encoderRight.getCurrentPosition(), encoderBack.getCurrentPosition());
+        telemetry.addData("X position", odometryTracker.getX());
+        telemetry.addData("Y position", odometryTracker.getY());
+        telemetry.addData("heading", odometryTracker.getHDeg());
+
         if(singlePlayer) {
             telemetry.addData("Single player", singlePlayer);
             telemetry.addData("lift Level", liftLevel);
-            odometryTracker.setEncoderPos(encoderLeft.getCurrentPosition(), -encoderRight.getCurrentPosition(), encoderBack.getCurrentPosition());
             telemetry.addData("X position", odometryTracker.getX());
             telemetry.addData("Y position", odometryTracker.getY());
             telemetry.addData("heading", odometryTracker.getHDeg());

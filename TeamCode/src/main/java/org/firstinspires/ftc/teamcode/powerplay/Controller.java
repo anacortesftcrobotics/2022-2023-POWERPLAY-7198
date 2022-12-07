@@ -33,56 +33,10 @@ public class Controller {
     Controller()
     {
     }
-
-    Gamepad.RumbleEffect rumbleA;
-    Gamepad.RumbleEffect rumbleB;
-    Gamepad.RumbleEffect rumbleC;
-
-    Gamepad.LedEffect ledA;
-    Gamepad.LedEffect ledB;
-    Gamepad.LedEffect ledC;
     
     public void initializeHardware()
     {
-        rumbleA = new Gamepad.RumbleEffect.Builder()
-                .addStep(1.0, 0.0, 500)
-                .build();
 
-        rumbleB = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0,1.0,500)
-                .build();
-
-        rumbleC = new Gamepad.RumbleEffect.Builder()
-                .addStep(1.0,0.0,200)
-                .addStep(0.75,0.25,200)
-                .addStep(0.5,0.5,200)
-                .addStep(0.25,0.75,200)
-                .addStep(0.0,1.0,200)
-                .build();
-
-        ledA = new Gamepad.LedEffect.Builder()
-                .addStep(0.5,0.5,0.5,1000)
-                .build();
-
-        ledB = new Gamepad.LedEffect.Builder()
-                .addStep(1.0,0.0,0.0,83)
-                .addStep(1.0,0.5,0.0,83)
-                .addStep(1.0,1.0,0.0,83)
-                .addStep(0.5,1.0,0.0,83)
-                .addStep(0.0,1.0,0.0,83)
-                .addStep(0.0,1.0,0.5,83)
-                .addStep(0.0,1.0,1.0,83)
-                .addStep(0.0,0.5,1.0,83)
-                .addStep(0.0,0.0,1.0,83)
-                .addStep(0.5,0.0,1.0,83)
-                .addStep(1.0,0.0,1.0,83)
-                .addStep(1.0,0.0,0.5,83)
-                .build();
-
-        ledC = new Gamepad.LedEffect.Builder()
-                .addStep(1.0,1.0,1.0,500)
-                .addStep(0.0,0.0,0.0,500)
-                .build();
     }
 
     /**

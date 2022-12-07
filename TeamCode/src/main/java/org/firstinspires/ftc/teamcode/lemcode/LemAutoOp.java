@@ -43,7 +43,7 @@ public class LemAutoOp extends LinearOpMode
     Acceleration gravity;
 
     //Odometry
-    Odo1Offset odometryTracker = new Odo1Offset();
+    Odo1Offset odometryTracker = new Odo1Offset(-813829,796907,-786263,3.5, 8192);
 
     //Library
     private LemLibrary robob;
