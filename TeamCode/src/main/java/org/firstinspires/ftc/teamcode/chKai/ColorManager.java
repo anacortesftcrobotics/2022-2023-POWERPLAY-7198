@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class LEDManager
+public class ColorManager
 {
 
     private RevBlinkinLedDriver led;
@@ -77,31 +75,56 @@ public class LEDManager
         int green = color.green();
         int blue = color.blue();
         double dist = color.getDistance(DistanceUnit.CM);
-        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue+"\ndistance -"+dist);
+        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue);
     }
     public void pole(){
+        /** in ideal position:
+         * left-20.9
+         * right- 17.7
+         * add- 38.6
+         * diff- 3.2
+         */
         double left = leftDistance.getDistance(DistanceUnit.CM);
         double right = rightDistance.getDistance(DistanceUnit.CM);
-        if (left-right>3){
-            if(left+right>6){
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-            }else if(left+ right<3){
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
-            }
-        }else if (left-right<-3){
-            if(left+right>6){
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_PARTY_PALETTE);
-            }else if(left+ right<3){
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE);
-            }
-        }else{
-            if(left+right>6){
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_FOREST_PALETTE);
-            }else if(left+ right<3){
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE);
-            }else{
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        double add = left + right;
+        double diff = left - right;
+        if (left>30 && right>30){//if the cone is far away, do team colors
+            teamColors();
+        }else {
+            if (diff > 5.2) {//if its too far in one direction, its red
+                if (add > 40) {//if its too far away, breath
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+                } else if (add < 35) {//if its too close, heartbeat
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                }else{//if its the right distance, solid
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                }
+            } else if (diff < 1.2) {//if its too far in the other direction, its blue
+                if (add > 40) {//if its too far away, breath
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
+                } else if (add < 35) {//if its too close, heartbeat
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+                }else{//if its the right distance, solid
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                }
+            } else {//if its centered side to side, its gray
+                if (add > 40) {//if its too far away, breath
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
+                } else if (add < 35) {//if its too close, heartbeat
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY);
+                } else {//if its the right distance, solid
+                    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.GRAY);
+                }
             }
         }
     }
+    public String distanceTelemetry(){
+        double left = leftDistance.getDistance(DistanceUnit.CM);
+        double right = rightDistance.getDistance(DistanceUnit.CM);
+        double add = left + right;
+        double diff = left - right;
+        return ("left- "+left+"\nright- "+right+"\nadd- "+add+"\ndiff- "+diff);
+    }
+
+
 }

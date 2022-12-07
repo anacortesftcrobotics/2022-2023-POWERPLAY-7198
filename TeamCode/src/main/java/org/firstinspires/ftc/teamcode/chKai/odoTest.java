@@ -41,10 +41,10 @@ public class odoTest extends LinearOpMode {
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -70,9 +70,18 @@ public class odoTest extends LinearOpMode {
                 leftBack.setPower(gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
                 rightFront.setPower(gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x);
                 leftFront.setPower(gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x);
+
+                double f = ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2);
+                double s = ((rightFront.getCurrentPosition()));
+                double diff = leftBack.getCurrentPosition()+rightBack.getCurrentPosition();
+                double i = 0;
+                i+=1;
                 telemetry.addData("X",getX());
                 telemetry.addData("Y",getY());
                 telemetry.addData("angle",getAngle());
+                telemetry.addData("s",s);
+                telemetry.addData("diff", diff);
+                telemetry.addData("i",i);
 
                 telemetry.update();
             }
@@ -90,9 +99,12 @@ public class odoTest extends LinearOpMode {
     }
     public int getX(){ //gets current position on the x-axis. Assumes that starting point is 0,0. Must be continually called.
         int x = positionx;
+        double f = ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2);
+        double s = ((rightFront.getCurrentPosition()));
+        double diff = leftBack.getCurrentPosition()+rightBack.getCurrentPosition();
         //X +=(-sin(f)+cos(s))
-        x += ((leftBack.getCurrentPosition()-rightBack.getCurrentPosition())/2)*(-Math.sin(getAngle()));
-        x += ((rightFront.getCurrentPosition())/2)*Math.cos(getAngle());
+        x -= f * Math.sin(getAngle());
+        x += s * Math.cos(getAngle());
         resetEncoders();
         positionx = x;
         return x;

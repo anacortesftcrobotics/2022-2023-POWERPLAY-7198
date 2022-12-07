@@ -22,7 +22,7 @@ public class basic extends LinearOpMode {
 
     private RevBlinkinLedDriver led;
 
-    private Servo scythe;
+
     private boolean stickActive = false;
 
     private boolean hasChanged2;
@@ -39,7 +39,6 @@ public class basic extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
-        scythe = hardwareMap.get(Servo.class, "scythe");
         color = hardwareMap.get(ColorSensor.class,"color");
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,7 +55,7 @@ public class basic extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        LEDManager p = new LEDManager();
+        ColorManager p = new ColorManager();
         p.setUp(hardwareMap);
 
         // Put initialization blocks here.
@@ -64,15 +63,27 @@ public class basic extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                // Put loop blocks here
+                boolean ledType = true;
                 leftFront.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 leftBack.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
+                if (gamepad1.a){
+                    ledType = true;
+                }
+                if (gamepad1.b){
+                    ledType = false;
+                }
+                if (ledType){
+                    p.pole();
+                }else if(!ledType){
+                    p.identify();
+                }
 
-                p.pole();
+
 
                 telemetry.addLine(p.colorTelemetry());
+                telemetry.addLine(p.distanceTelemetry());
                 telemetry.update();
             }
 

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "HeadlessChicken")
-public class HeadlessChicken extends LinearOpMode
+public class HeadlessHorseman extends LinearOpMode
 {
     BNO055IMU imu;
     Orientation angles;
