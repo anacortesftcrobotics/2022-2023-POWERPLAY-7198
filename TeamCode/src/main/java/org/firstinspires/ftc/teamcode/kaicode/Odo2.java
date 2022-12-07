@@ -71,28 +71,20 @@ public class Odo2 {
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
     }
 
-    /**
-     * Class constructor using encoder outputs after being spun counterclockwise 10 times to calculate values (& 180 deg).
-     * @param leftEncoder       (+) ticks traveled by the left encoder after being spun counterclockwise 10 times.
-     * @param rightEncoder      (+) ticks traveled by the right encoder after being spun counterclockwise 10 times.
-     * @param centerEncoder     (+/-) ticks traveled by the center encoder after being spun counterclockwise 10 times.
-     * @param frontOffset   the distance between midpoint of the left & right encoders and center of rotation in cm. Should be (-) if in back.
-     * @param diameter          the diameter of the encoder wheels in cm.
-     * @param ticksPerRevolution    the encoder ticks per revolution.
-     */
-    public Odo2(int leftEncoder, int rightEncoder, int centerEncoder, int frontOffset, double diameter, int ticksPerRevolution) {
-        encoderDiameter = diameter;
-        ticksPerRev = ticksPerRevolution;
-        cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
-        
-        distanceLtoC = cmFromCenter(leftEncoder, cmPerTick);
-        distanceRtoC = cmFromCenter(rightEncoder, cmPerTick);
-        backwardsOffset = cmFromCenter(centerEncoder, cmPerTick);
-        frontEncoderOffset = frontOffset;
-    }
-
     private static double cmFromCenter(int ticks, double cmPerTick) {
         return ticks/10.0*cmPerTick/2.0/Math.PI;
+    }
+
+    /**
+     * Uses encoder outputs after being spun counterclockwise 10 times & encoder properties to calculate the cm from center.
+     * @param ticks             ticks traveled by an encoder after being spun counterclockwise 10 times.
+     * @param encoderDiameter   the diameter of the encoder wheels in cm.
+     * @param tickPerRevolution the encoder ticks per revolution.
+     * @return                  the encoder's distance from the robot's center of rotation in cm.
+     */
+    public static double cmFromCenter(int ticks, double encoderDiameter, int tickPerRevolution) {
+        double cmPerT = encoderDiameter * Math.PI/tickPerRevolution;
+        return ticks/10.0*cmPerT/2.0/Math.PI;
     }
 
     /**
