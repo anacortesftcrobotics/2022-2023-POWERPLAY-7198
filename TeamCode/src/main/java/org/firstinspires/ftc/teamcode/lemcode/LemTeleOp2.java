@@ -5,29 +5,38 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
 
-@TeleOp(name = "LemTeleOp1Player", group = "TeleOps")
+/**
+ * This class is the primary teleOp for the 2022-2023 power-play season.
+ * @author      Lemon
+ */
+
+@TeleOp(name = "LemTeleOp", group = "TeleOp")
 
 public class LemTeleOp2 extends OpMode
 {
     //Variables
     boolean singlePlayer = false;
     boolean grabbed = false;
+    boolean beacon = false;
     double posMPCR = 1;
     double speedCoefficient = 0.6;
     int liftLevel = 0;
     double liftHeight = 0;
-    double artLiftHeight = 0;
     boolean tempMPCR = false;
     int num = 0;
+    int manual = 0;
     boolean hasZeroed = false;
-    double grabberConstant = 0.60;
+    double grabberConstant = 0.54;
     double whenGrabbed;
     double lastTime;
     double time;
     double rLast;
     double lLast;
     double bad = 0;
+    boolean cvd = false;
+    double jeff = 0;
     /*
     the hasChanged arrays are for the boolean buttons on the controllers.
     0 - a
@@ -45,9 +54,11 @@ public class LemTeleOp2 extends OpMode
     12 - back
     13 - start
     14 - guide
+    15 - left trigger
+    16 - right trigger
      */
-    boolean[] hasChanged1 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-    boolean[] hasChanged2 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+    boolean[] hasChanged1 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+    boolean[] hasChanged2 = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     Gamepad control1 = gamepad1;
     Gamepad control2 = gamepad2;
     boolean[] changed1 = hasChanged1;
@@ -68,6 +79,7 @@ public class LemTeleOp2 extends OpMode
 
     //Color Sensors
     private DistanceSensor color;
+    //private ColorSensor color;
 
     //Touch Sensors
     private TouchSensor zero;
@@ -76,6 +88,13 @@ public class LemTeleOp2 extends OpMode
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
+
+    //Rumbles
+    Gamepad.RumbleEffect singlePlayerRumble;
+    Gamepad.RumbleEffect theresAConeRumble;
+
+    //Odometry
+    Odo1Offset odometryTracker = new Odo1Offset();
 
     public void init()
     {
@@ -135,6 +154,7 @@ public class LemTeleOp2 extends OpMode
 
         //Color Sensors
         color = hardwareMap.get(DistanceSensor.class, "color");
+        //color = hardwareMap.get(ColorSensor.class, "color");
 
         //Limit switches
         zero = hardwareMap.get(TouchSensor.class, "bottomLimit");
@@ -148,26 +168,19 @@ public class LemTeleOp2 extends OpMode
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        //Rumbles
+        singlePlayerRumble = new Gamepad.RumbleEffect.Builder()
+                .addStep(1.0, 0.0, 500)
+                .build();
+
+        theresAConeRumble = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0,1.0,1000)
+                .build();
     }
     public void loop()
     {
-        if(!hasZeroed)
-        {
-            num = 0;
-            while (!zero.isPressed())
-            {
-                leftLift.setTargetPosition(num);
-                rightLift.setTargetPosition(num);
-
-                leftLift.setPower(0.8);
-                rightLift.setPower(0.8);
-
-                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                num -= 2;
-            }
-            hasZeroed = true;
-        }
+        liftZero();
         playerCheck(gamepad1,hasChanged1);
         if(!singlePlayer)
         {
@@ -189,34 +202,48 @@ public class LemTeleOp2 extends OpMode
         liftControl(control2,hasChanged2);
         telemetry();
     }
+    /**
+     * This function tells the software to display information on the driver hub. It displays little information in two player mode to not confuse the drivers, but will display much more information in one player mode.
+     */
     public void telemetry()
     {
-        if(singlePlayer)
+        telemetry.addData("grabbed", grabbed);
+        telemetry.addData("finger 1", "(" + gamepad1.touchpad_finger_1_x + ", " + gamepad1.touchpad_finger_1_y + ")");
+        telemetry.addData("finger 2", "(" + gamepad1.touchpad_finger_2_x + ", " + gamepad1.touchpad_finger_2_y + ")");
+        if(singlePlayer) {
             telemetry.addData("Single player", singlePlayer);
-        telemetry.addData("encoderLeft", encoderLeft.getCurrentPosition());
-        telemetry.addData("encoderRight", encoderRight.getCurrentPosition());
-        telemetry.addData("encoderBack", encoderBack.getCurrentPosition());
-        telemetry.addData("color", color.getDistance(DistanceUnit.INCH));
-        telemetry.addData("leftDistance",leftDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("rightDistance", rightDistance.getDistance(DistanceUnit.CM));
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("angles", angles);
-        telemetry.addData("Heading",angles.firstAngle);
-        telemetry.addData("MPCR Position", posMPCR);
-        telemetry.addData("grabbed",grabbed);
-        telemetry.addData("leftServo",leftMPCR.getPosition());
-        telemetry.addData("rightServo",rightMPCR.getPosition());
-        telemetry.addData("lift height", "Left: " + leftLift.getCurrentPosition() + " and Right: " + rightLift.getCurrentPosition());
-        telemetry.addData("liftpower: ", leftLift.getPower() + " " + rightLift.getPower());
-        telemetry.addData("Speed",100 * speedCoefficient + "%");
-        telemetry.addData("zero", zero.isPressed());
-        telemetry.addData("lift Level", liftLevel);
-        telemetry.addData("left lift current", ((DcMotorEx)leftLift).getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("right lift current", ((DcMotorEx)rightLift).getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("left lift velocity", ((DcMotorEx)leftLift).getVelocity());
-        telemetry.addData("right lift current", ((DcMotorEx)rightLift).getVelocity());
+            telemetry.addData("lift Level", liftLevel);
+            odometryTracker.setEncoderPos(encoderLeft.getCurrentPosition(), -encoderRight.getCurrentPosition(), encoderBack.getCurrentPosition());
+            telemetry.addData("X position", odometryTracker.getX());
+            telemetry.addData("Y position", odometryTracker.getY());
+            telemetry.addData("heading", odometryTracker.getHDeg());
+            telemetry.addData("encoderLeft", encoderLeft.getCurrentPosition());
+            telemetry.addData("encoderRight", encoderRight.getCurrentPosition());
+            telemetry.addData("encoderBack", encoderBack.getCurrentPosition());
+            telemetry.addData("color", color.getDistance(DistanceUnit.INCH));
+            //telemetry.addData("color", "red: " + color.red() + " green: " + color.green() + " blue: " + color.blue());
+            telemetry.addData("leftDistance", leftDistance.getDistance(DistanceUnit.CM));
+            telemetry.addData("rightDistance", rightDistance.getDistance(DistanceUnit.CM));
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("angles", angles);
+            telemetry.addData("Heading", angles.firstAngle);
+            telemetry.addData("MPCR Position", posMPCR);
+            telemetry.addData("leftServo", leftMPCR.getPosition());
+            telemetry.addData("rightServo", rightMPCR.getPosition());
+            telemetry.addData("lift height", "Left: " + leftLift.getCurrentPosition() + " and Right: " + rightLift.getCurrentPosition());
+            telemetry.addData("liftpower: ", leftLift.getPower() + " " + rightLift.getPower());
+            telemetry.addData("Speed", 100 * speedCoefficient + "%");
+            telemetry.addData("zero", zero.isPressed());
+            telemetry.addData("left lift current", ((DcMotorEx) leftLift).getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("right lift current", ((DcMotorEx) rightLift).getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("left lift velocity", ((DcMotorEx) leftLift).getVelocity());
+            telemetry.addData("right lift current", ((DcMotorEx) rightLift).getVelocity());
+        }
         telemetry.update();
     }
+    /**
+     * Resets all the drive encoders, which are actually used for odometer encoders.
+     */
     public void resetDriveEncoder()
     {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -231,6 +258,12 @@ public class LemTeleOp2 extends OpMode
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    /**
+     * Takes an input and checks that it is less than 0.1. If it's below, it returns zero, otherwise it returns the original value.
+     * This is intended to stop motors from being called with less power than makes them move.
+     * @param input     what is the parameter for
+     * @return          returns either 0 or the original value depending on whether its less then 0.1
+     */
     public double deadZone(double input)
     {
         if (Math.abs(input) < 0.1)
@@ -242,24 +275,36 @@ public class LemTeleOp2 extends OpMode
             return input;
         }
     }
+    /**
+     * This function reads the distance sensors and spits out a direction to turn the robot in, to center the grabber on the junction
+     * @return a double value to be added to the rx value in movement calculations
+     */
     public double poleCenter()
     {
-        if(grabbed && Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2) >= 800 + num)
-        {
-            if(Math.min(leftDistance.getDistance(DistanceUnit.CM) ,17) < 17)
+        double leftDist = leftDistance.getDistance(DistanceUnit.CM);
+        double rightDist = rightDistance.getDistance(DistanceUnit.CM);
+        if (grabbed && Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2) >= 800 + num) {
+            if(leftDist < rightDist && leftDist < 17)
                 return 0.05;
-            else if(Math.min(rightDistance.getDistance(DistanceUnit.CM) ,17) < 17)
+            if(rightDist < leftDist && rightDist < 17)
                 return -0.05;
-            else
-                return 0;
-        }
-        else
+        } else
             return 0;
+        return 0;
     }
+    /**
+     * I don't completely remember what purpose this serves, but it will take an input value and divide it by 200, then make it sure it stays between -1 and 1
+     * @param input     is the value fed into the function
+     * @return          returns the value divided by 200 and clipped to -1 to 1.
+     */
     public double autoClip(double input)
     {
         return 0.5 * Math.max(Math.min(input/200,1),-1);
     }
+    /**
+     * Sets the threat to sleep for x milliseconds
+     * @param input    is the amount of milliseconds to sleep for
+     */
     public void sleep (double input)
     {
         try
@@ -269,6 +314,11 @@ public class LemTeleOp2 extends OpMode
             throw new RuntimeException(e);
         }
     }
+    /**
+     * All the drive math needed to move the chassis around. It reads inputs off of the given game pad and sets the drive motors accordingly.
+     * @param gamepadX     a choice between gamepad1 and gamepad2. Used for switching between single player and two player.
+     * @param hasChangedX  each gamepad has an array of booleans to track when buttons have been pressed. This should correspond to the set game pad.
+     */
     public void driveControl(Gamepad gamepadX, boolean[] hasChangedX)
     {
         //drive code
@@ -285,7 +335,7 @@ public class LemTeleOp2 extends OpMode
         y = deadZone(y);
         rx = deadZone(rx);
 
-        rx += poleCenter();
+        //rx += poleCenter();
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx),1);
 
@@ -310,42 +360,50 @@ public class LemTeleOp2 extends OpMode
         rightFront.setPower(rightFrontPower);
 
         //Speed coefficient dpad up n down
-        if(gamepadX.dpad_up)
+        if(gamepadX.right_trigger > 0.5)
         {
-            if(!hasChangedX[7])
+            if(!hasChangedX[16])
             {
                 if(speedCoefficient < 1)
                     speedCoefficient += 0.2;
-                hasChangedX[7] = true;
+                hasChangedX[16] = true;
             }
         }
         else
         {
-            hasChangedX[7] = false;
+            hasChangedX[16] = false;
         }
-        if(gamepadX.dpad_down)
+        if(gamepadX.left_trigger > 0.5)
         {
-            if(!hasChanged1[4])
+            if(!hasChanged1[15])
             {
                 if(speedCoefficient > 0.2)
                     speedCoefficient -= 0.2;
-                hasChangedX[4] = true;
+                hasChangedX[15] = true;
             }
         }
         else
         {
-            hasChangedX[4] = false;
+            hasChangedX[15] = false;
         }
     }
+    /**
+     * This function controls the MultiPurpose Cone Righter. It automatically moves to position, unless told to move to the cone righting level.
+     * @param gamepadX     is the gamepad used to activate the MPCR.
+     * @param hasChangedX  is the boolean array to use the gamepad.
+     */
     public void MPCRControl(Gamepad gamepadX, boolean[] hasChangedX)
     {
         //MPCR
-        if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1200 + num)
-            posMPCR = 0;
+        if((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 >= 1300 + num)
+            posMPCR = 0.92;
+        else if (leftLift.getCurrentPosition() + num <= 5)
+            posMPCR = 0.55;
         else
-            posMPCR = 0.5;
+            posMPCR = 0.45;
+
         if(tempMPCR)
-            posMPCR = 1;
+            posMPCR = 0.2;
         if(gamepadX.left_bumper)
         {
             if(!hasChangedX[10])
@@ -361,8 +419,15 @@ public class LemTeleOp2 extends OpMode
         rightMPCR.setPosition(posMPCR + 0.02);
         leftMPCR.setPosition(1 - posMPCR - 0.02);
     }
+
+    /**
+     * This function controls the grabber servos. It will close if open, and open if closed.
+     * @param gamepadX     is the gamepad used to activate the grabber.
+     * @param hasChangedX  is the boolean array to use the gamepad.
+     */
     public void grabControl(Gamepad gamepadX, boolean[] hasChangedX)
     {
+        double grabberAffector = (gamepadX.left_stick_x / 10);
         //Grabber right bumper
         if(gamepadX.right_bumper)
         {
@@ -376,22 +441,47 @@ public class LemTeleOp2 extends OpMode
         {
             hasChangedX[11] = false;
         }
-        if(grabbed)
+
+        if(gamepadX.start)
         {
-            whenGrabbed = System.currentTimeMillis();
-            leftGrab.setPosition(grabberConstant);
-            rightGrab.setPosition(1 - grabberConstant);
+            if(!hasChangedX[13])
+            {
+                beacon = !beacon;
+                hasChangedX[13] = true;
+            }
         }
         else
         {
-            leftGrab.setPosition(0);
-            rightGrab.setPosition(1);
+            hasChangedX[13] = false;
+        }
+
+        if(grabbed)
+        {
+            whenGrabbed = System.currentTimeMillis();
+            if(beacon) {
+                leftGrab.setPosition(1 - 0.5 - grabberAffector);
+                rightGrab.setPosition(0.5 - grabberAffector);
+            } else
+            {
+                leftGrab.setPosition(1 - 0.54 - grabberAffector);
+                rightGrab.setPosition(0.54 - grabberAffector);
+            }
+        }
+        else
+        {
+            leftGrab.setPosition(0.6);
+            rightGrab.setPosition(0.3);
         }
         if(color.getDistance(DistanceUnit.INCH) < 0.5 && liftLevel == 0 && !grabbed)
         {
-            //make it do the rumble thing
+            gamepadX.runRumbleEffect(theresAConeRumble);
         }
     }
+    /**
+     * This function controls the lift. Pressing a, b, x, and y will move the lift to different levels. Pressing up and down on the d-pad will manually move the lift up and down.
+     * @param gamepadX     is the gamepad used to activate the lift.
+     * @param hasChangedX  is the boolean array to use the gamepad.
+     */
     public void liftControl(Gamepad gamepadX, boolean[] hasChangedX)
     {
         //lift mechanism
@@ -400,6 +490,11 @@ public class LemTeleOp2 extends OpMode
         //a is ground, b is low, y is medium, x is high
         //the button press includes moving to pole, depositing on pole, backing away from pole to starting position.
         //the lift then goes back to zero (bottom (grabbing position)) and the MPCR goes to standby position
+        if(gamepadX.dpad_up)
+            manual += 10;
+        if(gamepadX.dpad_down)
+            manual -= 10;
+
         if(gamepadX.a)
         {
             if(!hasChangedX[0])
@@ -407,7 +502,8 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 1;
-                    liftHeight = (252);
+                    manual = 0;
+                    liftHeight = (260);
                 }
                 if(!grabbed)
                 {
@@ -428,7 +524,8 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 2;
-                    liftHeight = (1302);
+                    manual = 0;
+                    liftHeight = (1330);
                 }
                 if(!grabbed)
                     liftLevel = 0;
@@ -446,7 +543,8 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 3;
-                    liftHeight = (2142);
+                    manual = 0;
+                    liftHeight = (2150);
                 }
                 if(!grabbed)
                     liftLevel = 0;
@@ -464,7 +562,8 @@ public class LemTeleOp2 extends OpMode
                 if(grabbed)
                 {
                     liftLevel = 4;
-                    liftHeight = (2982);
+                    manual = 0;
+                    liftHeight = (3000);
                 }
                 if(!grabbed)
                     liftLevel = 0;
@@ -476,11 +575,15 @@ public class LemTeleOp2 extends OpMode
             hasChangedX[3] = false;
         }
         if(liftLevel == 0)
-            if(grabbed &&  System.currentTimeMillis() >= whenGrabbed + 500)
+        {
+            if (grabbed && System.currentTimeMillis() >= whenGrabbed + 500) {
                 liftHeight = 84;
-            else
+                manual = 0;
+            } else {
                 liftHeight = 30;
-
+                manual = 0;
+            }
+        }
 
         lastTime = time;
         time = System.currentTimeMillis();
@@ -494,8 +597,15 @@ public class LemTeleOp2 extends OpMode
 
         lLast = leftLift.getCurrentPosition();
 
-        leftLift.setTargetPosition((int) liftHeight + num);
-        rightLift.setTargetPosition((int) liftHeight + num);
+        if(gamepadX.left_trigger > 0)
+            jeff = 250;
+        if(gamepadX.left_trigger == 0)
+            jeff = 0;
+        if(liftLevel == 0)
+            jeff = 0;
+
+        leftLift.setTargetPosition((int) liftHeight + num + manual - (int) jeff);
+        rightLift.setTargetPosition((int) liftHeight + num + manual - (int) jeff);
 
         int actual = Math.abs((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2);
         int rActual = Math.abs(rightLift.getCurrentPosition());
@@ -530,21 +640,43 @@ public class LemTeleOp2 extends OpMode
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+    /**
+     * This function checks to see if the player mode needs to be changed. It will switch between single and two player, and rumble when a change has been made.
+     * @param gamepadX     is the gamepad used to activate the MPCR.
+     * @param hasChangedX  is the boolean array to use the gamepad.
+     */
     public void playerCheck(Gamepad gamepadX, boolean[] hasChangedX) {
-        if (gamepadX.start) {
-            if (!hasChangedX[13]) {
-                if (gamepadX.y) {
-                    if (!hasChangedX[3]) {
-                        singlePlayer = !singlePlayer;
-                        hasChangedX[3] = true;
-                    }
-                } else {
-                    hasChangedX[3] = false;
-                }
+        if (gamepadX.start && gamepadX.y) {
+            if (!hasChangedX[13] && !hasChangedX[3]) {
+
+                singlePlayer = !singlePlayer;
+                gamepadX.runRumbleEffect(singlePlayerRumble);
+                hasChangedX[13] = true;
+                hasChangedX[3] = true;
+            } else {
+                hasChangedX[13] = false;
+                hasChangedX[3] = false;
             }
-            hasChangedX[13] = true;
-        } else {
-            hasChangedX[13] = false;
+        }
+    }
+    public void liftZero ()
+    {
+        if(!hasZeroed)
+        {
+            num = 0;
+            while (!zero.isPressed())
+            {
+                leftLift.setTargetPosition(num);
+                rightLift.setTargetPosition(num);
+
+                leftLift.setPower(0.8);
+                rightLift.setPower(0.8);
+
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                num -= 2;
+            }
+            hasZeroed = true;
         }
     }
 }
