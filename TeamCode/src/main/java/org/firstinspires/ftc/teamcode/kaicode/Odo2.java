@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode.kaicode;
  * @author      Kai Wallis
  * @version     %I%, %G%
  */
-public class Odo1 {
+public class Odo2 {
 
     private double x = 0;     //x Position on field in cm
     private double y = 0;     //y Position on field in cm
@@ -18,56 +18,73 @@ public class Odo1 {
     private double deltaX;
     private double deltaY;
     private double deltaHRad;
-
-    private double distanceLtoR = 11.0;
-    private double forwardOffset = 17.83;
+    public double distanceLtoC = 17.3853;
+    private double distanceRtoC = 17.0234;
+    private double backwardsOffset = -16.7964;
+    private double frontEncoderOffset = 3.3921;
     private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
     private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
 
 
     /**
-     * Class constructor using default encoder distances & dimensions.
+     * Class constructor using default encoder distances & dimensions. Based on values from 12/6/22 Powerplay robot.
      */
-    public Odo1() {}
+    public Odo2() {
+    }
 
     /**
-     * Class constructor using custom encoder distances & dimensions.
+     * Class constructor for centered encoders. Uses custom encoder distances & dimensions.
+     *      Some encoder values may need to be multiplied by -1 when using setEncoderPos().
      * @param disLtoR       the distance between left and right encoders in cm.
-     * @param disMidtoC     the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
-     * @param diameter      the diameter of encoder wheels in cm.
+     * @param disCtoCofRot  the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
+     * @param frontOffset   the distance between midpoint of the left & right encoders and center of rotation in cm. Should be (-) if in back.
+     * @param diameter      the radius of encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
-        distanceLtoR = disLtoR;
-        forwardOffset = disMidtoC;
+    public Odo2(double disLtoR, double disCtoCofRot, double frontOffset, double diameter, int ticksPerRevolution) {
+        distanceLtoC = distanceRtoC = disLtoR / 2.0;
+        backwardsOffset = disCtoCofRot;
+        frontEncoderOffset = frontOffset;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
     }
 
     /**
-     * Class constructor using the encoder outputs after being spun counterclockwise 10 times. 
-     *      If not in range, input negative values into the code when running. 
-     * @param rightEncoder      (+) ticks traveled by the right encoder.
-     * @param leftEncoder       (-) ticks traveled by the left encoder.
-     * @param centerEncoder     (+/-) ticks traveled by the center encoder.
-     * @param diameter          the diameter of the encoder wheels in cm.
+     * Class constructor for offset encoders. Uses custom encoder distances & dimensions.
+     *      Some encoder values may need to be multiplied by -1 when using setEncoderPos().
+     * @param disLtoC       the distance between left encoder and line of symmetry in cm.
+     * @param disRtoC       the distance between right encoder and line of symmetry in cm.
+     * @param disCtoCofRot  the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
+     * @param frontOffset   the distance between midpoint of the left & right encoders and center of rotation in cm. Should be (-) if in back.
+     * @param diameter      the radius of encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, int ticksPerRevolution) {
+    public Odo2(double disLtoC, double disRtoC, double disCtoCofRot, double frontOffset, double diameter, int ticksPerRevolution) {
+        distanceLtoC = disLtoC;
+        distanceRtoC = disRtoC;
+        backwardsOffset = disCtoCofRot;
+        frontEncoderOffset = frontOffset;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
-
-        distanceLtoR = Math.abs(cmFromCenter(rightEncoder, cmPerTick))
-            + Math.abs(cmFromCenter(leftEncoder, cmPerTick));
-        
-        forwardOffset = cmFromCenter(centerEncoder, ticksPerRevolution);
     }
 
     private static double cmFromCenter(int ticks, double cmPerTick) {
-        return ticks/10.0/cmPerTick/2.0/Math.PI;
+        return ticks/10.0*cmPerTick/2.0/Math.PI;
+    }
+
+    /**
+     * Uses encoder outputs after being spun counterclockwise 10 times & encoder properties to calculate the cm from center.
+     * @param ticks             ticks traveled by an encoder after being spun counterclockwise 10 times.
+     * @param encoderDiameter   the diameter of the encoder wheels in cm.
+     * @param tickPerRevolution the encoder ticks per revolution.
+     * @return                  the encoder's distance from the robot's center of rotation in cm.
+     */
+    public static double cmFromCenter(int ticks, double encoderDiameter, int tickPerRevolution) {
+        double cmPerT = encoderDiameter * Math.PI/tickPerRevolution;
+        return ticks/10.0*cmPerT/2.0/Math.PI;
     }
 
     /**
@@ -177,11 +194,19 @@ public class Odo1 {
      * Resets field coords, encoder history & delta values.
      */
     public void resetAll() {
-        reset();
-
         x = 0;
         y = 0;
         hRad = 0;
+
+        for (int i = 2; i >= 0; i--) {
+            encodersLast[i] = 0.0;
+            encoders[i] = 0.0;
+            deltaEncoders[i] = 0.0;
+        }
+
+        deltaX = 0.0;
+        deltaY = 0.0;
+        deltaHRad = 0.0;
     }
 
     /**
@@ -203,18 +228,19 @@ public class Odo1 {
      * @param eCenter   new tick position of the center encoder, (+) when strafing right.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
-        encodersLast = encoders;
+        for (int i = 2; i >= 0; i--)
+            encodersLast[i] = encoders[i];
 
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
         encoders[2] = cmPerTick * eCenter;
- 
+
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
-        
-        deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
+
+        deltaHRad = (deltaEncoders[1] / distanceRtoC) - (deltaEncoders[0] / distanceLtoC);
         double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
-        double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
+        double deltaR = deltaEncoders[2] - backwardsOffset * deltaHRad + frontEncoderOffset * deltaHRad;
 
         deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
         deltaY = deltaF * Math.sin(hRad) + deltaR * Math.cos(hRad);

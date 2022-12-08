@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.lemcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 @TeleOp(name = "LemTeleOp2Player", group = "TeleOps")
+@Disabled
 
 public class LemTeleOp2Player extends OpMode
 {
