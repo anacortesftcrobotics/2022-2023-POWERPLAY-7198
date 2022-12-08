@@ -9,8 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.lemcode.LemTeleOp2;
+import org.firstinspires.ftc.teamcode.lemcode.LemTeleOp2Player;
 
-@TeleOp(name = "HeadlessChicken")
+@TeleOp(name = "HeadlessHorseman")
 public class HeadlessHorseman extends LinearOpMode
 {
     BNO055IMU imu;
@@ -30,6 +32,7 @@ public class HeadlessHorseman extends LinearOpMode
     private boolean hasChanged3 = false;
     private boolean hasChanged4 = false;
     private double servoSet = 1;
+    LemTeleOp2Player p = new LemTeleOp2Player();
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -97,7 +100,7 @@ public class HeadlessHorseman extends LinearOpMode
                 leftBack.setPower(BL);
 
                 rightBack.setPower(BR);
-
+                p.gamepad2();
                 telemetry.addData("FL", leftFront.getPower() );
                 telemetry.addData("FR", rightFront.getPower() );
                 telemetry.addData("BL", leftBack.getPower() );
