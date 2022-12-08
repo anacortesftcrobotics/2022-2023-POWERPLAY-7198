@@ -12,11 +12,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot {
     public Robot () {}
     //Variables
+    boolean once = false;
     boolean coneRight = false;
     boolean grabbed = false;
     boolean beaconed = false;
     boolean singlePlayer = false;
-    int stackIterator = 6;
 
     //Subassembly Objects
     Chassis chassis = new Chassis();
@@ -135,9 +135,9 @@ public class Robot {
         liftControl(gamepad2);
         grabberControl(gamepad2);
 
+        led.setLed("black");
 
-
-        if(time.time() > 12000)
+        if(time.time() > 12)
         {
             gamepad1.runLedEffect(ledB);
             gamepad2.runLedEffect(ledB);
@@ -146,10 +146,10 @@ public class Robot {
 
         if(cds.getDistance() < 0.5 && !grabbed && lift.lastPlace == 0)
         {
-            gamepad2.runRumbleEffect(rumbleA);
+            gamepad1.runRumbleEffect(rumbleB);
+            gamepad2.runRumbleEffect(rumbleB);
+            led.setLed("green");
         }
-
-        led.setLed("violet");
 
         lift.liftSafetyCheck();
     }
@@ -158,10 +158,9 @@ public class Robot {
     {
         chassis.xyrMovement(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
         if(controller1.button(15,(gamepad1.left_trigger > 0.5)))
-            chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient - 0.2)));
+            chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient - 0.25)));
         if(controller1.button(16,(gamepad1.right_trigger > 0.5)))
-            chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient + 0.2)));
-
+            chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient + 0.25)));
     }
 
     public void MPCRControl (Gamepad gamepad1)
@@ -189,10 +188,39 @@ public class Robot {
                 if(lift.lastPlace == 0)
                     level = 1;
                 level = lift.lastPlace;
-                if(controller2.button(0, gamepad2.a))
-                {
+
+                //dpad_up       5       5
+                //dpad_left     4       4
+                //dpad_right    3       3
+                //dpad_down     1       =0
+
+                //y             high    0
+                //x             med     0
+                //b             low     0
+                //a             2       0
+                /*
+                0 - zero, bottom, floor
+                1 - stack 1
+                2 - stack 2
+                3 - stack 3
+                4 - stack 4
+                5 - stack 5
+                6 - ground
+                7 - low
+                8 - medium
+                9 - high
+                 */
+                if(controller2.button(4, gamepad2.dpad_down))
+                    level = 1;
+                if(controller2.button(5, gamepad2.dpad_left))
+                    level = 4;
+                if(controller2.button(6, gamepad2.dpad_right))
+                    level = 3;
+                if(controller2.button(7, gamepad2.dpad_up))
                     level = 5;
-                }
+
+                if(controller2.button(0, gamepad2.a))
+                    level = 2;
                 if(controller2.button(1, gamepad2.b))
                     level = 7;
                 if(controller2.button(2, gamepad2.x))
@@ -203,14 +231,18 @@ public class Robot {
             else
             {
                 level = lift.lastPlace;
+
+                if(controller2.button(4, gamepad2.dpad_down))
+                    level = 2;
+                if(controller2.button(5, gamepad2.dpad_left))
+                    level = 4;
+                if(controller2.button(6, gamepad2.dpad_right))
+                    level = 3;
+                if(controller2.button(7, gamepad2.dpad_up))
+                    level = 5;
+
                 if(controller2.button(0, gamepad2.a))
-                {
-                    if(stackIterator > 1)
-                        stackIterator--;
-                    else if(stackIterator == 1)
-                        stackIterator = 5;
-                    level = stackIterator;
-                }
+                    level = 0;
                 if(controller2.button(1, gamepad2.b))
                     level = 0;
                 if(controller2.button(2, gamepad2.x))

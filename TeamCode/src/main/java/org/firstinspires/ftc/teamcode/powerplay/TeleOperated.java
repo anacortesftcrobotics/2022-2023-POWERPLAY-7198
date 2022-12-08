@@ -12,15 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class TeleOperated extends OpMode
 {
     boolean once = false;
-    private DcMotor leftBack, leftFront, rightBack, rightFront, leftLift, rightLift;
-    private DcMotor encoderRight, encoderLeft, encoderBack;
-    private Servo leftGrab, rightGrab, leftMPCR, rightMPCR;
-    private DistanceSensor leftDistance, rightDistance;
-    private ColorRangeSensor color;
-    private TouchSensor zero;
-    BNO055IMU imu;
-    Orientation angles;
-    Acceleration gravity;
     Robot powerplay = new Robot();
 
     public void init()

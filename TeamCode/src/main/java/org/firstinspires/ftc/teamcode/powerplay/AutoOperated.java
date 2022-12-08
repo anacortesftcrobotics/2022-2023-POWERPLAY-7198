@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+@Autonomous (name = "AutoOp", group = "Autonomous")
 
 public class AutoOperated extends OpMode {
     boolean once = false;

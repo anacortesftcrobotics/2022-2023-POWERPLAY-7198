@@ -91,10 +91,10 @@ public class Chassis
         leftFrontPower = Math.cbrt(leftFrontPower);
         rightFrontPower = Math.cbrt(rightFrontPower);
 
-        leftBackPower = (leftBackPower * speedCoefficient * 0.75);
-        rightBackPower = (rightBackPower * speedCoefficient * 0.75);
-        leftFrontPower = (leftFrontPower  * speedCoefficient * 0.75);
-        rightFrontPower = (rightFrontPower * speedCoefficient * 0.75);
+        leftBackPower = (leftBackPower * speedCoefficient * 0.9);
+        rightBackPower = (rightBackPower * speedCoefficient * 0.9);
+        leftFrontPower = (leftFrontPower  * speedCoefficient * 0.9);
+        rightFrontPower = (rightFrontPower * speedCoefficient * 0.9);
 
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
@@ -295,7 +295,12 @@ public class Chassis
      */
     public void setSpeedCoefficient(double input)
     {
-        speedCoefficient = input;
+        double temp = Math.max(input, 0.25);
+        temp = Math.min(temp, 1);
+        temp *= 100;
+        temp = Math.round(temp);
+        temp /= 100;
+        speedCoefficient = temp;
     }
 
     /**

@@ -79,8 +79,11 @@ public class Lift implements SubsystemManager{
      */
     public void liftSet(int input)
     {
-        //left lift goes lower, the higher it goes
-        //also I think pid is too strong, and maybe inverted when going down?
+        //trial using old power supply system with new heights
+        //adjust power based on distance between points
+        //Max(0.2, Min(0.8, x * (1 / 600) ))
+        //Then run PID and amp dampening on top of that power calc.
+
         Pair<Integer, Integer> pair = levelToHeight(input);
 
         int lx = pair.fst + liftChange + liftManual;
@@ -97,12 +100,13 @@ public class Lift implements SubsystemManager{
         if(rightLift.getCurrentPosition() > rightLift.getTargetPosition())
             rightLiftError = -rightLiftError;
 
-        double leftPower = 0.7;
-        double rightPower = 0.7;
-        double error = Math.max(0.2, Math.min(-0.2, (leftLiftError / 100)));
+        double leftPower = 0.6;
+        double rightPower = 0.6;
+        double lerror = Math.max(0.2, Math.min(-0.2, (leftLiftError / 100)));
+        double rerror = Math.max(0.2, Math.min(-0.2, (rightLiftError / 100)));
 
-        leftPower -= error;
-        rightPower += error;
+        leftPower -= lerror;
+        rightPower += rerror;
 
         double leftAMP = ((DcMotorEx) leftLift).getCurrent(CurrentUnit.AMPS);
         double rightAMP = ((DcMotorEx) rightLift).getCurrent(CurrentUnit.AMPS);
@@ -129,6 +133,24 @@ public class Lift implements SubsystemManager{
     //2563 2511, 2562 2506  33
     //1 - 2624 2576         34
     //2 - 2730 2663         35
+
+    public void liftSet(double inches)
+    {
+        leftLift.setTargetPosition(0);
+        rightLift.setTargetPosition(0);
+
+
+
+
+
+
+        leftLift.setPower(0); //left power
+        rightLift.setPower(0); //right power
+
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     /**
      * This function should be run once every loop. This should hopefully stop motors from burning out at the bottom.
      */
@@ -255,18 +277,18 @@ public class Lift implements SubsystemManager{
                 break;
             case 7:
                 //low
-                leftLiftHeight = 1133;
-                rightLiftHeight = 1125;
+                leftLiftHeight = 1157;
+                rightLiftHeight = 1166;
                 break;
             case 8:
                 //medium
-                leftLiftHeight = 2045;
-                rightLiftHeight = 2005;
+                leftLiftHeight = 2042;
+                rightLiftHeight = 2082;
                 break;
             case 9:
                 //high
-                leftLiftHeight = 2912;
-                rightLiftHeight = 2851;
+                leftLiftHeight = 2889;
+                rightLiftHeight = 2951;
                 break;
             default:
                 //floor
