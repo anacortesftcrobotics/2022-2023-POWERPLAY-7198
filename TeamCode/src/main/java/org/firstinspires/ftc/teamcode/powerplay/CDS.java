@@ -35,6 +35,15 @@ public class CDS implements SubsystemManager {
     {
         return color.getDistance(DistanceUnit.INCH);
     }
+    public double getRed(){
+        return color.red();
+    }
+    public double getBlue(){
+        return color.blue();
+    }
+    public double getGreen(){
+        return color.green();
+    }
 
     /**
      * returns the argb value of the color sensor.
@@ -76,5 +85,32 @@ public class CDS implements SubsystemManager {
     public void onOffLED (boolean onOff)
     {
         color.enableLed(onOff);
+    }
+    public String colorTelemetry(){
+        double red = getRed();
+        double green = getGreen();
+        double blue = getGreen();
+        double dist = color.getDistance(DistanceUnit.CM);
+        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue);
+    }
+    public int identify () { //x=s 1 if red, 2 if green, 3 if blue, 4 if white and 0 if nothing.
+        int x = 0;
+        if (getDistance() > 1) {
+            x = 0;
+        } else {
+            if (getRed() > getBlue() && getRed() > getGreen()) {
+                x = 1;
+            } else if (getGreen() > getBlue() && getGreen() > getRed()) {
+                x = 2;
+            } else if (getBlue() > getRed() && getBlue() > getGreen()) {
+                if (getRed() < 1000)//(cds.getBlue()- cds.getGreen()>(cds.getRed())+ cds.getGreen()+ cds.getBlue()/5)
+                {
+                    x = 3;
+                } else {
+                    x = 4;
+                }
+            }
+        }
+        return x;
     }
 }

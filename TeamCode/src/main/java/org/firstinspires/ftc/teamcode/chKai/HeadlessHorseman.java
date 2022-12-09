@@ -100,7 +100,7 @@ public class HeadlessHorseman extends LinearOpMode
                 leftBack.setPower(BL);
 
                 rightBack.setPower(BR);
-                p.gamepad2();
+                //p.gamepad2();
                 telemetry.addData("FL", leftFront.getPower() );
                 telemetry.addData("FR", rightFront.getPower() );
                 telemetry.addData("BL", leftBack.getPower() );

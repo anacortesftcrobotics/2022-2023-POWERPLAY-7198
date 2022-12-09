@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
+import org.firstinspires.ftc.teamcode.powerplay.*;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -17,8 +18,11 @@ public class basic extends LinearOpMode {
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor leftFront;
+    private Servo rightGrab;
+    private Servo leftGrab;
 
     private ColorSensor color;
+
 
     private RevBlinkinLedDriver led;
 
@@ -40,6 +44,8 @@ public class basic extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
         color = hardwareMap.get(ColorSensor.class,"color");
+        leftGrab = hardwareMap.get(Servo.class, "leftGrab");
+        rightGrab = hardwareMap.get(Servo.class, " rightGrab");
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -55,9 +61,11 @@ public class basic extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        ColorManager p = new ColorManager();
-        p.setUp(hardwareMap);
-
+        Led p = new Led();
+        CDS cds = new CDS();
+        p.initializeHardware(hardwareMap);
+        cds.initializeHardware(hardwareMap);
+        boolean grabbed= false;
         // Put initialization blocks here.
         waitForStart();
         if (opModeIsActive()) {
@@ -68,22 +76,36 @@ public class basic extends LinearOpMode {
                 leftBack.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
-                if (gamepad1.a){
-                    ledType = true;
+
+                if (gamepad1.right_bumper) {
+                    grabbed = true;
                 }
-                if (gamepad1.b){
-                    ledType = false;
+
+                if (gamepad1.left_bumper){
+                    grabbed = false;
+
                 }
-                if (ledType){
-                    p.pole();
-                }else if(!ledType){
-                    p.identify();
+
+                if (grabbed){
+                    if(cds.getDistance()<1){
+                        leftGrab.setPosition(0.46);
+                        rightGrab.setPosition(0.54);
+                        p.setLed("green");
+                    }else {
+                        p.setLed("violet");
+                        leftGrab.setPosition(0.6);
+                        rightGrab.setPosition(0.3);
+                    }
+                } else if (!grabbed) {
+                    p.setLed("violet");
+                    leftGrab.setPosition(0.6);
+                    rightGrab.setPosition(0.3);
                 }
 
 
-
-                telemetry.addLine(p.colorTelemetry());
-                telemetry.addLine(p.distanceTelemetry());
+                telemetry.addLine(cds.colorTelemetry());
+                telemetry.addData("grabbed", grabbed);
+                //telemetry.addLine(p.distanceTelemetry());
                 telemetry.update();
             }
 
