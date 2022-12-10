@@ -61,9 +61,10 @@ public class basic extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        Led p = new Led();
+        Led led = new Led();
         CDS cds = new CDS();
-        p.initializeHardware(hardwareMap);
+        Lift lift = new Lift();
+        led.initializeHardware(hardwareMap);
         cds.initializeHardware(hardwareMap);
         boolean grabbed= false;
         // Put initialization blocks here.
@@ -90,16 +91,30 @@ public class basic extends LinearOpMode {
                     if(cds.getDistance()<1){
                         leftGrab.setPosition(0.46);
                         rightGrab.setPosition(0.54);
-                        p.setLed("green");
+                        led.setLed("green");
                     }else {
-                        p.setLed("violet");
+                        led.setLed("violet");
                         leftGrab.setPosition(0.6);
                         rightGrab.setPosition(0.3);
+                        lift.liftSet(6);
                     }
                 } else if (!grabbed) {
-                    p.setLed("violet");
+                    led.setLed("violet");
                     leftGrab.setPosition(0.6);
                     rightGrab.setPosition(0.3);
+                    lift.liftSet(0);
+                }
+                if (gamepad1.a){
+                    lift.liftSet(6);
+                }
+                if (gamepad1.b){
+                    lift.liftSet(7);
+                }
+                if (gamepad1.x){
+                    lift.liftSet(8);
+                }
+                if (gamepad1.y){
+                    lift.liftSet(9);
                 }
 
 

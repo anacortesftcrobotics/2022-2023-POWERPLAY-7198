@@ -144,15 +144,15 @@ public class Led implements SubsystemManager
     public void signal()
     {
         if (cds.identify()==1){
-            led.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            setLed("red");
         }else if (cds.identify()==2){
-            led.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            setLed("green");
         } else if (cds.identify()==3) {
-            led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            setLed("blue");
         } else if (cds.identify()==0) {
             setLed("blue violet");
         } else if (cds.identify()==4){
-            led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+            setLed("white");
         }
     }
 }
