@@ -27,6 +27,7 @@ public class Lift implements SubsystemManager{
     int liftManual = 0; //The new jeff. It wouldn't work with just the one.
     int[] storage = {0,0};
     int lastPlace;
+    double doubleLastPlace;
 
     /**
      * The method in all subsystem classes to register the hardware that this class uses.
@@ -136,16 +137,16 @@ public class Lift implements SubsystemManager{
 
     public void liftSet(double inches)
     {
-        leftLift.setTargetPosition(0);
-        rightLift.setTargetPosition(0);
+        doubleLastPlace = inches;
 
+        leftLift.setTargetPosition((int) ((int) 85.5103 * (inches + 3.441) + -290.793) + liftChange + liftManual + 10);
+        rightLift.setTargetPosition((int) ((int) 84.6713 * (inches + 3.405) + -288.274) + liftChange + liftManual + 10);
 
+        leftLift.setPower(leftLift.getPower() - Math.max(-0.2, Math.min(0.2,(leftLift.getPower() - Math.max(0.3, Math.min(0.9, (Math.abs(leftLift.getCurrentPosition() - leftLift.getTargetPosition()) / 400)))))));
+        rightLift.setPower(rightLift.getPower() - Math.max(-0.2, Math.min(0.2, rightLift.getPower() - Math.max(0.3, Math.min(0.9, Math.abs(rightLift.getCurrentPosition() - rightLift.getTargetPosition()) / 400)))));
 
-
-
-
-        leftLift.setPower(0); //left power
-        rightLift.setPower(0); //right power
+        //leftLift.setPower(0);
+        //rightLift.setPower(0);
 
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);

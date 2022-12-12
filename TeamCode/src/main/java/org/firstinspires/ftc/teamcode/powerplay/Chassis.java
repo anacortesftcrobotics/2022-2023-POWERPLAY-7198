@@ -31,6 +31,10 @@ public class Chassis
     // 3 : Distance Traveling
     double[] saveState = {0.0,0.0,0.0,0.0};
 
+    double xEndState = 0.0;
+    double yEndState = 0.0;
+    double hEndState = 0.0;
+
     /**
      * This method registers the hardware used by this class.
      * In this case, it's the four drive motors used by the robot.
@@ -105,31 +109,28 @@ public class Chassis
     /**
      * This function tells the robot to move forwards or backwards a certain amount of inches.
      * It is specially designed to be called in a certain type of control loop.
-     * @param dist is the amount of inches to move.
+     * @param cx is the amount of inches to move on the x-axis
+     * @param cy is the amount of inches to move on the y-axis
+     * @param crx is the amount of degrees to turn.
      * @param heading is an object that tells the robot where it is, so it can change the motor power values to course correct.
      * @return a boolean that says if the robot has reached its destination yet.
      */
-    public boolean move(double dist, Heading heading)
+    public boolean move(double cx, double cy, double crx, Heading heading)
     {
         boolean doneYet = false;
 
         if(!inLoop)
         {
-            saveState(heading.x, heading.y, heading.h);
+            //saveState(heading.x, heading.y, heading.h);
+            xEndState = saveState[0] + cx;
+            yEndState = saveState[1] + cy;
+            hEndState = saveState[2] + crx;
             inLoop = true;
         }
 
-        double xEndState = dist * Math.cos(Math.toRadians(saveState[2] + 90));
-        double yEndState = dist * Math.sin(Math.toRadians(saveState[2] + 90));
-        double hEndState = saveState[2];
-
-        double xError = xEndState - heading.x;
-        double yError = yEndState - heading.y;
-        double hError = hEndState - heading.h;
-
-        double trackError = Math.abs(dist) - Math.sqrt(Math.pow((heading.x), 2) + Math.pow((heading.y), 2));
-        double translatedError = Math.max(-1, Math.min(1, Math.cbrt(trackError) * (1 / 3)));
-        double correction = hError / 50;
+        double xError = (xEndState - saveState[0]) - (heading.x - saveState[0]);
+        double yError = (yEndState - saveState[1]) - (heading.y - saveState[1]);
+        double hError = (hEndState - saveState[2]) - (heading.h - saveState[2]);
 
         if(Math.abs(xError) < 0.5 && Math.abs(yError) < 0.5 && Math.abs(hError) < 5)
         {
@@ -138,18 +139,20 @@ public class Chassis
 
         if(!doneYet)
         {
-            leftBack.setPower(translatedError - correction);
-            rightBack.setPower(translatedError + correction);
-            leftFront.setPower(translatedError - correction);
-            rightFront.setPower(translatedError + correction);
+            xyrMovement(restrict(Math.cbrt(yError)), restrict(Math.cbrt(xError)), restrict(-hError / 10));
         }
 
         if(doneYet)
         {
+            saveState = new double[] {0.0, 0.0, 0.0};
+            xEndState = 0.0;
+            yEndState = 0.0;
+            hEndState = 0.0;
             inLoop = false;
             brake();
+            return true;
         }
-        return doneYet;
+        return false;
     }
 
     /**
@@ -318,6 +321,10 @@ public class Chassis
         {
             return input;
         }
+    }
+    public double restrict(double input)
+    {
+        return Math.max(-1, Math.min(1, input));
     }
 
     /**

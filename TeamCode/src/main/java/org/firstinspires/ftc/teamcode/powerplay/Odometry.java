@@ -57,6 +57,7 @@ public class Odometry implements SubsystemManager{
 
     /**
      * This method updates the position of the robot when given the encoder values of the odometry wheels.
+     * Deprecated
      * @param left is the left encoder wheel position.
      * @param right is the right encoder wheel position.
      * @param back is the back encoder wheel position.
@@ -109,11 +110,9 @@ public class Odometry implements SubsystemManager{
             storage[i + 6] = storage[i + 3] - storage[i];
         }
 
-        deltaH = (storage[6] / distA) - (storage[7] / distB);
-
+        deltaH = (storage[6] / (13.6892126) ) - (storage[7] / (13.40425197));
         double deltaF = ((storage[6] + storage[7]) / 2);
-        double deltaR = (storage[8] - distC * deltaH);
-
+        double deltaR = (storage[8] - (6.612755906 * deltaH) + (1.33547244 * deltaH));
         deltaX = (deltaF * Math.cos(Math.toRadians(h))) - (deltaR * Math.sin(Math.toRadians(h)));
         deltaY = (deltaF * Math.sin(Math.toRadians(h))) + (deltaR * Math.cos(Math.toRadians(h)));
 

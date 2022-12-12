@@ -212,8 +212,8 @@ public class LemTeleOp2 extends OpMode
         telemetry.addData("finger 1", "(" + gamepad1.touchpad_finger_1_x + ", " + gamepad1.touchpad_finger_1_y + ")");
         telemetry.addData("finger 2", "(" + gamepad1.touchpad_finger_2_x + ", " + gamepad1.touchpad_finger_2_y + ")");
         odometryTracker.setEncoderPos(encoderLeft.getCurrentPosition(), -encoderRight.getCurrentPosition(), encoderBack.getCurrentPosition());
-        telemetry.addData("X position", odometryTracker.getX());
-        telemetry.addData("Y position", odometryTracker.getY());
+        telemetry.addData("X position", odometryTracker.getX() / 2.54);
+        telemetry.addData("Y position", odometryTracker.getY() / 2.54);
         telemetry.addData("heading", odometryTracker.getHDeg());
 
         if(singlePlayer) {

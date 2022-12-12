@@ -17,6 +17,9 @@ public class Robot {
     boolean grabbed = false;
     boolean beaconed = false;
     boolean singlePlayer = false;
+    int iLast;
+    double[] depositState = {0.0,0.0,0.0,0.0,0.0};
+    int depositDoing = 0;
 
     //Subassembly Objects
     Chassis chassis = new Chassis();
@@ -144,7 +147,7 @@ public class Robot {
             time.reset();
         }
 
-        if(cds.getDistance() < 0.5 && !grabbed && lift.lastPlace == 0)
+        if(cds.getDistance() < 0.5 && !grabbed && lift.doubleLastPlace <= 2)
         {
             gamepad1.runRumbleEffect(rumbleB);
             gamepad2.runRumbleEffect(rumbleB);
@@ -169,8 +172,8 @@ public class Robot {
             coneRight = !coneRight;
         if(coneRight)
         {
-            if (lift.lastPlace <= 7)
-                lift.liftSet(7);
+            if (lift.doubleLastPlace <= 14)
+                lift.liftSet(14.0);
             if(lift.leftLift.getCurrentPosition()  > 1100)
                 mpcr.preSetMPCR(3);
         }
@@ -181,74 +184,49 @@ public class Robot {
     public void liftControl (Gamepad gamepad2)
     {
         if(!coneRight) {
-            lift.setManual((int) (-gamepad2.left_stick_y * 90));
-            int level;
+            lift.setManual((int) (-gamepad2.left_stick_y * 100));
+            double level;
             if(grabbed)
             {
-                if(lift.lastPlace == 0)
-                    level = 1;
-                level = lift.lastPlace;
-
-                //dpad_up       5       5
-                //dpad_left     4       4
-                //dpad_right    3       3
-                //dpad_down     1       =0
-
-                //y             high    0
-                //x             med     0
-                //b             low     0
-                //a             2       0
-                /*
-                0 - zero, bottom, floor
-                1 - stack 1
-                2 - stack 2
-                3 - stack 3
-                4 - stack 4
-                5 - stack 5
-                6 - ground
-                7 - low
-                8 - medium
-                9 - high
-                 */
+                level = lift.doubleLastPlace;
                 if(controller2.button(4, gamepad2.dpad_down))
-                    level = 1;
+                    level = 0.5; //1
                 if(controller2.button(5, gamepad2.dpad_left))
-                    level = 4;
+                    level = 4.25; //4
                 if(controller2.button(6, gamepad2.dpad_right))
-                    level = 3;
+                    level = 3; //3
                 if(controller2.button(7, gamepad2.dpad_up))
-                    level = 5;
+                    level = 5.5; //5
 
                 if(controller2.button(0, gamepad2.a))
-                    level = 2;
+                    level = 1.75; //2
                 if(controller2.button(1, gamepad2.b))
-                    level = 7;
+                    level = 14; //7
                 if(controller2.button(2, gamepad2.x))
-                    level = 8;
+                    level = 24; //8
                 if(controller2.button(3, gamepad2.y))
-                    level = 9;
+                    level = 34; //9
             }
             else
             {
-                level = lift.lastPlace;
-
+                level = lift.doubleLastPlace;
                 if(controller2.button(4, gamepad2.dpad_down))
-                    level = 2;
+                    level = 0; //1
                 if(controller2.button(5, gamepad2.dpad_left))
-                    level = 4;
+                    level = 4.25; //4
                 if(controller2.button(6, gamepad2.dpad_right))
-                    level = 3;
+                    level = 3; //3
                 if(controller2.button(7, gamepad2.dpad_up))
-                    level = 5;
+                    level = 5.5; //5
 
                 if(controller2.button(0, gamepad2.a))
-                    level = 0;
+                    level = 1.75; //0
                 if(controller2.button(1, gamepad2.b))
-                    level = 0;
+                    level = 0; //0
                 if(controller2.button(2, gamepad2.x))
-                    level = 0;
+                    level = 0; //0
                 if(controller2.button(3, gamepad2.y))
-                    level = 0;
+                    level = 0; //0
             }
             lift.liftSet(level);
         }
@@ -259,13 +237,13 @@ public class Robot {
         if(controller2.button(11, gamepad2.right_bumper))
         {
             grabbed = !grabbed;
-            beaconed = !beaconed;
+            beaconed = false;
         }
 
         if(controller2.button(10, gamepad2.left_bumper))
         {
             grabbed = !grabbed;
-            beaconed = false;
+            beaconed = true;
         }
 
         if(grabbed)
@@ -283,6 +261,16 @@ public class Robot {
                 singlePlayer = !singlePlayer;
     }
 
+    public void resetOdoButOnlyLikeOnce(int i)
+    {
+        if(i != iLast)
+        {
+            odometry.setPosition(0,0,0);
+            odometry.resetDriveEncoder();
+        }
+        iLast = i;
+    }
+
     /**
      * Updates the imu and odo heading data.
      */
@@ -298,17 +286,119 @@ public class Robot {
      */
     public void robotTelemetry(Telemetry telemetryIn)
     {
-        Heading temp = odometry.getOdoHeading();
+        int i = 0;
+        Heading temp = odometry.convertToHeading(odometry.getX(), odometry.getY(), gyro.getHeading());
+
+        telemetryIn.addData("isLooped",  chassis.inLoop);
+        telemetryIn.addData("x end",  chassis.xEndState);
+        telemetryIn.addData("y end",  chassis.yEndState);
+        telemetryIn.addData("h end",  chassis.hEndState);
+        telemetryIn.addData("x err",  chassis.xEndState - temp.x);
+        telemetryIn.addData("y err",  chassis.yEndState - temp.y);
+        telemetryIn.addData("h err",  chassis.hEndState - temp.h);
+        telemetryIn.addData("LF",  chassis.leftFront.getPower());
+        telemetryIn.addData("LB",  chassis.leftBack.getPower());
+        telemetryIn.addData("RF",  chassis.rightFront.getPower());
+        telemetryIn.addData("RB",  chassis.rightBack.getPower());
         telemetryIn.addData( "Speed Coefficient: ", chassis.speedCoefficient);
         telemetryIn.addData( "X: ", temp.x);
         telemetryIn.addData( "Y: ", temp.y);
         telemetryIn.addData( "ODO Heading: ", temp.h);
         telemetryIn.addData( "IMU Heading: ", gyro.getHeading());
         telemetryIn.addData( "last level: ", lift.lastPlace);
-        telemetryIn.addData( "right Lift: ", lift.rightLift.getCurrentPosition());
-        telemetryIn.addData( "left Lift: ", lift.leftLift.getCurrentPosition());
+        telemetryIn.addData( "right Lift pos: ", lift.rightLift.getCurrentPosition());
+        telemetryIn.addData( "left Lift pos: ", lift.leftLift.getCurrentPosition());
+        telemetryIn.addData( "right Lift pow: ", lift.rightLift.getPower());
+        telemetryIn.addData( "left Lift pow: ", lift.leftLift.getPower());
+        telemetryIn.addData( "right Lift goal: ", lift.rightLift.getTargetPosition());
+        telemetryIn.addData( "left Lift goal: ", lift.leftLift.getTargetPosition());
+        telemetryIn.addData( "change ", lift.liftChange);
+        telemetryIn.addData( "manual ", lift.liftManual);
         telemetryIn.addData( "time ", time.time());
 
         telemetryIn.update();
+    }
+
+    public void sleep(int input)
+    {
+        try {
+            Thread.sleep(input);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean deposit(String liftLevel)
+    {
+        /*
+        0 init x
+        1 init y
+        2 init h
+        3 init lift height
+         */
+        boolean doneYet = false;
+
+        switch(depositDoing) {
+            case 1:
+                depositState[0] = odometry.getX();
+                depositState[1] = odometry.getX();
+                depositState[2] = gyro.getHeading();
+                depositState[3] = lift.doubleLastPlace;
+                if(liftLevel.equals("low"))
+                    depositState[4] = 15;
+                if(liftLevel.equals("med"))
+                    depositState[4] = 25;
+                if(liftLevel.equals("high"))
+                    depositState[4] = 35;
+
+                depositDoing++;
+                break;
+            case 2:
+                //if( lift is not at proper position ) : move it to the proper position
+                depositDoing++;
+                break;
+            case 3:
+                // start scanning left and right until the distance sensors hit something
+                    //move left until 0.5 sec or pablo spots something
+                    //move right 1 sec or until pablo spots something
+                    //etc
+                depositDoing++;
+                break;
+            case 4:
+                //Center on the pole
+                    //get distance sensors to be equal / around the pole
+                depositDoing++;
+                break;
+            case 5:
+                //move up to pole
+                    //get color to check what its seeing, if its red or blue, go to cone distance, if its not, go to pole distance
+                depositDoing++;
+                break;
+            case 6:
+                //lower cone
+                //release cone, wait a sec
+                depositDoing++;
+                break;
+            case 7:
+                //back off
+                depositDoing++;
+                break;
+            case 8:
+                //reset
+                //lower lift to initial position
+
+                //return to starting position
+                depositDoing++;
+                break;
+            case 9:
+                doneYet = true;
+                depositDoing++;
+                break;
+        }
+        if(doneYet)
+        {
+            chassis.brake();
+            return true;
+        }
+        return false;
     }
 }

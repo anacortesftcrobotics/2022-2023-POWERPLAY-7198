@@ -32,13 +32,14 @@ public class Grabber implements SubsystemManager{
 
     /**
      * This method will open and close the grabber. It will also shift the grabber based on a local variable that can be changed with the setShift method.
-     * @param open is a boolean that dictates whether the grabber is open or not.
+     * @param open is a boolean that dictates whether the grabber is open or not. True means grab. False means release
+     * @param beacon is a boolean that dictates whether to close to regular grabbing or beacon grabbing close. False means regular grab. True means beacon.
      */
     public void grab(boolean open, boolean beacon)
     {
         if(open)
         {
-            if(beacon)
+            if(!beacon)
             {
                 leftGrab.setPosition(0.46 - grabberShift);
                 rightGrab.setPosition(0.54 - grabberShift);
@@ -51,7 +52,7 @@ public class Grabber implements SubsystemManager{
         }
         else
         {
-            leftGrab.setPosition(0.6);
+            leftGrab.setPosition(0.58);
             rightGrab.setPosition(0.3);
         }
     }

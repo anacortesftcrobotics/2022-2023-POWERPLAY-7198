@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp (name = "TeleOp", group = "TeleOp")
+@TeleOp (name = "ArtistOp", group = "0TeleOp")
 
-public class TeleOperated extends OpMode
+public class ArtistOp extends OpMode
 {
     Robot powerplay = new Robot();
 
@@ -24,7 +24,12 @@ public class TeleOperated extends OpMode
     public void loop()
     {
         powerplay.dataLoop();
-        powerplay.driveLoop(gamepad1, gamepad2);
+        powerplay.mpcr.preSetMPCR(0);
+        powerplay.chassis.brake();
+        powerplay.grabber.grab(false, false);
+        powerplay.lift.liftSet(10);
+        powerplay.grabber.setShift(gamepad1.touchpad_finger_1_x);
+        powerplay.lift.setShift((int) gamepad1.touchpad_finger_1_y * 180);
         powerplay.robotTelemetry(telemetry);
     }
 }
