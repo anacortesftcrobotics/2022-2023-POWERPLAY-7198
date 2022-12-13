@@ -114,28 +114,24 @@ public class Led implements SubsystemManager
         if (left>30 && right>30){//if the cone is far away, do team colors
             setLed("blue violet");
         }else {
-            if (diff > idealDiff+diffTolerance) {//if its too far in one direction, its red
-                if (add > idealAdd + addTolerance) {//if its too far away, breath
-                    setLed("yellow");
-                //} else if (add < 35) {//if its too close, heartbeat
-                //    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                }else{//if its the right distance, solid
-                    setLed("orange");
-                }
-            } else if (diff < idealDiff - diffTolerance) {//if its too far in the other direction, its blue
-                if (add > idealAdd +addTolerance) {//if its too far away, breath
+            if (add > idealAdd + addTolerance) {//if its too far away...
+                if (diff < idealDiff - diffTolerance) {//if its too far right and too far away, blue
                     setLed("blue");
-                //} else if (add < 35) {//if its too close, heartbeat
-                //    led.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
-                }else{//if its the right distance, solid
-                    setLed("violet");
-                }
-            } else {//if its centered side to side, its gray
-                if (add > idealAdd + addTolerance) {//if its too far away, breath
+
+                }else if (diff > idealDiff + diffTolerance){//if its too far left and too far away, yellow
+                    setLed("orange");
+                }else{//if its centered and too far away, green
                     setLed("green");
-                } else if (add < idealAdd - addTolerance) {//if its too close, heartbeat
-                    setLed("red");
-                } else {//if its the right distance, solid
+                }
+            } else if (add < idealAdd - addTolerance) {//if its too close, red
+                setLed("red");
+
+            } else {//if its the right distance...
+                if (diff < idealDiff - diffTolerance) {//if its too far right and the right distance, purple
+                    setLed("violet");
+                } else if (diff > idealDiff + diffTolerance) {//if its too far left and right distance, orange
+                    setLed("orange");
+                } else {//if its the right distance and centered, solid
                     setLed("white");
                 }
             }
