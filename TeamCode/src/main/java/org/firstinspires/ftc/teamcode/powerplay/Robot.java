@@ -18,7 +18,7 @@ public class Robot {
     boolean beaconed = false;
     boolean singlePlayer = false;
     int iLast;
-    double[] depositState = {0.0,0.0,0.0,0.0,0.0};
+    double[] depositState = {0.0,0.0,0.0,0.0,0.0,0.0};
     int depositDoing = 0;
 
     //Subassembly Objects
@@ -129,16 +129,10 @@ public class Robot {
      */
     public void driveLoop(Gamepad gamepad1, Gamepad gamepad2)
     {
-        playerCheck(gamepad1);
-        if(singlePlayer)
-            gamepad2 = gamepad1;
-
         driveControl(gamepad1);
         MPCRControl(gamepad1);
         liftControl(gamepad2);
         grabberControl(gamepad2);
-
-        led.setLed("black");
 
         if(time.time() > 12)
         {
@@ -153,6 +147,8 @@ public class Robot {
             gamepad2.runRumbleEffect(rumbleB);
             led.setLed("green");
         }
+        else
+            led.setLed("violet");
 
         lift.liftSafetyCheck();
     }
@@ -174,7 +170,7 @@ public class Robot {
         {
             if (lift.doubleLastPlace <= 14)
                 lift.liftSet(14.0);
-            if(lift.leftLift.getCurrentPosition()  > 1100)
+            if(lift.leftLift.getCurrentPosition()  > 1000)
                 mpcr.preSetMPCR(3);
         }
         else
@@ -254,13 +250,6 @@ public class Robot {
             grabber.grab(false, beaconed);
     }
 
-    public void playerCheck(Gamepad gamepad1)
-    {
-        if(controller1.button(8, gamepad1.left_stick_button))
-            if(controller1.button(13, gamepad1.start))
-                singlePlayer = !singlePlayer;
-    }
-
     public void resetOdoButOnlyLikeOnce(int i)
     {
         if(i != iLast)
@@ -305,13 +294,9 @@ public class Robot {
         telemetryIn.addData( "Y: ", temp.y);
         telemetryIn.addData( "ODO Heading: ", temp.h);
         telemetryIn.addData( "IMU Heading: ", gyro.getHeading());
-        telemetryIn.addData( "last level: ", lift.lastPlace);
+        telemetryIn.addData( "last level: ", lift.doubleLastPlace);
         telemetryIn.addData( "right Lift pos: ", lift.rightLift.getCurrentPosition());
         telemetryIn.addData( "left Lift pos: ", lift.leftLift.getCurrentPosition());
-        telemetryIn.addData( "right Lift pow: ", lift.rightLift.getPower());
-        telemetryIn.addData( "left Lift pow: ", lift.leftLift.getPower());
-        telemetryIn.addData( "right Lift goal: ", lift.rightLift.getTargetPosition());
-        telemetryIn.addData( "left Lift goal: ", lift.leftLift.getTargetPosition());
         telemetryIn.addData( "change ", lift.liftChange);
         telemetryIn.addData( "manual ", lift.liftManual);
         telemetryIn.addData( "time ", time.time());
@@ -334,6 +319,8 @@ public class Robot {
         1 init y
         2 init h
         3 init lift height
+        4 end lift height
+        5 start time
          */
         boolean doneYet = false;
 
@@ -345,38 +332,58 @@ public class Robot {
                 depositState[3] = lift.doubleLastPlace;
                 if(liftLevel.equals("low"))
                     depositState[4] = 15;
-                if(liftLevel.equals("med"))
+                else if(liftLevel.equals("med"))
                     depositState[4] = 25;
-                if(liftLevel.equals("high"))
+                else if(liftLevel.equals("high"))
                     depositState[4] = 35;
-
+                else
+                    depositState[4] = 15;
+                depositState[5] = time.time();
                 depositDoing++;
                 break;
             case 2:
-                //if( lift is not at proper position ) : move it to the proper position
+                lift.liftSet(depositState[4]);
                 depositDoing++;
                 break;
             case 3:
                 // start scanning left and right until the distance sensors hit something
                     //move left until 0.5 sec or pablo spots something
                     //move right 1 sec or until pablo spots something
+                    //19.4 right
+                    //24.6 left
                     //etc
                 depositDoing++;
                 break;
             case 4:
                 //Center on the pole
                     //get distance sensors to be equal / around the pole
+
+                /*
+                double leftDist = leftDistance.getDistance(DistanceUnit.CM);
+                double rightDist = rightDistance.getDistance(DistanceUnit.CM);
+                if (leftDist < rightDist && leftDist < 18)
+                    return 0.05;
+                if (rightDist < leftDist && rightDist < 18)
+                    return -0.05;
+                return 0;
+                 */
+
                 depositDoing++;
                 break;
             case 5:
                 //move up to pole
                     //get color to check what its seeing, if its red or blue, go to cone distance, if its not, go to pole distance
+                if(true){
+                    depositState[5] = time.time();
+                    depositDoing++;
+                }
                 depositDoing++;
                 break;
             case 6:
-                //lower cone
-                //release cone, wait a sec
-                depositDoing++;
+                lift.liftSet(lift.doubleLastPlace - 1);
+                grabber.grab(false, false);
+                if(time.time() - depositState[5] > 1.5)
+                    depositDoing++;
                 break;
             case 7:
                 //back off
