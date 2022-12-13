@@ -18,6 +18,7 @@ public class MentorBotBasicOpMode extends OpMode {
         robot = new ArrayList<Subsystem>();
         robot.add(new PowerplayMecanum());
         robot.add(new PowerplayGrabber());
+        robot.add(new PoseTracker(17.3853, 17.0234, 16.7964));
 
         for (Subsystem subsystem : robot) {
             subsystem.registerHardware(hardwareMap);
@@ -31,10 +32,9 @@ public class MentorBotBasicOpMode extends OpMode {
      */
     @Override
     public void loop() {
-        // Evaluate
-
-
-        // Act
+        for (Subsystem subsystem : robot) {
+            telemetry.addData(subsystem.name, subsystem.update(gamepad1, gamepad2));
+        }
     }
 
     /**

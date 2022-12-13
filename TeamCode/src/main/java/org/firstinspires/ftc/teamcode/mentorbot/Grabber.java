@@ -7,6 +7,7 @@ package org.firstinspires.ftc.teamcode.mentorbot;
  */
 public abstract class Grabber extends Subsystem {
 
+    String name = "GRAB";
     public abstract void grab();
 
     public abstract void release();

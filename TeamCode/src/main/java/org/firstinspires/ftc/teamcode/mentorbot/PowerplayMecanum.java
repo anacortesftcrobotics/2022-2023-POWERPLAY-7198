@@ -1,21 +1,27 @@
 package org.firstinspires.ftc.teamcode.mentorbot;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
+import java.text.DecimalFormat;
 
 public class PowerplayMecanum extends OmnidirectionalChassis {
+
+    String name = "CHAS";
+    State currentState;
 
     DcMotorEx frontLeft;
     DcMotorEx frontRight;
     DcMotorEx backLeft;
     DcMotorEx backRight;
+    String telemetry;
+
+    public PowerplayMecanum() {
+        currentState = State.UNINITIALIZED;
+    }
 
     /**
      * Sets the power for every motor on a 4 motor chassis.
@@ -116,5 +122,60 @@ public class PowerplayMecanum extends OmnidirectionalChassis {
                "FrontRight: " + frontRight.getConnectionInfo() +
                "BackLeft: " + backLeft.getConnectionInfo() +
                "BackRight: " + backRight.getConnectionInfo();
+    }
+
+    /**
+     * Updates the Subsystem operation based on user input
+     *
+     * @param gamepad1 should match TeleOp's gamepad1
+     * @param gamepad2 should match TeleOp's gamepad2
+     * @return the current status of the Subsytem
+     */
+    @Override
+    public String update(Gamepad gamepad1, Gamepad gamepad2) {
+        switch(currentState) {
+            case UNINITIALIZED:
+                return "Not initialized";
+            case INACTIVE:
+                if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
+                    currentState = State.MANUAL;
+                    update(gamepad1, gamepad2);
+                }
+                return "Inactive";
+            case MANUAL:
+                setPowerXYR(-gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x);
+                return "Manual inputs";
+            case AUTOMATIC:
+                // Check for automatic or cancel request
+                return "CURRENT INSTRUCTION STATUS";
+            case STOP:
+                return "STOPPED";
+            default:
+                return "Bad State";
+        }
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void stop() {
+        frontLeft.setMotorDisable();
+        frontRight.setMotorDisable();
+        backLeft.setMotorDisable();
+        backRight.setMotorDisable();
+        frontLeft = null;
+        frontRight = null;
+        backLeft = null;
+        backRight = null;
+        currentState = State.STOP;
+    }
+
+    private enum State {
+        UNINITIALIZED,
+        INACTIVE,
+        AUTOMATIC,
+        MANUAL,
+        STOP
     }
 }

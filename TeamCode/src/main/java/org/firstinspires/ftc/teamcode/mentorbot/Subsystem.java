@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.mentorbot;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * @author Mentor Liam
  */
 public abstract class Subsystem {
+
+    String name;
 
     /**
      * Registers the hardware devices used by the subsystem.
@@ -26,6 +29,15 @@ public abstract class Subsystem {
      * @return the String of concatenated device statuses for this subsystem
      */
     public abstract String getHardwareStatus();
+
+    /**
+     * Updates the Subsystem operation based on user input
+     *
+     * @param gamepad1 should match TeleOp's gamepad1
+     * @param gamepad2 should match TeleOp's gamepad2
+     * @return the current status of the Subsytem
+     */
+    public abstract String update(Gamepad gamepad1, Gamepad gamepad2);
 
     public abstract void stop();
 }
