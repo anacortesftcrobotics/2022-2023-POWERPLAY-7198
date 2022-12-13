@@ -67,6 +67,7 @@ public class basic extends LinearOpMode {
         Lift lift = new Lift();
         led.initializeHardware(hardwareMap);
         cds.initializeHardware(hardwareMap);
+        lift.initializeHardware(hardwareMap);
         boolean grabable= false;
         boolean grabbed = false;
         boolean hasChanged = false;
@@ -96,7 +97,7 @@ public class basic extends LinearOpMode {
                     if(cds.getDistance()<1){
                         leftGrab.setPosition(0.46);
                         rightGrab.setPosition(0.54);
-
+                        grabbed = true;
                         lift.liftSet(6);
                         led.pole();
                     }else {
@@ -108,6 +109,7 @@ public class basic extends LinearOpMode {
                     leftGrab.setPosition(0.6);
                     rightGrab.setPosition(0.3);
                     lift.liftSet(0);
+                    grabbed = false;
                 }
                 telemetry.addLine(cds.colorTelemetry());
                 telemetry.addData("grabbed", grabable);
