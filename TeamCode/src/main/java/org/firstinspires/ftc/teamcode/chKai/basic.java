@@ -111,6 +111,20 @@ public class basic extends LinearOpMode {
                     lift.liftSet(0);
                     grabbed = false;
                 }
+                if (grabbed){
+                    if (gamepad1.a){
+                        lift.liftSet(6);
+                    }
+                    if (gamepad1.b){
+                        lift.liftSet(7);
+                    }
+                    if (gamepad1.x){
+                        lift.liftSet(8);
+                    }
+                    if (gamepad1.y){
+                        lift.liftSet(9);
+                    }
+                }
                 telemetry.addLine(cds.colorTelemetry());
                 telemetry.addData("grabbed", grabable);
                 //telemetry.addLine(p.distanceTelemetry());
