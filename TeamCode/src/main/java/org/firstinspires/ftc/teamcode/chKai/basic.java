@@ -65,68 +65,27 @@ public class basic extends LinearOpMode {
         Led led = new Led();
         CDS cds = new CDS();
         Lift lift = new Lift();
+        Grabber grabber = new Grabber();
+        Grabliftled grabliftled = new Grabliftled();
+        grabber.initializeHardware(hardwareMap );
         led.initializeHardware(hardwareMap);
         cds.initializeHardware(hardwareMap);
         lift.initializeHardware(hardwareMap);
-        boolean grabable= false;
-        boolean grabbed = false;
-        boolean hasChanged = false;
+        grabliftled.initializeHardware(hardwareMap);
+
         // Put initialization blocks here.
         waitForStart();
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                boolean ledType = true;
                 leftFront.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 leftBack.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
 
-                if (gamepad1.right_bumper && !grabable && !hasChanged) {
-                    grabable = true;
-                    hasChanged = true;
-                }else if (gamepad1.right_bumper && grabable && !hasChanged){
-                    grabable = false;
-                    hasChanged = true;
-                }else {
-                    hasChanged = false;
-                }
-
-                if (grabable){
-                    led.setLed("yellow");
-                    if(cds.getDistance()<1){
-                        leftGrab.setPosition(0.46);
-                        rightGrab.setPosition(0.54);
-                        grabbed = true;
-                        lift.liftSet(6);
-                        led.pole();
-                    }else {
-                        leftGrab.setPosition(0.6);
-                        rightGrab.setPosition(0.3);
-                    }
-                } else if (!grabable) {
-                    led.setLed("violet");
-                    leftGrab.setPosition(0.6);
-                    rightGrab.setPosition(0.3);
-                    lift.liftSet(0);
-                    grabbed = false;
-                }
-                if (grabbed){
-                    if (gamepad1.a){
-                        lift.liftSet(6);
-                    }
-                    if (gamepad1.b){
-                        lift.liftSet(7);
-                    }
-                    if (gamepad1.x){
-                        lift.liftSet(8);
-                    }
-                    if (gamepad1.y){
-                        lift.liftSet(9);
-                    }
-                }
+                grabliftled.autoGrab(gamepad1);
                 telemetry.addLine(cds.colorTelemetry());
-                telemetry.addData("grabbed", grabable);
+
                 //telemetry.addLine(p.distanceTelemetry());
                 telemetry.update();
             }
