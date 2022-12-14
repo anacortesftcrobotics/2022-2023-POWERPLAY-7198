@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.kaicode;
+import java.lang.Math.*;
 
 /**
  * This class provides odometry tracking for an FTC Robot
@@ -18,10 +19,9 @@ public class Odo1Offset {
     private double deltaX;
     private double deltaY;
     private double deltaHRad;
-
-    private double distanceLtoC;
-    private double distanceRtoC;
-    private double forwardOffset = 17.83;
+    public double distanceLtoC = 18.25117;
+    private double distanceRtoC = 17.145;
+    private double forwardOffset = 18.0975;
     private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
     private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
@@ -30,17 +30,19 @@ public class Odo1Offset {
     /**
      * Class constructor using default encoder distances & dimensions.
      */
-    //public Odo1Offset() {}
+    public Odo1Offset() {}
 
     /**
-     * Class constructor using custom encoder distances & dimensions.
-     * @param disLtoR       the distance between left and right encoders in cm.
+     * Class constructor using custom encoder distances & dimensions. Some encoder values may need to be multiplied by -1.
+     * @param disLtoC       the distance between left encoder and line of symmetry in cm.
+     * @param disRtoC       the distance between right encoder and line of symmetry in cm.
      * @param disMidtoC     the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
      * @param diameter      the radius of encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1Offset(double disLtoR, double disMidtoC, double diameter, int ticksPerRevolution) {
-        distanceRtoC = distanceLtoC = disLtoR/2.0;
+    public Odo1Offset(double disLtoC, double disRtoC, double disMidtoC, double diameter, int ticksPerRevolution) {
+        distanceLtoC = disLtoC;
+        distanceRtoC = disRtoC;
         forwardOffset = disMidtoC;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
@@ -49,9 +51,9 @@ public class Odo1Offset {
     
     /**
      * Class constructor using the encoder outputs after being spun counterclockwise 10 times. 
-     *      If not in range, input negative values into the code when running. 
-     * @param rightEncoder      (+/-) ticks traveled by the right encoder.
+     *      If not in range, input negative values into the code when running.
      * @param leftEncoder       (+/-) ticks traveled by the left encoder.
+     * @param rightEncoder      (+/-) ticks traveled by the right encoder.
      * @param centerEncoder     (+/-) ticks traveled by the center encoder.
      * @param diameter          the diameter of the encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
@@ -217,14 +219,13 @@ public class Odo1Offset {
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
         encoders[2] = cmPerTick * eCenter;
- 
+
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
         
         //deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
-        //deltaHRad = (deltaEncoders[1] / distanceRtoC) - (deltaEncoders[0] / distanceLtoC);
-        deltaHRad = (deltaEncoders[1] - deltaEncoders[0]) / (distanceRtoC + distanceLtoC);
-        double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0; // + deltaHRad
+        deltaHRad = (deltaEncoders[0] / distanceLtoC) - (deltaEncoders[1] / distanceRtoC);
+        double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
         double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
 
         deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
@@ -233,17 +234,5 @@ public class Odo1Offset {
         x += deltaX;
         y += deltaY;
         hRad += deltaHRad;
-    }
-    public double getDistanceLtoC()
-    {
-        return distanceLtoC;
-    }
-    public double getDistanceRtoC()
-    {
-        return distanceRtoC;
-    }
-    public double getForwardOffset()
-    {
-        return forwardOffset;
     }
 }
