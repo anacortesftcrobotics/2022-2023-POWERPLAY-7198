@@ -10,12 +10,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.kaicode.Odo1;
 import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
 
-@Autonomous(name = "LemAutoOpMinimal", group = "Autonomous")
+@Autonomous(name = "LemAutoOpRP1", group = "Red Position 1")
 
-public class LemAutoOp extends LinearOpMode
+public class LemAutoOp3 extends LinearOpMode
 {
     //Variables
     int colorCheck = 1;
@@ -88,19 +87,33 @@ public class LemAutoOp extends LinearOpMode
         robob = new LemLibrary(hardwareMap, this, telemetry);
         robob.init();
         waitForStart();
+
         robob.grab();
         robob.grab();
-        robob.MPCR(1);
-        robob.move(18);
+        robob.grab();
+        sleep(500);
+        robob.lift(6);
+        robob.move(2);
+        robob.turn(85);
+        robob.moveBad(-20);
+        robob.grab();
+        sleep(500);
+        robob.lift(0);
+        robob.moveBad(18);
+        robob.turn(-90);
+
+        //regular park stuff from starting position
+        robob.move(16);
         colorCheck = robob.check();
         sleep(250);
-        robob.move(20);
-        robob.move(-14);
-        robob.turn(-5);
+        robob.move(22);
+        robob.move(-16);
+        //robob.turn(-10);
         if(colorCheck == 1)
-            robob.strafe(-24);
+            robob.strafe(-22);
         if(colorCheck == 3)
-            robob.strafe(24);
+            robob.strafe(22);
+        robob.move(2);
 
         //allStop here
     }

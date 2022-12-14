@@ -238,7 +238,7 @@ public class Odo2 {
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
 
-        deltaHRad = (deltaEncoders[1] / distanceRtoC * 2) - (deltaEncoders[0] / distanceLtoC * 2);
+        deltaHRad = (deltaEncoders[1] / (distanceRtoC * 2) ) - (deltaEncoders[0] / (distanceLtoC * 2));
         double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
         double deltaR = deltaEncoders[2] - backwardsOffset * deltaHRad + frontEncoderOffset * deltaHRad;
 
