@@ -79,8 +79,11 @@ public class Lift implements SubsystemManager{
      */
     public void liftSet(int input)
     {
-        //left lift goes lower, the higher it goes
-        //also I think pid is too strong, and maybe inverted when going down?
+        //trial using old power supply system with new heights
+        //adjust power based on distance between points
+        //Max(0.2, Min(0.8, x * (1 / 600) ))
+        //Then run PID and amp dampening on top of that power calc.
+
         Pair<Integer, Integer> pair = levelToHeight(input);
 
         int lx = pair.fst + liftChange + liftManual;
@@ -97,12 +100,13 @@ public class Lift implements SubsystemManager{
         if(rightLift.getCurrentPosition() > rightLift.getTargetPosition())
             rightLiftError = -rightLiftError;
 
-        double leftPower = 0.7;
-        double rightPower = 0.7;
-        double error = Math.max(0.2, Math.min(-0.2, (leftLiftError / 100)));
+        double leftPower = 0.6;
+        double rightPower = 0.6;
+        double lerror = Math.max(0.2, Math.min(-0.2, (leftLiftError / 100)));
+        double rerror = Math.max(0.2, Math.min(-0.2, (rightLiftError / 100)));
 
-        leftPower -= error;
-        rightPower += error;
+        leftPower -= lerror;
+        rightPower += rerror;
 
         double leftAMP = ((DcMotorEx) leftLift).getCurrent(CurrentUnit.AMPS);
         double rightAMP = ((DcMotorEx) rightLift).getCurrent(CurrentUnit.AMPS);
