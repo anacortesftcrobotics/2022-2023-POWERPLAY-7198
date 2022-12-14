@@ -27,6 +27,7 @@ public class Lift implements SubsystemManager{
     int liftManual = 0; //The new jeff. It wouldn't work with just the one.
     int[] storage = {0,0};
     int lastPlace;
+    double doubleLastPlace;
 
     /**
      * The method in all subsystem classes to register the hardware that this class uses.
@@ -133,6 +134,24 @@ public class Lift implements SubsystemManager{
     //2563 2511, 2562 2506  33
     //1 - 2624 2576         34
     //2 - 2730 2663         35
+
+    public void liftSet(double inches)
+    {
+        doubleLastPlace = inches;
+
+        leftLift.setTargetPosition((int) ((int) 85.5103 * (inches + 3.441) + -290.793) + liftChange + liftManual + 10);
+        rightLift.setTargetPosition((int) ((int) 84.6713 * (inches + 3.405) + -288.274) + liftChange + liftManual + 10);
+
+        leftLift.setPower(leftLift.getPower() - Math.max(-0.2, Math.min(0.2,(leftLift.getPower() - Math.max(0.3, Math.min(0.9, (Math.abs(leftLift.getCurrentPosition() - leftLift.getTargetPosition()) / 400)))))));
+        rightLift.setPower(rightLift.getPower() - Math.max(-0.2, Math.min(0.2, rightLift.getPower() - Math.max(0.3, Math.min(0.9, Math.abs(rightLift.getCurrentPosition() - rightLift.getTargetPosition()) / 400)))));
+
+        //leftLift.setPower(0);
+        //rightLift.setPower(0);
+
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     /**
      * This function should be run once every loop. This should hopefully stop motors from burning out at the bottom.
      */
@@ -259,18 +278,18 @@ public class Lift implements SubsystemManager{
                 break;
             case 7:
                 //low
-                leftLiftHeight = 1133;
-                rightLiftHeight = 1125;
+                leftLiftHeight = 1157;
+                rightLiftHeight = 1166;
                 break;
             case 8:
                 //medium
-                leftLiftHeight = 2045;
-                rightLiftHeight = 2005;
+                leftLiftHeight = 2042;
+                rightLiftHeight = 2082;
                 break;
             case 9:
                 //high
-                leftLiftHeight = 2912;
-                rightLiftHeight = 2851;
+                leftLiftHeight = 2889;
+                rightLiftHeight = 2951;
                 break;
             default:
                 //floor

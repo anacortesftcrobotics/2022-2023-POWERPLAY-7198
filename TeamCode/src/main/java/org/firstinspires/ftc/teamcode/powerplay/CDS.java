@@ -56,10 +56,12 @@ public class CDS implements SubsystemManager {
 
     /**
      * A method to check which way the signal sleeve is facing.
-     * @return an int value based on which side. 1 = red, 2 = green, 3 = blue, 0 = error.
+     * @return an int value based on which side. 1 = red, 2 = green, 3 = blue, 4 = white, 0 = nothing
      */
     public int getSleeve()
     {
+        if(color.getDistance(DistanceUnit.INCH) > 1)
+            return 0;
         if(color.red() > color.green() && color.red() > color.blue())
         {
             //red
@@ -73,7 +75,9 @@ public class CDS implements SubsystemManager {
         else if(color.blue() > color.green() && color.blue() > color.red())
         {
             //blue
-            return 3;
+            if(color.red() < 1000)
+                return 3;
+            return 4;
         }
         return 0;
     }
