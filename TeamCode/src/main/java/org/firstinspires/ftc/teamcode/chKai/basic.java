@@ -90,6 +90,8 @@ public class basic extends LinearOpMode {
                     //make the lift go down
                 }
                 telemetry.addLine(cds.colorTelemetry());
+                telemetry.addLine(grabliftled.state());
+                telemetry.addData("distance",cds.getDistance());
                 telemetry.update();
             }
 
