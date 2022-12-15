@@ -27,19 +27,20 @@ public class Grabliftled {
             hasChanged = false;
         }
         if (grabbable){
-            led.setLed("yellow");
             if (cds.getDistance()<2){
                 grabbed = true;
             }else{
                 grabbed = false;
+                led.setLed("yellow");
             }
 
         }else {
-            led.setLed("violet");
+            led.teamColors();
             grabbed = false;
         }
         if (grabbed){
             grabber.grab(true,true);
+            led.poleCenter();
         }else {
             grabber.grab(false,true);
         }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.powerplay;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Led implements SubsystemManager
 {
@@ -102,7 +101,7 @@ public class Led implements SubsystemManager
                 break;
         }
     }
-    public void pole(){
+    public void poleCenter(){
         double left = pablo.getLeftDistance();
         double right = pablo.getRightDistance();
         double add = left + right;//distance fore/back
@@ -151,4 +150,8 @@ public class Led implements SubsystemManager
             setLed("white");
         }
     }
+    public void teamColors(){
+        led.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+    }
+
 }
