@@ -76,6 +76,17 @@ public class OdometryPractice extends LinearOpMode {
             robot.setRobotTelemetry();
             telemetry.update();
 
+            double testcm = 40.0;
+            if (gamepad1.y) {
+                robot.setSimplePower(0.20, 0.20);
+            } else if (
+                (gamepad1.a) ||
+                (Math.abs(robot.odometrywheels.leftX_cm) >= testcm) ||
+                (Math.abs(robot.odometrywheels.rightX_cm) >= testcm)
+            ) {
+                robot.setSimplePower(0, 0);
+            }
+
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
@@ -125,7 +136,7 @@ public class OdometryPractice extends LinearOpMode {
             telemetry.update();
 
             // Pace this loop so hands move at a reasonable speed.
-            sleep(50);
+//            sleep(50);
         }
 
 //    /** keeps track of the line of the poem which is to be emitted next */
