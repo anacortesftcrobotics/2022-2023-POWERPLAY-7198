@@ -29,17 +29,22 @@ public class Grabliftled {
         if (grabbable){
             led.setLed("yellow");
             if (cds.getDistance()<2){
-                grabber.grab(true,true);
+                grabbed = true;
             }else{
-                grabber.grab(false,true);
+                grabbed = false;
             }
 
         }else {
             led.setLed("violet");
+            grabbed = false;
+        }
+        if (grabbed){
+            grabber.grab(true,true);
+        }else {
             grabber.grab(false,true);
         }
     }
-
-
-
+    public boolean grabbed(){
+        return grabbed;
+    }
 }
