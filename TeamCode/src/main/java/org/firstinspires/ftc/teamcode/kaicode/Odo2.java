@@ -21,7 +21,7 @@ public class Odo2 {
     public double distanceLtoC = 17.3853;
     private double distanceRtoC = 17.0234;
     private double backwardsOffset = -16.7964;
-    private double frontEncoderOffset = 3.3921;
+    private double frontEncoderOffset = 4.128; //3.3921
     private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
     private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;

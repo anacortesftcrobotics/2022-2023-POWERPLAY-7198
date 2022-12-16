@@ -138,15 +138,27 @@ public class Lift implements SubsystemManager{
     public void liftSet(double inches)
     {
         doubleLastPlace = inches;
+        double leftPower = 0;
+        double rightPower = 0;
 
         leftLift.setTargetPosition((int) ((int) 85.5103 * (inches + 3.441) + -290.793) + liftChange + liftManual + 10);
         rightLift.setTargetPosition((int) ((int) 84.6713 * (inches + 3.405) + -288.274) + liftChange + liftManual + 10);
 
-        leftLift.setPower(leftLift.getPower() - Math.max(-0.2, Math.min(0.2,(leftLift.getPower() - Math.max(0.3, Math.min(0.9, (Math.abs(leftLift.getCurrentPosition() - leftLift.getTargetPosition()) / 400)))))));
-        rightLift.setPower(rightLift.getPower() - Math.max(-0.2, Math.min(0.2, rightLift.getPower() - Math.max(0.3, Math.min(0.9, Math.abs(rightLift.getCurrentPosition() - rightLift.getTargetPosition()) / 400)))));
+        leftPower = (leftLift.getPower() - Math.max(-0.2, Math.min(0.2,(leftLift.getPower() - Math.max(0.3, Math.min(0.9, (Math.abs(leftLift.getCurrentPosition() - leftLift.getTargetPosition()) / 400)))))));
+        rightPower = (rightLift.getPower() - Math.max(-0.2, Math.min(0.2, rightLift.getPower() - Math.max(0.3, Math.min(0.9, Math.abs(rightLift.getCurrentPosition() - rightLift.getTargetPosition()) / 400)))));
 
-        //leftLift.setPower(0);
-        //rightLift.setPower(0);
+        double leftAMP = ((DcMotorEx) leftLift).getCurrent(CurrentUnit.AMPS);
+        double rightAMP = ((DcMotorEx) rightLift).getCurrent(CurrentUnit.AMPS);
+
+        if(leftAMP > 8 || rightAMP > 8)
+        {
+            double v = 1 - ((Math.max(leftAMP, rightAMP) - 7) / 10);
+            leftPower *= v;
+            rightPower *= v;
+        }
+
+        leftLift.setPower(leftPower);
+        rightLift.setPower(rightPower);
 
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);

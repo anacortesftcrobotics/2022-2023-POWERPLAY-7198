@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.teamcode.kaicode.*;
+
 /**
  * This class is an intermediary between the teleOp and autoOp classes and all the sub-assembly classes on the 2022-2023 powerplay robot.
  * @author      Lemon
@@ -18,8 +20,9 @@ public class Robot {
     boolean beaconed = false;
     boolean singlePlayer = false;
     int iLast;
+
     double[] depositState = {0.0,0.0,0.0,0.0,0.0,0.0};
-    int depositDoing = 0;
+    int depositDoing = 1;
 
     //Subassembly Objects
     Chassis chassis = new Chassis();
@@ -32,6 +35,9 @@ public class Robot {
 
     Gyro gyro = new Gyro();
     Odometry odometry = new Odometry();
+
+    Odo3 odo1 = new Odo3();
+    Odo2 odo3 = new Odo2();
 
     Led led = new Led();
 
@@ -73,7 +79,7 @@ public class Robot {
                 .build();
 
         rumbleB = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0,1.0,500)
+                .addStep(0.2,1.0,250)
                 .build();
 
         rumbleC = new Gamepad.RumbleEffect.Builder()
@@ -85,7 +91,7 @@ public class Robot {
                 .build();
 
         ledA = new Gamepad.LedEffect.Builder()
-                .addStep(0.5,0.5,0.5,1000)
+                .addStep(0.0,0.0,0.0,1000)
                 .build();
 
         ledB = new Gamepad.LedEffect.Builder()
@@ -104,8 +110,7 @@ public class Robot {
                 .build();
 
         ledC = new Gamepad.LedEffect.Builder()
-                .addStep(1.0,1.0,1.0,500)
-                .addStep(0.0,0.0,0.0,500)
+                .addStep(0.0,1.0,0.0,250)
                 .build();
     }
 
@@ -114,12 +119,13 @@ public class Robot {
      */
     public void robotDefaultState()
     {
-        led.setLed("red");
+        led.setLed("violet");
         cds.onOffLED(false);
         chassis.brake();
         lift.liftZero();
         grabber.grab(false, false);
         mpcr.preSetMPCR(0);
+        lift.liftSet(0.5);
     }
 
     /**
@@ -134,17 +140,12 @@ public class Robot {
         liftControl(gamepad2);
         grabberControl(gamepad2);
 
-        if(time.time() > 12)
-        {
-            gamepad1.runLedEffect(ledB);
-            gamepad2.runLedEffect(ledB);
-            time.reset();
-        }
-
-        if(cds.getDistance() < 0.5 && !grabbed && lift.doubleLastPlace <= 2)
+        if(cds.getDistance() < 0.5 && !grabbed && lift.doubleLastPlace <= 6)
         {
             gamepad1.runRumbleEffect(rumbleB);
             gamepad2.runRumbleEffect(rumbleB);
+            gamepad1.runLedEffect(ledC);
+            gamepad2.runLedEffect(ledC);
             led.setLed("green");
         }
         else
@@ -278,6 +279,19 @@ public class Robot {
         int i = 0;
         Heading temp = odometry.convertToHeading(odometry.getX(), odometry.getY(), gyro.getHeading());
 
+        odo1.setEncoderPos((int)odometry.getLeft(), (int)-odometry.getRight(), (int)odometry.getBack());
+        telemetryIn.addData("1x",  odo1.getX());
+        telemetryIn.addData("1y",  odo1.getY());
+        telemetryIn.addData("1h",  odo1.getHDeg());
+        odo3.setEncoderPos((int)odometry.getLeft(), (int)-odometry.getRight(), (int)odometry.getBack());
+        telemetryIn.addData("3x",  odo3.getX());
+        telemetryIn.addData("3y",  odo3.getY());
+        telemetryIn.addData("3h",  odo3.getHDeg());
+
+        telemetryIn.addData("range",  cds.getDistance());
+        telemetryIn.addData("color",  cds.getColor());
+        telemetryIn.addData("left",  pablo.getLeftDistance());
+        telemetryIn.addData("right",  pablo.getRightDistance());
         telemetryIn.addData("isLooped",  chassis.inLoop);
         telemetryIn.addData("x end",  chassis.xEndState);
         telemetryIn.addData("y end",  chassis.yEndState);
@@ -312,91 +326,86 @@ public class Robot {
             throw new RuntimeException(e);
         }
     }
-    public boolean deposit(String liftLevel)
+    public boolean deposit(double liftLevel, Heading input, boolean cone)
     {
-        /*
-        0 init x
-        1 init y
-        2 init h
-        3 init lift height
-        4 end lift height
-        5 start time
-         */
         boolean doneYet = false;
-
         switch(depositDoing) {
             case 1:
+                //saves the initial position
+                led.setLed("hot pink");
                 depositState[0] = odometry.getX();
                 depositState[1] = odometry.getX();
                 depositState[2] = gyro.getHeading();
                 depositState[3] = lift.doubleLastPlace;
-                if(liftLevel.equals("low"))
-                    depositState[4] = 15;
-                else if(liftLevel.equals("med"))
-                    depositState[4] = 25;
-                else if(liftLevel.equals("high"))
-                    depositState[4] = 35;
-                else
-                    depositState[4] = 15;
+                depositState[4] = liftLevel;
                 depositState[5] = time.time();
                 depositDoing++;
                 break;
             case 2:
-                lift.liftSet(depositState[4]);
+                //sets the lift to the right height
+                led.setLed("dark red");
+                lift.liftSet(liftLevel);
+                depositState[5] = time.time();
                 depositDoing++;
                 break;
             case 3:
-                // start scanning left and right until the distance sensors hit something
-                    //move left until 0.5 sec or pablo spots something
-                    //move right 1 sec or until pablo spots something
-                    //19.4 right
-                    //24.6 left
-                    //etc
-                depositDoing++;
+                //scans for the pole
+                led.setLed("red");
+                chassis.move(0,0,(15 * Math.cbrt(Math.sin(2 *  Math.PI * (time.time() - depositState[5])) * Math.pow((time.time() - depositState[5]),2)) / 57.2958),input);
+                if(pablo.getLeftDistance() < 25 || pablo.getRightDistance() < 25)
+                    depositDoing++;
                 break;
             case 4:
-                //Center on the pole
-                    //get distance sensors to be equal / around the pole
-
-                /*
-                double leftDist = leftDistance.getDistance(DistanceUnit.CM);
-                double rightDist = rightDistance.getDistance(DistanceUnit.CM);
-                if (leftDist < rightDist && leftDist < 18)
-                    return 0.05;
-                if (rightDist < leftDist && rightDist < 18)
-                    return -0.05;
-                return 0;
-                 */
-
-                depositDoing++;
+                //center on pole
+                led.setLed("red orange");
+                double turn = 0;
+                if(pablo.getLeftDistance() < pablo.getRightDistance())
+                    turn = -2.5;
+                if(pablo.getLeftDistance() > pablo.getRightDistance())
+                    turn = 2.5;
+                if(chassis.move(0,0,turn,input))
+                    if(Math.round(pablo.getLeftDistance()) == Math.round(pablo.getRightDistance()))
+                        depositDoing++;
                 break;
             case 5:
-                //move up to pole
-                    //get color to check what its seeing, if its red or blue, go to cone distance, if its not, go to pole distance
-                if(true){
+                //move up to the pole
+                led.setLed("orange");
+                double dist = 0;
+                boolean done = false;
+                if(cone)
+                    if(cds.getDistance() > 0.39)
+                        if(chassis.move((((1.73559 * cds.getDistance()) - 0.405826) - 0.27),0,0,input))
+                            done = true;
+                else
+                    if(cds.getDistance() > 1.55)
+                        if(chassis.move((((1.73559 * cds.getDistance()) - 0.405826) - 2.28),0,0,input))
+                            done = true;
+
+                if(done){
                     depositState[5] = time.time();
                     depositDoing++;
                 }
-                depositDoing++;
                 break;
             case 6:
+                led.setLed("gold");
                 lift.liftSet(lift.doubleLastPlace - 1);
                 grabber.grab(false, false);
                 if(time.time() - depositState[5] > 1.5)
                     depositDoing++;
                 break;
             case 7:
-                //back off
-                depositDoing++;
+                led.setLed("yellow");
+                if(chassis.move(-2,0,0, input))
+                    depositDoing++;
                 break;
             case 8:
-                //reset
-                //lower lift to initial position
-
-                //return to starting position
-                depositDoing++;
+                led.setLed("lawn green");
+                lift.liftSet(depositState[3]);
+                if(chassis.move(depositState[0],depositState[1],depositState[2],input))
+                    depositDoing++;
                 break;
             case 9:
+                led.setLed("green");
                 doneYet = true;
                 depositDoing++;
                 break;

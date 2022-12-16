@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.mentorbot;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -61,6 +62,11 @@ public class PowerplayGrabber extends Grabber {
     public String getHardwareStatus() {
         return "LeftPaddle: " + leftPaddle.getConnectionInfo() +
                 "RightPaddle: " + rightPaddle.getConnectionInfo();
+    }
+
+    @Override
+    public String update(Gamepad gamepad1, Gamepad gamepad2) {
+        return null;
     }
 
     /**
