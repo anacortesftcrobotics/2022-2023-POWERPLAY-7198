@@ -18,14 +18,23 @@ public class Odo3 {
     private double deltaX;
     private double deltaY;
     private double deltaHRad;
-    public double distanceLtoC = 17.3853;
-    private double distanceRtoC = 17.0234;
+    public double distanceLtoC = 18.25;
+    //Liam: 18.25
+    //Kai: 17.3853
+    private double distanceRtoC = 17.02;
+    //Liam: 17.14
+    //Kai: 17.02
     private double backwardsOffset = -16.7964;
+    //Liam: 16.8
+    //Kai: 16.7964
     private double frontEncoderOffset = 3.3921;
+    //Kai: 3.3921
+    //Liam: 3.39
     private double encoderDiameter = 3.5;
     private int ticksPerRev = 8192;
     private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
-
+    //kai: 0.001342233189
+    //liam: 0.0013
 
     /**
      * Class constructor using default encoder distances & dimensions. Based on values from 12/6/22 Powerplay robot.
@@ -191,7 +200,7 @@ public class Odo3 {
     }
 
     /**
-     * Resets field coords, encoder history & delta values.
+     * Resets field cords, encoder history & delta values.
      */
     public void resetAll() {
         x = 0;
@@ -211,11 +220,11 @@ public class Odo3 {
 
     /**
      * Sets the current position & heading on a coordinate grid.
-     * @param newX     new position on the x axis.
-     * @param newY     new position on the y axis.
+     * @param newX     new position on the x-axis.
+     * @param newY     new position on the y-axis.
      * @param newHDeg  new heading in degrees.
      */
-    public void setCoords(double newX, double newY, double newHDeg) {
+    public void setCords(double newX, double newY, double newHDeg) {
         x = newX;
         y = newY;
         hRad = newHDeg * Math.PI/180;
@@ -228,8 +237,7 @@ public class Odo3 {
      * @param eCenter   new tick position of the center encoder, (+) when strafing right.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
-        for (int i = 2; i >= 0; i--)
-            encodersLast[i] = encoders[i];
+        System.arraycopy(encoders, 0, encodersLast, 0, 3);
 
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
