@@ -151,7 +151,7 @@ public class Led implements SubsystemManager
         }
     }
     public void teamColors(){
-        led.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+        led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
     }
 
 }

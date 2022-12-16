@@ -22,25 +22,22 @@ public class Grabliftled {
         grabber.grab(false, true);
     }
     public void autoGrab(Gamepad gamepad1){
-        /*if (gamepad1.right_bumper && !hasChanged){
+        if (gamepad1.right_bumper && !hasChanged){
             grabbable = !grabbable;
+        }
+        if (gamepad1.right_bumper){
             hasChanged = true;
         }else {
             hasChanged = false;
-        }*/
-        if (gamepad1.right_bumper){
-            grabbable = true;
-        } else if (gamepad1.left_bumper) {
-            grabbable = false;
         }
         if (grabbable){
-            if (cds.getDistance() < 0.5){
+            if (cds.getDistance() < 1){
                 grabbed = true;
                 grabber.grab(true,false);
-            }else{
+            }/*else if (cds.getDistance() > 0.8){
                 grabbed = false;
                 grabber.grab(false,false);
-            }
+            }*/
 
         }else {
             grabbed = false;
