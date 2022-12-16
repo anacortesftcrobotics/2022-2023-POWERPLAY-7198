@@ -10,6 +10,7 @@ public class Grabliftled {
     Lift lift = new Lift();
     Grabber grabber = new Grabber();
     private boolean hasChanged = false;
+    private  boolean hasGrabbed = false;
     private boolean grabbable = false;
     private boolean grabbed = false;
     private String s = "notGrabbable";
@@ -55,6 +56,14 @@ public class Grabliftled {
                 led.setLed("yellow");
                 s="grabbable not grabbed";
             }
+        }
+        if (grabbed && !hasGrabbed){
+            lift.liftSet(2.0);
+        }
+        if (grabbed){
+            hasGrabbed = true;
+        }else{
+            hasGrabbed = false;
         }
 
 
