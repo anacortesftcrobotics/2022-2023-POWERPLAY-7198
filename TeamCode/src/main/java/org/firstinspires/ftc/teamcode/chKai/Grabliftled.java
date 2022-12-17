@@ -13,6 +13,7 @@ public class Grabliftled {
     private  boolean hasGrabbed = false;
     private boolean grabbable = false;
     private boolean grabbed = false;
+    private  int i = 0;
     private String s = "notGrabbable";
     public void initializeHardware(HardwareMap hardwareMap){
         led.initializeHardware(hardwareMap);
@@ -23,6 +24,7 @@ public class Grabliftled {
         grabber.grab(false, true);
     }
     public void autoGrab(Gamepad gamepad1){
+
         if (gamepad1.right_bumper && !hasChanged){
             grabbable = !grabbable;
         }
@@ -57,20 +59,27 @@ public class Grabliftled {
                 s="grabbable not grabbed";
             }
         }
-        if (grabbed && !hasGrabbed){
+
+        if (grabbed){
+            i ++;
+        }else{
+            i =0;
+        }
+
+        if (grabbed && !hasGrabbed && i > 60){
             lift.liftSet(2.0);
+        }
+        if (!grabbed){
+            lift.liftSet(0.0);
         }
         if (grabbed){
             hasGrabbed = true;
         }else{
             hasGrabbed = false;
         }
-
-
-
     }
     public String state(){
-        return s;
+        return (String) s+i;
 
     }
     public boolean grabbed(){
