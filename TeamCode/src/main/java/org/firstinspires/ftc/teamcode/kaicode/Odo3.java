@@ -14,6 +14,7 @@ public class Odo3 {
     private double[] encodersLast = {0.0,0.0,0.0};  //left, right, center
     private double[] encoders = {0.0,0.0,0.0};      //l,r,c
     private double[] deltaEncoders = {0.0,0.0,0.0}; //l,r,c
+    private double hRadLast = 0;
 
     private double deltaX;
     private double deltaY;
@@ -40,6 +41,14 @@ public class Odo3 {
      * Class constructor using default encoder distances & dimensions. Based on values from 12/6/22 Powerplay robot.
      */
     public Odo3() {
+    }
+
+    /**
+     * Class constructor with initial IMU heading + default values
+     * @param headingIMU IMU heading at init
+     */
+    public Odo3(double headingIMU) {
+        hRadLast = headingIMU;
     }
 
     /**
@@ -132,7 +141,7 @@ public class Odo3 {
      * Returns the robot's heading change in degrees between the last 2 setEncoderPos.
      * @return      the robot's heading change in degrees
      */
-   public double getDeltaHDeg() {
+    public double getDeltaHDeg() {
         return Math.toDegrees(deltaHRad);
     }
 
@@ -230,14 +239,15 @@ public class Odo3 {
         hRad = newHDeg * Math.PI/180;
     }
 
-    /**
+    /*
      * Updates the object based on updated encoder positions.
      * @param eLeft     new tick position of the left encoder, (+) when moving forward.
      * @param eRight    new tick position of the right encoder, (+) when moving forward.
      * @param eCenter   new tick position of the center encoder, (+) when strafing right.
-     */
+     *
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
         System.arraycopy(encoders, 0, encodersLast, 0, 3);
+        hRadLast = deltaHRad;
 
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
@@ -246,15 +256,71 @@ public class Odo3 {
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
 
-        deltaHRad = (deltaEncoders[1] / distanceRtoC * 2) - (deltaEncoders[0] / distanceLtoC * 2);
-        double deltaFArc = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
-        double deltaRArc = deltaEncoders[2] - backwardsOffset * deltaHRad + frontEncoderOffset * deltaHRad;
+        deltaHRad = headingIMU - hRadLast;
 
-        double deltaF = -(Math.sin(deltaHRad) * deltaFArc + Math.cos(deltaHRad) * deltaRArc);
-        double deltaR = -(Math.cos(deltaHRad) * deltaFArc + Math.sin(deltaHRad) * deltaRArc);
+        double rF = -Math.sqrt(Math.pow(distanceRtoC, 2) + Math.pow(frontEncoderOffset, 2)) * deltaHRad * Math.cos(Math.tan(frontEncoderOffset/distanceRtoC));
+        double lF = Math.sqrt(Math.pow(distanceLtoC, 2) + Math.pow(frontEncoderOffset, 2)) * deltaHRad * Math.cos(Math.tan(frontEncoderOffset/distanceLtoC));
 
-        deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
-        deltaY = deltaF * Math.sin(hRad) + deltaR * Math.cos(hRad);
+        double deltaFArc = (deltaEncoders[1] + rF + deltaEncoders[0] + lF) / 2.0;
+        double deltaRArc = deltaEncoders[2] - backwardsOffset * deltaHRad;
+
+        double fArcRadius = deltaFArc/deltaHRad;
+        double rArcRadius = deltaRArc/deltaHRad;
+
+        double deltaF = fArcRadius * Math.sin(deltaHRad) + (rArcRadius - rArcRadius * Math.cos(deltaHRad));
+        if(deltaHRad == 0)
+            deltaF = deltaFArc;
+        double deltaR = rArcRadius * Math.sin(deltaHRad) - (fArcRadius - fArcRadius * Math.cos(deltaHRad));
+        if(deltaHRad == 0)
+            deltaR = deltaRArc;
+
+        deltaX = deltaR * Math.cos(hRad) - deltaF * Math.sin(hRad);
+        deltaY = deltaF * Math.cos(hRad) + deltaR * Math.sin(hRad);
+
+        x += deltaX;
+        y += deltaY;
+        hRad += deltaHRad;
+    }
+    */
+
+    /**
+     * Updates the object based on updated encoder positions.
+     * @param eLeft     new tick position of the left encoder, (+) when moving forward.
+     * @param eRight    new tick position of the right encoder, (+) when moving forward.
+     * @param eCenter   new tick position of the center encoder, (+) when strafing right.
+     * @param headingIMU    heading of the robot in radians
+     */
+    public void setEncoderPos(int eLeft, int eRight, int eCenter, double headingIMU) {
+        System.arraycopy(encoders, 0, encodersLast, 0, 3);
+        hRadLast = deltaHRad;
+
+        encoders[0] = cmPerTick * eLeft;
+        encoders[1] = cmPerTick * eRight;
+        encoders[2] = cmPerTick * eCenter;
+
+        for (int i = 2; i >= 0; i--)
+            deltaEncoders[i] =  encoders[i] - encodersLast[i];
+
+        deltaHRad = headingIMU - hRadLast;
+
+        double rF = -Math.sqrt(Math.pow(distanceRtoC, 2) + Math.pow(frontEncoderOffset, 2)) * deltaHRad * Math.cos(Math.tan(frontEncoderOffset/distanceRtoC));
+        double lF = Math.sqrt(Math.pow(distanceLtoC, 2) + Math.pow(frontEncoderOffset, 2)) * deltaHRad * Math.cos(Math.tan(frontEncoderOffset/distanceLtoC));
+
+        double deltaFArc = (deltaEncoders[1] + rF + deltaEncoders[0] + lF) / 2.0;
+        double deltaRArc = deltaEncoders[2] - backwardsOffset * deltaHRad;
+
+        double fArcRadius = deltaFArc/deltaHRad;
+        double rArcRadius = deltaRArc/deltaHRad;
+
+        double deltaF = fArcRadius * Math.sin(deltaHRad) + (rArcRadius - rArcRadius * Math.cos(deltaHRad));
+        if(deltaHRad == 0)
+            deltaF = deltaFArc;
+        double deltaR = rArcRadius * Math.sin(deltaHRad) - (fArcRadius - fArcRadius * Math.cos(deltaHRad));
+        if(deltaHRad == 0)
+            deltaR = deltaRArc;
+
+        deltaX = deltaR * Math.cos(hRad) - deltaF * Math.sin(hRad);
+        deltaY = deltaF * Math.cos(hRad) + deltaR * Math.sin(hRad);
 
         x += deltaX;
         y += deltaY;
