@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@Autonomous (name = "This one", group = "Autonomous")
+@Disabled
+@Autonomous (name = "AutoOpTheron", group = "Autonomous")
 
-public class AutoOperated3 extends OpMode {
+public class AutoOperatedTheron extends OpMode {
     int i = 0;
     Heading temp = new Heading();
     Robot powerplay = new Robot();
@@ -20,7 +22,7 @@ public class AutoOperated3 extends OpMode {
     public void start()
     {
         powerplay.robotDefaultState();
-        powerplay.chassis.setSpeedCoefficient(0.35);
+        powerplay.chassis.setSpeedCoefficient(0.3);
         powerplay.cds.onOffLED(false);
         powerplay.time.reset();
     }
@@ -40,13 +42,12 @@ public class AutoOperated3 extends OpMode {
             case 1:
                 powerplay.resetOdoButOnlyLikeOnce(i);
                 liftHeight = 15;
-                if(powerplay.chassis.move(19.5,0,0,temp))
+                if(powerplay.chassis.move(19.25,0,0,temp))
                     i++;
                 break;
             case 2:
             case 5:
             case 7:
-            case 10:
                 if(!once)
                 {
                     storage = powerplay.time.time();
@@ -94,28 +95,32 @@ public class AutoOperated3 extends OpMode {
                 break;
             case 4:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(24,0,0,temp))
+                if(powerplay.chassis.move(22,0,0,temp))
                     i++;
                 break;
             case 6:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                powerplay.led.setLed("white");
                 if(powerplay.chassis.move(-19,-2,0,temp))
                     i++;
                 break;
             case 8:
                 powerplay.resetOdoButOnlyLikeOnce(i);
                 if(pos == 1)
-                    if(powerplay.chassis.move(3, -24, 0, temp))
+                    if(powerplay.chassis.move(2, -24, 0, temp))
                         i++;
                 if(pos == 2)
                     i++;
                 if(pos == 3)
-                    if(powerplay.chassis.move(3, 24, 0, temp))
+                    if(powerplay.chassis.move(2, 24, 0, temp))
                         i++;
                 break;
             case 9:
                 liftHeight = 0;
+                if((powerplay.lift.leftLift.getCurrentPosition() + powerplay.lift.liftChange + powerplay.lift.liftManual + 10) < 20)
+                    i++;
+                break;
+            case 10:
+                i++;
                 break;
             case 11:
                 i++;

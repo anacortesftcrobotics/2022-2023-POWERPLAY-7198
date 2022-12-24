@@ -139,7 +139,12 @@ public class Chassis
 
         if(!doneYet)
         {
-            xyrMovement(restrict(yError), restrict(xError), restrict(-hError / 10));
+            //xyrMovement(restrict(yError), restrict(xError), restrict(-hError / 10));
+            double yMin = restrictSet(((yError - 1) / 8), -0.4, -0.3);
+            double yMax = restrictSet(((yError - 1) / 8), 0.3, 0.4);
+            double xMin = restrictSet(((xError - 1) / 22), -0.4, -0.15);
+            double xMax = restrictSet(((xError - 1) / 22), 0.15, 0.4);
+            xyrMovement(restrictSet(yError,yMin, yMax), restrictSet(xError,xMin, xMax), restrict(-hError / 10));
         }
 
         if(doneYet)
@@ -226,6 +231,10 @@ public class Chassis
     public double restrict(double input)
     {
         return Math.max(-1, Math.min(1, input));
+    }
+    public double restrictSet(double input, double min, double max)
+    {
+        return Math.max(min, Math.min(max, input));
     }
 
     /**

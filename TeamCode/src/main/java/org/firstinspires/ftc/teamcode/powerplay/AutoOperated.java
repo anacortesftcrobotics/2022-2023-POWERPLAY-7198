@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.powerplay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 import org.checkerframework.checker.units.qual.A;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+@Disabled
 @Autonomous (name = "AutoOp", group = "Autonomous")
 
 public class AutoOperated extends OpMode {
@@ -26,7 +28,7 @@ public class AutoOperated extends OpMode {
     public void start()
     {
         powerplay.robotDefaultState();
-        powerplay.chassis.setSpeedCoefficient(0.35);
+        powerplay.chassis.setSpeedCoefficient(0.3);
         powerplay.cds.onOffLED(false);
         powerplay.time.reset();
     }
@@ -94,21 +96,12 @@ public class AutoOperated extends OpMode {
                     i++;
                 break;
             case 5:
-                powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(-8, 1, 0, temp))
-                    i++;
-                break;
             case 6:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(-8, 1, 0, temp))
+                if(powerplay.chassis.move(-8.5, 1, 0, temp))
                     i++;
                 break;
             case 7:
-                powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(-8, 1, 0, temp))
-                    i++;
-                break;
-            case 8:
                 powerplay.resetOdoButOnlyLikeOnce(i);
                 if(pos == 1)
                     if(powerplay.chassis.move(4, -25, 0, temp))
@@ -119,7 +112,7 @@ public class AutoOperated extends OpMode {
                     if(powerplay.chassis.move(1, 25, 0, temp))
                         i++;
                 break;
-            case 9:
+            case 8:
                 liftHeight = 0;
                 if((powerplay.lift.leftLift.getCurrentPosition() + powerplay.lift.liftChange + powerplay.lift.liftManual + 10) < 20)
                     i++;

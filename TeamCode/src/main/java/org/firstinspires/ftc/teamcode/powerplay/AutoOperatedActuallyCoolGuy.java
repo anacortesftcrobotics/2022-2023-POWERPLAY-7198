@@ -1,19 +1,13 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.*;
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Disabled
-@Autonomous (name = "AutoOpCoolGuy", group = "Autonomous")
+@Autonomous (name = "AutoOpCoolGuy2", group = "Autonomous")
 
-public class AutoOperated2 extends OpMode {
+public class AutoOperatedActuallyCoolGuy extends OpMode {
     int i = 0;
     Heading temp = new Heading();
     Robot powerplay = new Robot();
@@ -43,26 +37,26 @@ public class AutoOperated2 extends OpMode {
                 powerplay.led.setLed("black");
                 powerplay.grabber.grab(true, false);
                 if (powerplay.time.time() > 2)
-                    i++;
+                    i = 1;
                 break;
             case 1:
                 powerplay.led.setLed("black");
                 liftHeight = 14;
-                i++;
+                i = 2;
                 break;
             case 2:
                 once = false;
                 powerplay.led.setLed("black");
                 powerplay.resetOdoButOnlyLikeOnce(i);
                 if (powerplay.chassis.move(20.5, 0, 0, temp))
-                    i++;
+                    i = 3;
                 break;
             case 3:
                 liftHeight = 35;
-                if (once) {
+                if (!once) {
                     storage = powerplay.time.time();
                     powerplay.cds.onOffLED(true);
-                    once = !once;
+                    once = true;
                 }
                 int j = powerplay.cds.getSleeve();
                 if (j == 0) {
@@ -82,79 +76,96 @@ public class AutoOperated2 extends OpMode {
                     pos = 2;
                 }
                 if (powerplay.time.time() - storage > 5) {
+                    once = false;
                     powerplay.cds.onOffLED(false);
-                    i++;
+                    i = 4;
                 }
                 break;
             case 4:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if (powerplay.chassis.move(28, 0, 0, temp))
-                    i++;
+                if(powerplay.chassis.move(12, 0, 0, temp))
+                    i = 5;
                 break;
             case 5:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if (powerplay.chassis.move(-8, 1, 0, temp))
-                    i++;
+                if(powerplay.chassis.move(0, 0, 30, temp))
+                    i = 6;
                 break;
             case 6:
-                powerplay.resetOdoButOnlyLikeOnce(i);
-                if (powerplay.chassis.move(0, 0, 35, temp))
-                    i++;
-                break;
-            case 7:
-                powerplay.resetOdoButOnlyLikeOnce(i);
-                if (powerplay.chassis.move(12, 0, 0, temp)) {
-                    powerplay.led.setLed("red");
-                    powerplay.grabber.grab(false, false);
-                    i++;
-                }
-                break;
-            case 8:
-                powerplay.resetOdoButOnlyLikeOnce(i);
                 if(!once)
                 {
                     storage = powerplay.time.time();
-                    once = !once;
+                    once = true;
                     powerplay.chassis.brake();
                 }
-                if(powerplay.time.time() - storage > 0.75 ){
+                if(powerplay.time.time() - storage > 0.5 ){
                     once = false;
-                    i++;
+                    i = 7;
+                }
+                break;
+            case 7:
+                powerplay.resetOdoButOnlyLikeOnce(i);
+                if(powerplay.chassis.move(11, 0, 0, temp))
+                    i = 8;
+                break;
+            case 8:
+                if(!once)
+                {
+                    storage = powerplay.time.time();
+                    once = true;
+                    powerplay.chassis.brake();
+                }
+                if(powerplay.time.time() - storage > 0.5 ){
+                    once = false;
+                    i = 9;
                 }
                 break;
             case 9:
-                powerplay.resetOdoButOnlyLikeOnce(i);
-                liftHeight = 0;
-                if(powerplay.chassis.move(-12, 0, 0, temp))
-                    i++;
+                powerplay.grabber.grab(false,false);
+                i = 10;
                 break;
             case 10:
-                powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(0, 0, -35, temp))
-                    i++;
+                if(!once)
+                {
+                    storage = powerplay.time.time();
+                    once = true;
+                    powerplay.chassis.brake();
+                }
+                if(powerplay.time.time() - storage > 0.5 ){
+                    once = false;
+                    i = 11;
+                }
                 break;
             case 11:
+                liftHeight = 0;
+                powerplay.resetOdoButOnlyLikeOnce(i);
+                if(powerplay.chassis.move(-12, 0, 0, temp))
+                    i = 12;
+                break;
             case 12:
+                powerplay.resetOdoButOnlyLikeOnce(i);
+                if(powerplay.chassis.move(0, 0, -30, temp))
+                    i = 13;
+                break;
             case 13:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(-8, 0, 0, temp))
-                    i++;
+                powerplay.led.setLed("white");
+                if(powerplay.chassis.move(-19,-2,0,temp))
+                    i = 14;
                 break;
             case 14:
                 powerplay.resetOdoButOnlyLikeOnce(i);
                 if(pos == 1)
-                    if(powerplay.chassis.move(4, -25, 0, temp))
-                        i++;
+                    if(powerplay.chassis.move(3, -24, 0, temp))
+                        i = 15;
                 if(pos == 2)
-                    i++;
+                    i = 15;
                 if(pos == 3)
-                    if(powerplay.chassis.move(1, 25, 0, temp))
-                        i++;
+                    if(powerplay.chassis.move(3, 24, 0, temp))
+                        i = 15;
                 break;
             case 15:
-                liftHeight = 0;
-                if((powerplay.lift.leftLift.getCurrentPosition() + powerplay.lift.liftChange + powerplay.lift.liftManual + 10) < 20)
-                    i++;
+                i = 16;
                 break;
             default:
                 powerplay.led.setLed("black");
@@ -164,5 +175,16 @@ public class AutoOperated2 extends OpMode {
                 break;
         }
         powerplay.lift.liftSet(liftHeight);
+    }
+    private enum State
+    {
+        grabbing,
+        unGrabbing,
+        waiting,
+        setLiftUp,
+        setLiftDown,
+        move20_5
+
+
     }
 }
