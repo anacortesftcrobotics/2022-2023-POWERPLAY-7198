@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chKai;
+/*package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
@@ -32,13 +32,12 @@ public class basic extends LinearOpMode {
 
     private boolean hasChanged2;
     private double servoSet;
+    private double lastSpeed;
+    private Speed s = new Speed();
 
-    /**
-     * This function is executed when this Op Mode is selected from the Driver Station.
-     */
     @Override
     public void runOpMode() {
-
+        
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
@@ -72,6 +71,7 @@ public class basic extends LinearOpMode {
         cds.initializeHardware(hardwareMap);
         lift.initializeHardware(hardwareMap);
         grabliftled.initializeHardware(hardwareMap);
+        s.initializeHardware(hardwareMap);
 
         // Put initialization blocks here.
         waitForStart();
@@ -92,6 +92,8 @@ public class basic extends LinearOpMode {
                 telemetry.addLine(cds.colorTelemetry());
                 telemetry.addLine(grabliftled.state());
                 telemetry.addData("distance",cds.getDistance());
+                telemetry.addData("spedometer",spedometer());
+                telemetry.addData("speed",s.getSpeedY(1));
                 telemetry.update();
             }
 
@@ -99,4 +101,10 @@ public class basic extends LinearOpMode {
         }
 
     }
-}
+    public double spedometer(){
+
+        double t = Math.max(s.getSpeedY(1),lastSpeed);
+        lastSpeed = t;
+        return t;
+    }
+}*/
