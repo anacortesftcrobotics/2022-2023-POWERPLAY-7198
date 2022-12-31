@@ -18,11 +18,14 @@ public class NeedForSpeed implements SubsystemManager{
     ElapsedTime tx = new ElapsedTime();
     ElapsedTime ty = new ElapsedTime();
     ElapsedTime tr = new ElapsedTime();
+    ElapsedTime px = new ElapsedTime();
+    ElapsedTime py = new ElapsedTime();
+    ElapsedTime pr = new ElapsedTime();
     private DcMotor rightBack;
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor leftFront;
-    //left encoder is leftBack; right encoder is rightBack; rear encoder is rightFront.
+    private DcMotor encoderLeft, encoderRight, encoderBack;
     private int lastX;
     private int lastY;
     private int lastR;
@@ -77,47 +80,56 @@ public class NeedForSpeed implements SubsystemManager{
         return y;
     }
     public double moveY (double input, double coefficient){ //input would be the speed to set it at. coefficient would be the speed coefficient. both should be between 1 and 0.
-        lastMoveY += (input - getSpeedY(coefficient))/2;
+        if (py.milliseconds()>20){
+            lastMoveY += (input - getSpeedY(coefficient))/2;
+            py.reset();
+        }
         return lastMoveY;
     }
     public double moveX (double input, double coefficient){ //input would be the speed to set it at. coefficient would be the speed coefficient. both should be between 1 and 0.
-        lastMoveX += (input - getSpeedY(coefficient))/2;
+        if (px.milliseconds()>20){
+            lastMoveX += (input - getSpeedX(coefficient))/2;
+            px.reset();
+        }
         return lastMoveX;
     }
     public double moveR (double input, double coefficient){ //input would be the speed to set it at. coefficient would be the speed coefficient. both should be between 1 and 0.
-        lastMoveR += (input - getSpeedY(coefficient))/2;
+        if (pr.milliseconds()>20){
+            lastMoveR += (input - getSpeedR(coefficient))/2;
+            pr.reset();
+        }
         return lastMoveR;
     }
-    
-    
-}*/
-/*
-    concept implementation:
-    double y = s.moveY(gamepad1.left_stick_y, speedCoefficient);
-    double x = s.moveX(gamePad1.left_stick_x, speedCoefficient);
-    double r = s.moveR(gamePad1.right_stick_x, speedCoefficient);
-    
-    double FL = (y - x - r);
+    public void check (Gamepad gamepad1, double speedCoefficient){
+        double y = s.moveY(gamepad1.left_stick_y, speedCoefficient);
+        double x = s.moveX(gamePad1.left_stick_x, speedCoefficient);
+        double r = s.moveR(gamePad1.right_stick_x, speedCoefficient);
+        
+        double FL = (y - x - r);
 
-    double FR = (y + x + r);
+        double FR = (y + x + r);
 
-    double BL = (y + x - r);
+        double BL = (y + x - r);
 
-    double BR = (y - x + r);
+        double BR = (y - x + r);
 
-    double maxPower = Math.max(Math.max(FL,FR),Math.max(BL,BR));
-    if (maxPower > 1){
-        FL=FL/maxPower;
-        FR=FR/maxPower;
-        BL=BL/maxPower;
-        BR=BR/maxPower;
+        double maxPower = Math.max(Math.max(FL,FR),Math.max(BL,BR));
+        if (maxPower > 1){
+            FL=FL/maxPower;
+            FR=FR/maxPower;
+            BL=BL/maxPower;
+            BR=BR/maxPower;
+        }
+
+        leftFront.setPower(FL);
+
+        rightFront.setPower(FR);
+
+        leftBack.setPower(BL);
+
+        rightBack.setPower(BR);
     }
-
-    leftFront.setPower(FL);
-
-    rightFront.setPower(FR);
-
-    leftBack.setPower(BL);
-
-    rightBack.setPower(BR);
-    */
+    
+    
+}
+*/
