@@ -18,22 +18,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class SemiAuto implements SubsystemManager{
-
-    private DcMotor rightBack, leftBack, rightFront, leftFront, encoderLeft, encoderRight, encoderBack;
-    private boolean hasChanged = false;
-    private boolean ok = false;
-    private boolean Ying, Xing, Ring;
-    private boolean YCing, XCing, RCing;
-    private int xCounter, yCounter, rCounter;
-    private double goalX, goalY, goalR;
-    private int lastGoalX;
-    private int lastGoalY;
+    //hardware stuff
+    //imu
     BNO055IMU imu;
-    FakeOdometry odo = new FakeOdometry();
     Orientation angles;
     Acceleration gravity;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+    //motors/encoders
+    private DcMotor rightBack, leftBack, rightFront, leftFront, encoderLeft, encoderRight, encoderBack;//encoderLeft is leftBack, encoderRight is rightBack, and encoderBack is rightFront. see initializeHardware.
 
+    //instance variables
+    private boolean hasChanged = false; //see dBounce
+    private boolean ok = false; //ok to move semi-autonomously. see check, Y, X, R, and stickActive.
+    private boolean Ying, Xing, Ring; //Ying = moving on the Y-axis, etc. see Y, X, and R.
+    private boolean YCing, XCing, RCing; //YCing = centering on a tile in the y-axis, etc. see Y, X, centerX, and centerY. not using RCing yet.
+    private int xCounter, yCounter, rCounter; //these count how many tiles (or eighth-turns) you want to move in each axis. see check, setGoalY, setGoalX, and setGoalR.
+    private double goalX, goalY, goalR; //these hold the current goal position (where the robot is trying to go) for each axis. see X, Y, R, setGoalY, setGoalX, and setGoalR.
+    //odometry
+    FakeOdometry odo = new FakeOdometry();
     /**
     *initializes all the hardware needed
     *@param hardwareMap is the hardwareMap object you need to pass to it
@@ -63,7 +65,7 @@ public class SemiAuto implements SubsystemManager{
         
         imu.initialize(parameters);
     }
-    /**
+    *//**
     *call this method in your opMode loop to use this class
     *@param gamepad1 is the gamepad you want to use for chassis control
      *//*
@@ -104,9 +106,9 @@ public class SemiAuto implements SubsystemManager{
         }
 
     }
-    /**
-    *executes center X, then moves the robot along the y-axis to within one inch of goalY
-    *only moves if the robot is in the process of strafing or turning or non-auto movement
+    *//**
+    *executes centerX, then moves the robot along the y-axis to within one inch of goalY
+    *only moves if the robot is not in the process of x movement, r movement or non-auto movement
      *//*
     public void Y(){
         double pwr=0;
@@ -126,9 +128,9 @@ public class SemiAuto implements SubsystemManager{
             Ying = false;
         }
     }
-    /**
+    *//**
     *executes centerY, then moves the robot along the x-axis to within one inch of goalX
-    *only moves if the robot is in the process of driving or turning or non-auto movement
+    *only moves if the robot is not in the process of y movement, r movement or non-auto movement
      *//*
     public void X(){
         double pwr=0;
@@ -148,9 +150,9 @@ public class SemiAuto implements SubsystemManager{
             Xing = false;
         }
     }
-    /**
+    *//**
     *turns the robot to within three degrees of goalR
-    *only moves if the robot is in the process of strafing or driving or non-auto movement
+    *only moves if the robot is not in the process of y movement, x movement or non-auto movement
      *//*
     public void R(){
         double pwr=0;
@@ -168,7 +170,10 @@ public class SemiAuto implements SubsystemManager{
             Ring = false;
         }
     }
-
+    *//**
+    *centers the robot on the nearest path in the x-axis, preparing it to move along the y-axis
+    *path = an imaginary line going down the center of a row of tiles. we want the robot to move along the path.
+     *//*
     public void centerX(){
         double near = (Math.round(odo.getX()/24))*24;
         double pwr = 0;
@@ -185,7 +190,10 @@ public class SemiAuto implements SubsystemManager{
             XCing = false;
         }
     }
-
+    *//**
+    *centers the robot on the nearest path in the y-axis, preparing it to move along the x-axis
+    *path = an imaginary line going down the center of a row of tiles. we want the robot to move along the path.
+     *//*
     public void centerY(){
         double near = (Math.round(odo.getY()/24))*24;
         double pwr = 0;
@@ -202,23 +210,29 @@ public class SemiAuto implements SubsystemManager{
             YCing = false;
         }
     }
-
+    *//**
+    *determines the y-axis goal and sets goalY based on the nearest path and yCounter
+     *//*
     public void setGoalY(){
         double near = (Math.round(odo.getY()/24))*24;
         goalY = near + yCounter;
     }
-
+    *//**
+    *determines the x-axis goal and sets goalX based on the nearest path and xCounter
+     *//*
     public void setGoalX(){
         double near = (Math.round(odo.getX()/24))*24;
         goalY = near + xCounter;
     }
-
+    *//**
+    *determines the rotational axis goal and sets goalR based on the nearest 45* angle and rCounter
+     *//*
     public void setGoalR(){
         double near = (Math.round(odo.getR()/45))*45;
         goalY = near + rCounter;
     }
 
-    /**
+    *//**
     *Checks if either stick is being moved
     *if true, sets all goals to current position, all counters to 0, and ok to false, thereby disabling semi-autonomous movement
     *@param gamepad1 is the Gamepad being checked, presumably the chassis controller
@@ -241,7 +255,7 @@ public class SemiAuto implements SubsystemManager{
         }
         return stickActive;
     }
-    /**Takes a boolean key from the gamepad and only lets it "count" once.
+    *//**Takes a boolean key from the gamepad and only lets it "count" once.
     *@param input is the boolean key being used
     *can only be used for one key at a time; if multiple keys are dBounced at the same time, only the first one will be counted
     *//*
@@ -260,7 +274,7 @@ public class SemiAuto implements SubsystemManager{
         }
         return x;
     }
-    /**
+    *//**
     *sets motors to drive, strafe, or turn. 
     *@param type is the type of movement, 1 for driving, 2 for strafing, and 3 for turning.
     *type 1: +forward/-back. types 2 and 3: +right/-left
@@ -286,7 +300,7 @@ public class SemiAuto implements SubsystemManager{
         }
 
     }
-    /**
+    *//**
     *movements in relation to field, not robot heading. 
     *@param type is the type of movement, 1 for y-axis and 2 for x-axis
     *type 1: +forward/-back. type2: +right/-left
@@ -327,3 +341,4 @@ public class SemiAuto implements SubsystemManager{
         rightBack.setPower(BR);
     }
 }
+*/
