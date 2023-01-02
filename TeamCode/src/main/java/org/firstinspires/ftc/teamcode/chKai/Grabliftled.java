@@ -23,12 +23,20 @@ public class Grabliftled {
         grabber.initializeHardware(hardwareMap);
         grabber.grab(false, true);
     }
-    public void autoGrab(Gamepad gamepad1){
+    /**
+    *automatically grabs and lifts cone when near enough
+    *@param button- the button you want to use for basic grabbing
+    *to use:
+    *press button. the led should turn yellow.
+    *drive close to the cone. when the cone is close enough, the grabber will automatically close
+    *the led should switch to poleCenter (which means red if its down), and after half a second or so the lift will raise to 2 inches. 
+     */
+    public void autoGrab(Boolean button){
 
-        if (gamepad1.right_bumper && !hasChanged){
+        if (button && !hasChanged){
             grabbable = !grabbable;
         }
-        if (gamepad1.right_bumper){
+        if (button){
             hasChanged = true;
         }else {
             hasChanged = false;
@@ -78,10 +86,19 @@ public class Grabliftled {
             hasGrabbed = false;
         }
     }
+    /**
+    *Gets the current state of autoGrab for telemetry
+    *@return "notGrabbable," "grabbed," or "grabbable not grabbed" depending on the state. also shows i, the iterator that controls the delay between grab and lift.
+     */
     public String state(){
         return (String) s+i;
 
     }
+    /**
+    *tells you wether or not the grabber is actually closed 
+    *@return true if the grabber is closed, else false 
+    *use in robot or opMode to control lift stuff
+    */
     public boolean grabbed(){
         return grabbed;
     }

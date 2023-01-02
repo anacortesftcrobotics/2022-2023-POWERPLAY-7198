@@ -32,6 +32,9 @@ public class NeedForSpeed implements SubsystemManager{
     private int lastMoveX;
     private int lastMoveY;
     private int lastMoveR;
+    private boolean hasChanged;
+    private double speedCoefficient = 1;
+
     public void initializeHardware(HardwareMap hardwareMap){
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
@@ -100,7 +103,24 @@ public class NeedForSpeed implements SubsystemManager{
         }
         return lastMoveR;
     }
-    public void check (Gamepad gamepad1, double speedCoefficient){
+    public void check (Gamepad gamepad1){
+
+        if (gamepad1.left_trigger > 0.5 && !hasChanged){
+            speedCoefficient -= 0.25;
+        }else if (gamepad1.right_trigger > 0.5 && !hasChanged){
+            speedCoefficient += 0.25;
+        }
+        if (gamepad1.left_trigger || gamepad1.right_trigger){
+            hasChanged = true;
+        }else{
+            hasChanged = false;
+        }
+        if (speedCoefficient < 0.25){
+            speedCoefficient = 0.25;
+        }
+        if (speedCoefficient > 1.0){
+            speedCoefficient = 1.0;
+        }
         double y = s.moveY(gamepad1.left_stick_y, speedCoefficient);
         double x = s.moveX(gamePad1.left_stick_x, speedCoefficient);
         double r = s.moveR(gamePad1.right_stick_x, speedCoefficient);

@@ -101,6 +101,19 @@ public class Led implements SubsystemManager
                 break;
         }
     }
+    /**
+    *Gives LED feedback to drivers on how to center the cone over the pole
+    *questionable if its working yet
+    *if the pole is very far away, do team colors
+    *if its too far right and too far away, blue 
+    *if its too far left and too far away, yellow
+    *if its centered and too far away, green
+    *if its too close, red
+    *if its too far right and the right distance, purple
+    *if its too far left and right distance, orange
+    *if its the right distance and centered, white
+    *@author Kai G
+    */
     public void poleCenter(){
         double left = pablo.getLeftDistance();
         double right = pablo.getRightDistance();
@@ -110,8 +123,8 @@ public class Led implements SubsystemManager
         double idealDiff = 5.2;
         double addTolerance = 3;
         double diffTolerance = 6;
-        if (left>30 && right>30){//if the cone is far away, do team colors
-            setLed("blue violet");
+        if (left>30 && right>30){//if the pole is very far away, do team colors
+            teamColors();
         }else {
             if (add > idealAdd + addTolerance) {//if its too far away...
                 if (diff < idealDiff - diffTolerance) {//if its too far right and too far away, blue
@@ -130,12 +143,17 @@ public class Led implements SubsystemManager
                     setLed("violet");
                 } else if (diff > idealDiff + diffTolerance) {//if its too far left and right distance, orange
                     setLed("orange");
-                } else {//if its the right distance and centered, solid
+                } else {//if its the right distance and centered, white
                     setLed("white");
                 }
             }
         }
     }
+
+    /**
+    *uses the identify() method in CDS to match the signal color with the LEDs
+    *@author Kai G
+    */
     public void signal()
     {
         if (cds.identify()==1){
@@ -145,11 +163,16 @@ public class Led implements SubsystemManager
         } else if (cds.identify()==3) {
             setLed("blue");
         } else if (cds.identify()==0) {
-            setLed("blue violet");
+            teamColors();
         } else if (cds.identify()==4){
             setLed("white");
         }
     }
+    /**
+    *Sets the LEDs to our team colors
+    *should be purple an white waves
+    *@author Kai G
+    */
     public void teamColors(){
         led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
     }

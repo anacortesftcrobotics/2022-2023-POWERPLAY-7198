@@ -29,19 +29,32 @@ public class CDS implements SubsystemManager {
 
     /**
      * This method returns the distance in CM.
-     * @return the distance in CM.
+     * @return the distance in CM. 
      */
     public double getDistance ()
     {
         return color.getDistance(DistanceUnit.INCH);
     }
-    public double getRed(){
+
+    /**gets the red value from the CDS
+    *@return int value of red
+    *@author Kai G
+     */
+    public int getRed(){
         return color.red();
     }
-    public double getBlue(){
+     /**gets the blue value from the CDS
+    *@return int value of blue
+    *@author Kai G
+     */
+    public int getBlue(){
         return color.blue();
     }
-    public double getGreen(){
+     /**gets the green value from the CDS
+    *@return int value of green
+    *@author Kai G
+     */
+    public int getGreen(){
         return color.green();
     }
 
@@ -90,14 +103,26 @@ public class CDS implements SubsystemManager {
     {
         color.enableLed(onOff);
     }
+    /**
+    *add telemetry with the individual rgb color values, as well as the distance in cm. 
+    *@return a string with each color value and distance, labeled
+    *to use: telemetry.addLine([CDS object].colorTelemetry);
+    *@author Kai G
+    */
     public String colorTelemetry(){
-        double red = getRed();
-        double green = getGreen();
-        double blue = getGreen();
-        double dist = color.getDistance(DistanceUnit.CM);
-        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue);
+        int red = getRed();
+        int green = getGreen();
+        int blue = getGreen();
+        int dist = color.getDistance(DistanceUnit.CM);
+        return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue+"\ndistance (cm)"+dist);
     }
-    public int identify () { //x=s 1 if red, 2 if green, 3 if blue, 4 if white and 0 if nothing.
+    /**
+    *Check which way the signal sleeve is facing
+    *@return 0 if nothing, 1 if red, 2 if green, 3 if blue, and 4 if white.
+    *sensor light should be on
+    *@author Kai G
+    */
+    public int identify () { 
         int x = 0;
         if (getDistance() > 1) {
             x = 0;

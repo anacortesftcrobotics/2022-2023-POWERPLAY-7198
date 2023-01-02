@@ -17,8 +17,8 @@ public class TheStuff extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                a.check();
-                b.check();
+                a.check(gamepad1);
+                b.check(gamepad1);
             }
         }
     }
