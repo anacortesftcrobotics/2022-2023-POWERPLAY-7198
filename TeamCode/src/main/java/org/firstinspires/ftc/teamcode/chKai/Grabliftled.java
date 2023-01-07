@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.chKai;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 import com.qualcomm.robotcore.hardware.*;
-
+/**
+*this class was made because the stuff inside it didnt really fit inside grabber, lift, or Led.
+*autoGrab is the only real thing in here right now
+*@author Kai G
+ */
 public class Grabliftled {
     private Servo leftGrab, rightGrab;
     Led led = new Led();
@@ -30,6 +34,7 @@ public class Grabliftled {
     *press button. the led should turn yellow.
     *drive close to the cone. when the cone is close enough, the grabber will automatically close
     *the led should switch to poleCenter (which means red if its down), and after half a second or so the lift will raise to 2 inches. 
+    *press button again to release
      */
     public void autoGrab(Boolean button){
 
