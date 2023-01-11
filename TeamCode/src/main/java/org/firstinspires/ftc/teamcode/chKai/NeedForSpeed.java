@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-
+/** */
 public class NeedForSpeed implements SubsystemManager{
     ElapsedTime tx = new ElapsedTime();
     ElapsedTime ty = new ElapsedTime();
@@ -21,10 +21,7 @@ public class NeedForSpeed implements SubsystemManager{
     ElapsedTime px = new ElapsedTime();
     ElapsedTime py = new ElapsedTime();
     ElapsedTime pr = new ElapsedTime();
-    private DcMotor rightBack;
-    private DcMotor leftBack;
-    private DcMotor rightFront;
-    private DcMotor leftFront;
+    private DcMotor rightFront, leftFront, leftBack, rightBack;
     private DcMotor encoderLeft, encoderRight, encoderBack;
     private int lastX;
     private int lastY;
@@ -45,6 +42,9 @@ public class NeedForSpeed implements SubsystemManager{
         encoderBack = rightFront;
         zero();
     }
+    /**
+    *sets all encoders to zero and motors to run without encoder
+    */
     public void zero(){
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -58,6 +58,9 @@ public class NeedForSpeed implements SubsystemManager{
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    /**
+    *gets the speed forward/back in encoder ticks per millisecond
+    *once I test it I can set max to the right value and it will give values from -1 to 1 */
     public double getSpeedY(double x){//x would be the speed coeficcient
         double max = 1.0;//would be the max speed we wanted, so the method would return values from 0 to 1
         double moved = (encoderLeft.getCurrentPosition() - encoderRight.getCurrentPosition()) - lastY;//amount moved since method last called
