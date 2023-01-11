@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
@@ -110,7 +110,7 @@ public class NeedForSpeed implements SubsystemManager{
         }else if (gamepad1.right_trigger > 0.5 && !hasChanged){
             speedCoefficient += 0.25;
         }
-        if (gamepad1.left_trigger || gamepad1.right_trigger){
+        if (gamepad1.left_trigger>0.5 || gamepad1.right_trigger>0.5){
             hasChanged = true;
         }else{
             hasChanged = false;
@@ -121,9 +121,9 @@ public class NeedForSpeed implements SubsystemManager{
         if (speedCoefficient > 1.0){
             speedCoefficient = 1.0;
         }
-        double y = s.moveY(gamepad1.left_stick_y, speedCoefficient);
-        double x = s.moveX(gamePad1.left_stick_x, speedCoefficient);
-        double r = s.moveR(gamePad1.right_stick_x, speedCoefficient);
+        double y = moveY(gamepad1.left_stick_y, speedCoefficient);
+        double x = moveX(gamepad1.left_stick_x, speedCoefficient);
+        double r = moveR(gamepad1.right_stick_x, speedCoefficient);
         
         double FL = (y - x - r);
 
@@ -152,4 +152,3 @@ public class NeedForSpeed implements SubsystemManager{
     
     
 }
-*/

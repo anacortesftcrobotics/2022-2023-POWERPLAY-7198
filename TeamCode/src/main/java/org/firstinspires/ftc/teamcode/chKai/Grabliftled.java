@@ -74,14 +74,15 @@ public class Grabliftled {
             i =0;
         }
 
-        if (grabbed && !hasGrabbed && i > 60){
-            lift.liftSet(2.0);
+        if (grabbed  && i > 6 && !hasGrabbed){
+            lift.liftSet(1.0);
+            hasGrabbed = true;
         }
         if (!grabbed){
             lift.liftSet(0.0);
         }
         if (grabbed){
-            hasGrabbed = true;
+
         }else{
             hasGrabbed = false;
         }

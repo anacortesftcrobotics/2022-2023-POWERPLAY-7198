@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.chKai;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
@@ -33,7 +33,7 @@ public class basic extends LinearOpMode {
     private boolean hasChanged2;
     private double servoSet;
     private double lastSpeed;
-    private Speed s = new Speed();
+    private NeedForSpeed s = new NeedForSpeed();
 
     @Override
     public void runOpMode() {
@@ -83,11 +83,17 @@ public class basic extends LinearOpMode {
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
 
-                grabliftled.autoGrab(gamepad1);
+                grabliftled.autoGrab(gamepad1.right_bumper);
                 if (grabliftled.grabbed()){
                     //do whatever lift thingy
+                    if (gamepad1.a){
+                        lift.liftSet(10.0);
+                    } else if (gamepad1.b) {
+                        lift.liftSet(1.0);
+                    }
                 }else {
                     //make the lift go down
+                    lift.liftSet(0.0); 
                 }
                 telemetry.addLine(cds.colorTelemetry());
                 telemetry.addLine(grabliftled.state());
@@ -107,4 +113,4 @@ public class basic extends LinearOpMode {
         lastSpeed = t;
         return t;
     }
-}*/
+}
