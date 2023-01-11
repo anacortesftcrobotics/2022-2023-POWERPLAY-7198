@@ -4,6 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+/**
+ * This AutoOp was given to Theron to write code. It was a copy of a functioning autonomous at the time.
+ * This code is non-operational, and should not be run.
+ * @author      Lemon
+ */
+
 @Disabled
 @Autonomous (name = "AutoOpTheron", group = "Autonomous")
 

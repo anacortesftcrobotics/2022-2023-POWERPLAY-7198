@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 public class Gyro implements SubsystemManager{
 
+    /**
+     * Empty constructor
+     */
     public Gyro()
     {
 

@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Odometry implements SubsystemManager{
 
+    /**
+     * Empty constructor.
+     */
     public Odometry ()
     {
 
@@ -90,7 +93,7 @@ public class Odometry implements SubsystemManager{
     }
 
     /**
-     * This is an alternate method for updating the odometry values.
+     * This is the method for updating the odometry values.
      */
     public void updatePosition()
     {
@@ -121,6 +124,10 @@ public class Odometry implements SubsystemManager{
         h += Math.toDegrees(deltaH);
     }
 
+    /**
+     * This method returns a heading value based off of the odometry values.
+     * @return a Heading object with the current odometry values in it.
+     */
     public Heading getOdoHeading()
     {
         Heading temp = new Heading();
@@ -128,6 +135,13 @@ public class Odometry implements SubsystemManager{
         return temp;
     }
 
+    /**
+     * A method that converts three double into a heading object.
+     * @param x is the X value.
+     * @param y is the Y value.
+     * @param h is the heading value.
+     * @return a heading object filled with the set values.
+     */
     public Heading convertToHeading(double x, double y, double h)
     {
         Heading temp = new Heading();

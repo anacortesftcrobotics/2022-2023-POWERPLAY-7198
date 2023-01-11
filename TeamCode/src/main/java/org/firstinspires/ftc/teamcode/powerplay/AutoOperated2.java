@@ -10,6 +10,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+/**
+ * This was an AutoOp given to logan to write.
+ * This class is non-operational, and should not be run.
+ * @author      Lemon and Logan
+ */
+
 @Disabled
 @Autonomous (name = "AutoOpCoolGuy", group = "Autonomous")
 

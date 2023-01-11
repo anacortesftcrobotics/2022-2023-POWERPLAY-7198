@@ -3,6 +3,11 @@ package org.firstinspires.ftc.teamcode.powerplay;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+/**
+ * This was the AutoOp used at inter-leagues. It worked well, and should still work.
+ * @author      Lemon
+ */
+
 @Autonomous (name = "This one", group = "Autonomous")
 
 public class AutoOperated3 extends OpMode {

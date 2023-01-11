@@ -1,12 +1,20 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+/**
+ * This class is a TeleOp intended to provide touchpad control to the robot grabber, specifically for drawing with the robot.
+ * This class is non-operational, and should not be run.
+ * @author      Lemon
+ */
+
+@Disabled
 @TeleOp (name = "ArtistOp", group = "0TeleOp")
 
 public class ArtistOp extends OpMode

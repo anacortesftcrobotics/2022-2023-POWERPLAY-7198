@@ -4,6 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+/**
+ * This was another AutoOp given to logan to write.
+ * This class is non-operational, and should not be run.
+ * @author      Lemon and Logan
+ */
+
 @Disabled
 @Autonomous (name = "AutoOpCoolGuy2", group = "Autonomous")
 

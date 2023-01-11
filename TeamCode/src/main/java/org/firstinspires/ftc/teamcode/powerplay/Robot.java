@@ -12,7 +12,11 @@ import org.firstinspires.ftc.teamcode.kaicode.*;
  */
 
 public class Robot {
+    /**
+     * Empty constructor
+     */
     public Robot () {}
+
     //Variables
     boolean once = false;
     boolean coneRight = false;
@@ -154,6 +158,10 @@ public class Robot {
         lift.liftSafetyCheck();
     }
 
+    /**
+     * This is the method that runs the driving of the chassis.
+     * @param gamepad1 is the controller used to drive.
+     */
     public void driveControl (Gamepad gamepad1)
     {
         chassis.xyrMovement(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
@@ -163,6 +171,10 @@ public class Robot {
             chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient + 0.25)));
     }
 
+    /**
+     * This method controls the multipurpose cone righter.
+     * @param gamepad1 is the gamepad being used to control the MPCR.
+     */
     public void MPCRControl (Gamepad gamepad1)
     {
         if(controller1.button(10,gamepad1.left_bumper))
@@ -178,6 +190,10 @@ public class Robot {
             mpcr.preSetMPCR(0);
     }
 
+    /**
+     * This is the method that controls the lift.
+     * @param gamepad2 is th gamepad used to control the lift.
+     */
     public void liftControl (Gamepad gamepad2)
     {
         if(!coneRight) {
@@ -229,6 +245,10 @@ public class Robot {
         }
     }
 
+    /**
+     * This is the method that controls the grabber. It allows for opening and closing, as well as shifting between regular and beacon grab.
+     * @param gamepad2 is the gamepad used to control the grabber.
+     */
     public void grabberControl(Gamepad gamepad2)
     {
         if(controller2.button(11, gamepad2.right_bumper))
@@ -251,6 +271,10 @@ public class Robot {
             grabber.grab(false, beaconed);
     }
 
+    /**
+     * This is a method designed to be used in an auto loop. It will reset the odometry, but only once per step.
+     * @param i is the i value or the current step that the auto is on.
+     */
     public void resetOdoButOnlyLikeOnce(int i)
     {
         if(i != iLast)

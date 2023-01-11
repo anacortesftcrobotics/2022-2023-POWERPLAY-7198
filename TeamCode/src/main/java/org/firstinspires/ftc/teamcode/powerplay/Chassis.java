@@ -13,6 +13,9 @@ import static java.lang.Thread.sleep;
 
 public class Chassis
 {
+    /**
+     * Empty constructor.
+     */
     public Chassis ()
     {
 
@@ -162,9 +165,9 @@ public class Chassis
 
     /**
      * This function takes in positional data and saves it to a local storage array for easy access.
-     * @param x
-     * @param y
-     * @param h
+     * @param x is the x position given to the function.
+     * @param y is the y position given to the function.
+     * @param h is the heading, in degrees given to the function.
      */
     public void saveState(double x, double y, double h)
     {
@@ -228,10 +231,24 @@ public class Chassis
             return input;
         }
     }
+
+    /**
+     * Restricts a value to between -1 and 1.
+     * @param input is the value to be restricted.
+     * @return the value after being restricted.
+     */
     public double restrict(double input)
     {
         return Math.max(-1, Math.min(1, input));
     }
+
+    /**
+     * This function will restrict a value between a given minimum and maximum.
+     * @param input is the input value that is being processed.
+     * @param min is the allowed minimum.
+     * @param max is the allowed maximum.
+     * @return the input value after being restricted.
+     */
     public double restrictSet(double input, double min, double max)
     {
         return Math.max(min, Math.min(max, input));

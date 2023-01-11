@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 /**
  * This class should be used to run a gamepad more efficiently.
+ * This class is mostly deprecated and no longer functional, except for the button function.
  * @author      Lemon
  */
 
@@ -30,10 +31,17 @@ public class Controller {
     boolean[] hasChanged = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     Gamepad gamepad;
 
+    /**
+     * Empty constructor
+     */
     Controller()
     {
+
     }
-    
+
+    /**
+     * Empty hardware initialization because the previous version was non functional.
+     */
     public void initializeHardware()
     {
 

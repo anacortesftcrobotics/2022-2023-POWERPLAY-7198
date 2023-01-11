@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class CDS implements SubsystemManager {
 
+    /**
+     * Empty constructor.
+     */
     public CDS ()
     {
 
@@ -97,6 +100,14 @@ public class CDS implements SubsystemManager {
         double dist = color.getDistance(DistanceUnit.CM);
         return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue);
     }
+
+    /**
+     * Checks which way the signal sleeve is facing.
+     * @return 0 if nothing, 1 if red, 2 if green, 4 if blue, and 4 if white.
+     * Sensor light should be on.
+     * @author Kai G
+     */
+
     public int identify () { //x=s 1 if red, 2 if green, 3 if blue, 4 if white and 0 if nothing.
         int x = 0;
         if (getDistance() > 1) {

@@ -3,23 +3,42 @@ package org.firstinspires.ftc.teamcode.powerplay;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * This class is for passing and using the position and heading data of the robot more efficiently.
+ * @author Lemon
+ */
+
 public class Led implements SubsystemManager
 {
+    /**
+     * Empty constructor
+     */
     public Led ()
     {
 
     }
 
     private RevBlinkinLedDriver led;
-    Pablo pablo = new Pablo();
-    CDS cds = new CDS();
+    //Pablo pablo = new Pablo();
+    //CDS cds = new CDS();
+
+    /**
+     * The method in all subsystem classes to register the hardware that this class uses.
+     * In this case it's the color sensor for the robot.
+     * @param hardwareMap is the hardware map of the robot.
+     */
     public void initializeHardware(HardwareMap hardwareMap)
     {
-        cds.initializeHardware(hardwareMap);
-        pablo.initializeHardware(hardwareMap);
+        //cds.initializeHardware(hardwareMap);
+        //pablo.initializeHardware(hardwareMap);
         led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
     }
 
+    /**
+     * This function sets the leds to a color based on a text input.
+     * "hot pink", "dark red", "red", "red orange", "orange", "gold", "yellow", "lawn green", "lime", "dark green", "green", "blue green", "aqua", "sky blue", "dark blue", "blue", "blue violet", "violet", "white", "gray", "dark gray", "black"
+     * @param in is the input String.
+     */
     public void setLed(String in)
     {
         int num = 22;
@@ -101,6 +120,8 @@ public class Led implements SubsystemManager
                 break;
         }
     }
+
+    /*
     public void poleCenter(){
         double left = pablo.getLeftDistance();
         double right = pablo.getRightDistance();
@@ -136,6 +157,7 @@ public class Led implements SubsystemManager
             }
         }
     }
+
     public void signal()
     {
         if (cds.identify()==1){
@@ -150,6 +172,11 @@ public class Led implements SubsystemManager
             setLed("white");
         }
     }
+    */
+
+    /**
+     * This function sets the LEDs to blue-violet.
+     */
     public void teamColors(){
         led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
     }

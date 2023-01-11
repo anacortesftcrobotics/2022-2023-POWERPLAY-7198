@@ -9,6 +9,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 public class Pablo implements SubsystemManager{
 
+    /**
+     * Empty constructor
+     */
     public Pablo() {
 
     }

@@ -10,6 +10,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+/**
+ * This was the first AutoOp made. It functioned, but became broken after changes were made elsewhere in the code.
+ * This class is non-operational, and should not be run.
+ * @author      Lemon
+ */
+
 @Disabled
 @Autonomous (name = "AutoOp", group = "Autonomous")
 

@@ -13,6 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  */
 public class Lift implements SubsystemManager{
 
+    /**
+     * Empty constructor.
+     */
     public Lift()
     {
 
@@ -25,9 +28,9 @@ public class Lift implements SubsystemManager{
     //int liftHeight = 0; //The motor encoder ticks
     int liftChange = 0; //The shift from a preset height, combo of manual adjustment, jeff, and lift zeroing.
     int liftManual = 0; //The new jeff. It wouldn't work with just the one.
-    int[] storage = {0,0};
-    int lastPlace;
-    double doubleLastPlace;
+    int[] storage = {0,0}; //
+    int lastPlace; //The last place storage variable from the deprecated int based lift method.
+    double doubleLastPlace; //The last place storage variable from the double based lift method.
 
     /**
      * The method in all subsystem classes to register the hardware that this class uses.
@@ -66,6 +69,7 @@ public class Lift implements SubsystemManager{
 
     /**
      * This function should tell the lift to go to a certain height.
+     * This function is deprecated and should no longer be used.
      * 0 - zero, bottom, floor
      * 1 - stack 1
      * 2 - stack 2
@@ -128,13 +132,11 @@ public class Lift implements SubsystemManager{
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    //right left
-    //846 831,   838 840    13
-    //1709 1679, 1712 1675  23
-    //2563 2511, 2562 2506  33
-    //1 - 2624 2576         34
-    //2 - 2730 2663         35
 
+    /**
+     * This is the most up to date liftSet method. It will move the lift to a height in inches.
+     * @param inches is the height the lift should go to.
+     */
     public void liftSet(double inches)
     {
         doubleLastPlace = inches;
@@ -183,6 +185,7 @@ public class Lift implements SubsystemManager{
     }
 
     /**
+     * Deprecated. Do not use.
      * This function takes a string input, checks it against a list of preset words, and then tells the
      * @param input is a string that corresponds to different preset levels. ground for 0, etc.
      */
@@ -314,7 +317,7 @@ public class Lift implements SubsystemManager{
     }
 
     /**
-     * This changes the shift of the robot. Should be used for manual adjustment and jeff style depositing.
+     * This changes the shift of the robot.
      * Should always be called something like <p>"lift.setShift(lift.getShift + x);"</p>
      * @param input is the value that the lift change will be set to.
      */
@@ -323,6 +326,9 @@ public class Lift implements SubsystemManager{
         liftChange = input;
     }
 
-
+    /**
+     * This changes the manual change of the robot. Used for jeff style depositing and manual adjustment.
+     * @param input
+     */
     public void setManual(int input) {liftManual = input;}
 }
