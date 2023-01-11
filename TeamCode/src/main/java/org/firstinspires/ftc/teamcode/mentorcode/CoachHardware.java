@@ -140,10 +140,10 @@ public class CoachHardware {
      */
     public void init() {
         // Define and Initialize Motors
-        leftfront = myOpMode.hardwareMap.get(DcMotor.class, "leftfront");
-        rightfront = myOpMode.hardwareMap.get(DcMotor.class, "rightfront");
-        leftback = myOpMode.hardwareMap.get(DcMotor.class, "leftback");
-        rightback = myOpMode.hardwareMap.get(DcMotor.class, "rightback");
+        leftfront = myOpMode.hardwareMap.get(DcMotor.class, "leftFront");
+        rightfront = myOpMode.hardwareMap.get(DcMotor.class, "rightFront");
+        leftback = myOpMode.hardwareMap.get(DcMotor.class, "leftBack");
+        rightback = myOpMode.hardwareMap.get(DcMotor.class, "rightBack");
 
 //        // Define and Initialize Motors (note: need to use reference to actual OpMode).
 //        armMotor   = myOpMode.hardwareMap.get(DcMotor.class, "arm");
@@ -171,8 +171,15 @@ public class CoachHardware {
         //encoderAux = rightback;
         //encoderRight = leftback;
         if (hasOdometryWheels) {
-            odometrywheels = new OdometryWheels(rightfront, leftback, rightback,
-                    22.8, 16.8, 3.5, 8192);
+            // xLeft, xRight, center
+            // vendor wheel says 35mm, actuals is between 33.8 and 34.2
+            // because it's not stopping at 40cm, changing wheeldiameter to adjust
+            // tried wheeldiameter = 3.4, 3.5, 3.55, closest is 3.5 on left side encoder
+            // initial est trackwidth 22.8
+            // measured trackwidth 34.5, right is one mm closer than left
+            // wheel distance apart is 288mm, forward offset = ((288/2)+24+2)/10=17.0
+            odometrywheels = new OdometryWheels(rightback, leftback, rightfront,
+                    34.5, 17.8, 3.50, 8192);
         }
 
         // Set all motors to zero power
@@ -183,7 +190,7 @@ public class CoachHardware {
 
         resetEncoders();
 
-        liftlimitlow = new LimitSwitch(myOpMode, LimitSwitch.SwitchType.NC, "liftlimitlow");
+        //SKJ remove 2022-12-14 liftlimitlow = new LimitSwitch(myOpMode, LimitSwitch.SwitchType.NC, "bottomLift");
 
         // Define and initialize ALL installed servos.
 //        leftHand = myOpMode.hardwareMap.get(Servo.class, "left_hand");
@@ -297,37 +304,52 @@ public class CoachHardware {
          //         * @see Telemetry#getMsTransmissionInterval()
          //         */
         myOpMode.telemetry.addLine("robot | ")
-                .addData("volts", "%.1f ", getRobotBatteryVoltage())
-                .addData("loop count", loopCount)
-                .addData("ms/loop", "%.3f ms", opmodeRunTime.milliseconds() / loopCount);
+                .addData("volts", " %.1f ", getRobotBatteryVoltage())
+                .addData("loop count", " %d ", loopCount)
+                .addData("ms/loop", " %.3f ms", opmodeRunTime.milliseconds() / loopCount);
 
         myOpMode.telemetry.addLine("IMU | ")
                 .addData("status", imu.getSystemStatus().toShortString());
+
         myOpMode.telemetry.addLine("IMU Pose | ")
                 .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
                 .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
                 .addData("pitch", formatAngle(angles.angleUnit, angles.thirdAngle));
-        myOpMode.telemetry.addLine("Chassis Power | ")
-                .addData("leftfront", leftfront.getPower())
-                .addData("rightfront", rightfront.getPower())
-                .addData("leftback", leftback.getPower())
-                .addData("rightback", rightback.getPower());
-        myOpMode.telemetry.addLine(liftlimitlow.toString());
 
+        myOpMode.telemetry.addLine("Chassis Power | ")
+                .addData("leftfront", "%.2f", leftfront.getPower())
+                .addData("rightfront", "%.2f", rightfront.getPower())
+                .addData("leftback", "%.2f", leftback.getPower())
+                .addData("rightback", "%.2f", rightback.getPower());
+        //SKJ remove 2022-12-14 myOpMode.telemetry.addLine(liftlimitlow.toString());
+
+        myOpMode.telemetry.addLine("Odometry current pos | ")
+                .addData("leftX",  "%d", odometrywheels.left_encoder_pos)
+                .addData("rightX",  "%d", odometrywheels.right_encoder_pos)
+                .addData("Y",  "%d", odometrywheels.center_encoder_pos);
+
+        myOpMode.telemetry.addLine("Odometry prev pos | ")
+                .addData("leftX",  "%d", odometrywheels.prev_left_encoder_pos)
+                .addData("rightX",  "%d", odometrywheels.prev_right_encoder_pos)
+                .addData("Y",  "%d", odometrywheels.prev_center_encoder_pos);
+
+        myOpMode.telemetry.addLine("Odometry current cm | ")
+                .addData("cm_per_tick",  "%.5f", odometrywheels.cm_per_tick)
+                .addData("leftX",  "%.2f", odometrywheels.leftX_cm)
+                .addData("rightX",  "%.2f", odometrywheels.rightX_cm)
+                .addData("Y",  "%.2f", odometrywheels.y_cm);
+
+        /* SKJ troubleshoot
         myOpMode.telemetry.addLine("Odometry pos | ")
                 .addData("x(cm)", "%.2f", odometrywheels.pos.x_cm)
-                .addData("y(cm)", "%.2f", odometrywheels.pos.y_cm)
+                .addData("y(cm)", "%.2f", odometrywheels.pos.y_cm);
+
+        myOpMode.telemetry.addLine("Odometry enc | ")
                 .addData("x", "%.2f", odometrywheels.pos.getX())
-                .addData("y", odometrywheels.pos.getY())
+                .addData("y", "%.2f", odometrywheels.pos.getY())
                 .addData("h", "%.2f", Math.toDegrees(odometrywheels.pos.h));
-        myOpMode.telemetry.addLine("Odometry prev pos | ")
-                .addData("x", odometrywheels.prev_left_encoder_pos)
-                .addData("y", odometrywheels.prev_right_encoder_pos)
-                .addData("h", odometrywheels.prev_center_encoder_pos);
-//        myOpMode.telemetry.addLine("Odometry current | ")
-//                .addData("left", odometrywheels.currentRightPosition)
-//                .addData("right", odometrywheels.currentLeftPosition)
-//                .addData("aux", odometrywheels.currentAuxPosition);
+
+         */
         /* do the telemetry update inside main opmode, instead of here inside robot hardware class */
         // myOpMode.telemetry.update();
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.powerplay.*;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -17,12 +19,15 @@ public class basic extends LinearOpMode {
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor leftFront;
+    private Servo rightGrab;
+    private Servo leftGrab;
 
     private ColorSensor color;
 
+
     private RevBlinkinLedDriver led;
 
-    private Servo scythe;
+
     private boolean stickActive = false;
 
     private boolean hasChanged2;
@@ -39,8 +44,9 @@ public class basic extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
-        scythe = hardwareMap.get(Servo.class, "scythe");
         color = hardwareMap.get(ColorSensor.class,"color");
+        leftGrab = hardwareMap.get(Servo.class, "leftGrab");
+        rightGrab = hardwareMap.get(Servo.class, " rightGrab");
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -55,24 +61,37 @@ public class basic extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-        LEDManager p = new LEDManager();
-        p.setUp(hardwareMap);
+        ElapsedTime time = new ElapsedTime();
+        Led led = new Led();
+        CDS cds = new CDS();
+        Lift lift = new Lift();
+        Grabber grabber = new Grabber();
+        Grabliftled grabliftled = new Grabliftled();
+        grabber.initializeHardware(hardwareMap );
+        led.initializeHardware(hardwareMap);
+        cds.initializeHardware(hardwareMap);
+        lift.initializeHardware(hardwareMap);
+        grabliftled.initializeHardware(hardwareMap);
 
         // Put initialization blocks here.
         waitForStart();
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                // Put loop blocks here
                 leftFront.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 leftBack.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x)/2);
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x)/2);
 
-                p.signal();
-
-                telemetry.addLine(p.colorTelemetry());
+                grabliftled.autoGrab(gamepad1);
+                if (grabliftled.grabbed()){
+                    //do whatever lift thingy
+                }else {
+                    //make the lift go down
+                }
+                telemetry.addLine(cds.colorTelemetry());
+                telemetry.addLine(grabliftled.state());
+                telemetry.addData("distance",cds.getDistance());
                 telemetry.update();
             }
 
