@@ -62,15 +62,15 @@ public class NeedForSpeed implements SubsystemManager{
     *gets the speed forward/back in encoder ticks per millisecond
     *once I test it I can set max to the right value and it will give values from -1 to 1 */
     public double getSpeedY(double x){//x would be the speed coeficcient
-        double max = 1.0;//would be the max speed we wanted, so the method would return values from 0 to 1
+        double max = 175.0;//would be the max speed we wanted, so the method would return values from 0 to 1
         double moved = (encoderLeft.getCurrentPosition() - encoderRight.getCurrentPosition()) - lastY;//amount moved since method last called
         double y = (moved/ty.milliseconds())/(max*x);
         ty.reset();
         lastY = encoderLeft.getCurrentPosition() - encoderRight.getCurrentPosition();
-        return y;
+        return -y;
     }
     public double getSpeedX(double x){//x would be the speed coeficcient
-        double max = 1.0;//would be the max speed we wanted, so the method would return values from 0 to 1
+        double max = 80.0;//would be the max speed we wanted, so the method would return values from 0 to 1
         double moved = (encoderBack.getCurrentPosition()) - lastX;//amount moved since method last called
         double y = (moved/tx.milliseconds())/(max*x);//higher x means smaller return value which would make the robot go faster
         tx.reset();
@@ -78,7 +78,7 @@ public class NeedForSpeed implements SubsystemManager{
         return y;
     }
     public double getSpeedR(double x){//x would be the speed coeficcient
-        double max = 1.0;//would be the max speed we wanted, so the method would return values from 0 to 1
+        double max = 100.0;//would be the max speed we wanted, so the method would return values from 0 to 1
         double moved = (encoderLeft.getCurrentPosition()+encoderRight.getCurrentPosition()) - lastX;//amount moved since method last called
         double y = (moved/tr.milliseconds())/(max*x);//higher x means smaller return value which would make the robot go faster
         tr.reset();
@@ -106,7 +106,7 @@ public class NeedForSpeed implements SubsystemManager{
         }
         return lastMoveR;
     }
-    public void check (Gamepad gamepad1){
+    public String check (Gamepad gamepad1){
 
         if (gamepad1.left_trigger > 0.5 && !hasChanged){
             speedCoefficient -= 0.25;
@@ -151,6 +151,10 @@ public class NeedForSpeed implements SubsystemManager{
         leftBack.setPower(BL);
 
         rightBack.setPower(BR);
+        return  "y= "+y+"x= "+x+"r= "+r;
+    }
+    public double getCoefficient(){
+        return speedCoefficient;
     }
     
     
