@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.chKai;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 import com.qualcomm.robotcore.hardware.*;
 /**
@@ -19,6 +20,7 @@ public class Grabliftled {
     private boolean grabbed = false;
     private  int i = 0;
     private String s = "notGrabbable";
+    ElapsedTime elapsedTime = new ElapsedTime();
     public void initializeHardware(HardwareMap hardwareMap){
         led.initializeHardware(hardwareMap);
         cds.initializeHardware(hardwareMap);
@@ -29,7 +31,7 @@ public class Grabliftled {
     }
     /**
     *automatically grabs and lifts cone when near enough
-    *@param button- the button you want to use for basic grabbing
+    *@param button- the button you want to use for basic grabbing. Needs to be dBounced
     *to use:
     *press button. the led should turn yellow.
     *drive close to the cone. when the cone is close enough, the grabber will automatically close
@@ -38,29 +40,18 @@ public class Grabliftled {
      */
     public void autoGrab(Boolean button){
 
-        if (button && !hasChanged){
-            grabbable = !grabbable;
-        }
+
         if (button){
-            hasChanged = true;
-        }else {
-            hasChanged = false;
-        }
-        if (grabbable){
             if (cds.getDistance() < 1){
                 grabbed = true;
                 grabber.grab(true,false);
-            }/*else if (cds.getDistance() > 0.8){
-                grabbed = false;
-                grabber.grab(false,false);
-            }*/
-
+            }
         }else {
             grabbed = false;
             grabber.grab(false,false);
         }
 
-        if (!grabbable){
+        if (!button){
             led.teamColors();
             s = "notGrabbable";
         } else if (grabbable) {
@@ -73,13 +64,8 @@ public class Grabliftled {
             }
         }
 
-        if (grabbed){
-            i ++;
-        }else{
-            i =0;
-        }
 
-        if (grabbed  && i > 6 && !hasGrabbed){
+        if (grabbed  && elapsedTime.milliseconds()>200 && !hasGrabbed){
             lift.liftSet(1.0);
             hasGrabbed = true;
         }
@@ -87,7 +73,7 @@ public class Grabliftled {
             lift.liftSet(0.0);
         }
         if (grabbed){
-
+            hasGrabbed = true;
         }else{
             hasGrabbed = false;
         }

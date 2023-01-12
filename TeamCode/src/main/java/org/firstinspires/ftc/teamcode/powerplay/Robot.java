@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.powerplay;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.chKai.Grabliftled;
 
 /**
  * This class is an intermediary between the teleOp and autoOp classes and all the sub-assembly classes on the 2022-2023 powerplay robot.
@@ -36,6 +37,7 @@ public class Robot {
     Led led = new Led();
 
     ElapsedTime time = new ElapsedTime();
+    Grabliftled grabliftled = new Grabliftled();
 
     Controller controller1 = new Controller();
     Controller controller2 = new Controller();
@@ -58,6 +60,7 @@ public class Robot {
         lift.initializeHardware(hardwareMap);
         grabber.initializeHardware(hardwareMap);
         mpcr.initializeHardware(hardwareMap);
+        grabliftled.initializeHardware(hardwareMap);
 
         cds.initializeHardware(hardwareMap);
         pablo.initializeHardware(hardwareMap);
@@ -131,8 +134,8 @@ public class Robot {
     {
         driveControl(gamepad1);
         MPCRControl(gamepad1);
-        liftControl(gamepad2);
-        grabberControl(gamepad2);
+        liftControl(gamepad1);
+        grabberControl(gamepad1);
 
         if(time.time() > 12)
         {
@@ -182,7 +185,7 @@ public class Robot {
         if(!coneRight) {
             lift.setManual((int) (-gamepad2.left_stick_y * 100));
             double level;
-            if(grabbed)
+            if(grabliftled.grabbed())
             {
                 level = lift.doubleLastPlace;
                 if(controller2.button(4, gamepad2.dpad_down))
@@ -206,23 +209,7 @@ public class Robot {
             else
             {
                 level = lift.doubleLastPlace;
-                if(controller2.button(4, gamepad2.dpad_down))
-                    level = 0; //1
-                if(controller2.button(5, gamepad2.dpad_left))
-                    level = 4.25; //4
-                if(controller2.button(6, gamepad2.dpad_right))
-                    level = 3; //3
-                if(controller2.button(7, gamepad2.dpad_up))
-                    level = 5.5; //5
-
-                if(controller2.button(0, gamepad2.a))
-                    level = 1.75; //0
-                if(controller2.button(1, gamepad2.b))
-                    level = 0; //0
-                if(controller2.button(2, gamepad2.x))
-                    level = 0; //0
-                if(controller2.button(3, gamepad2.y))
-                    level = 0; //0
+                level = 0.0;
             }
             lift.liftSet(level);
         }
@@ -230,24 +217,8 @@ public class Robot {
 
     public void grabberControl(Gamepad gamepad2)
     {
-        if(controller2.button(11, gamepad2.right_bumper))
-        {
-            grabbed = !grabbed;
-            beaconed = false;
-        }
+        grabliftled.autoGrab(controller2.button(11, gamepad2.right_bumper));
 
-        if(controller2.button(10, gamepad2.left_bumper))
-        {
-            grabbed = !grabbed;
-            beaconed = true;
-        }
-
-        if(grabbed)
-        {
-            grabber.setShift(gamepad2.left_stick_x);
-            grabber.grab(true, beaconed);
-        } else
-            grabber.grab(false, beaconed);
     }
 
     public void resetOdoButOnlyLikeOnce(int i)
@@ -300,6 +271,7 @@ public class Robot {
         telemetryIn.addData( "change ", lift.liftChange);
         telemetryIn.addData( "manual ", lift.liftManual);
         telemetryIn.addData( "time ", time.time());
+        telemetryIn.addData("grabbed ", grabliftled.grabbed());
 
         telemetryIn.update();
     }

@@ -113,7 +113,7 @@ public class CDS implements SubsystemManager {
         int red = getRed();
         int green = getGreen();
         int blue = getGreen();
-        int dist = color.getDistance(DistanceUnit.CM);
+        double dist = color.getDistance(DistanceUnit.CM);
         return ("red - "+ red+"\ngreen - "+green+"\nblue - "+blue+"\ndistance (cm)"+dist);
     }
     /**
