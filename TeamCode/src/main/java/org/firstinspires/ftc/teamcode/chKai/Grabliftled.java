@@ -16,6 +16,7 @@ public class Grabliftled {
     Grabber grabber = new Grabber();
     private boolean hasChanged = false;
     private  boolean hasGrabbed = false;
+    private  boolean grabbedUp = false;
     private boolean grabbable = false;
     private boolean grabbed = false;
     private  int i = 0;
@@ -39,9 +40,11 @@ public class Grabliftled {
     *press button again to release
      */
     public void autoGrab(Boolean button){
-
-
         if (button){
+            grabbable = !grabbable;
+        }
+
+        if (grabbable){
             if (cds.getDistance() < 1){
                 grabbed = true;
                 grabber.grab(true,false);
@@ -50,40 +53,30 @@ public class Grabliftled {
             grabbed = false;
             grabber.grab(false,false);
         }
-
-        if (!button){
+        if(!grabbable){
             led.teamColors();
-            s = "notGrabbable";
-        } else if (grabbable) {
-            if (grabbed){
-                led.poleCenter();
-                s="grabbed";
-            } else if (!grabbed) {
-                led.setLed("yellow");
-                s="grabbable not grabbed";
-            }
+            s = "not grabbable";
+        }else if(grabbable && !grabbed){
+            led.setLed("yellow");
+            s = "grabbable not grabbed";
+        } else if (grabbable && grabbed) {
+            led.poleCenter();
+            s = "grabbed";
+        }
+
+        if (grabbed && elapsedTime.milliseconds() > 500){
+            elapsedTime.reset();
+            grabbedUp = true;
         }
 
 
-        if (grabbed  && elapsedTime.milliseconds()>200 && !hasGrabbed){
-            lift.liftSet(1.0);
-            hasGrabbed = true;
-        }
-        if (!grabbed){
-            lift.liftSet(0.0);
-        }
-        if (grabbed){
-            hasGrabbed = true;
-        }else{
-            hasGrabbed = false;
-        }
     }
     /**
     *Gets the current state of autoGrab for telemetry
-    *@return "notGrabbable," "grabbed," or "grabbable not grabbed" depending on the state. also shows i, the iterator that controls the delay between grab and lift.
+    *@return "notGrabbable," "grabbed," or "grabbable not grabbed" depending on the state.
      */
     public String state(){
-        return (String) s+i;
+        return (String) s;
 
     }
     /**
@@ -94,4 +87,8 @@ public class Grabliftled {
     public boolean grabbed(){
         return grabbed;
     }
+    public boolean isGrabbedUp(){
+        return grabbedUp;
+    }
+
 }

@@ -18,6 +18,7 @@ public class Robot {
     boolean grabbed = false;
     boolean beaconed = false;
     boolean singlePlayer = false;
+    boolean hasGrabbedUp = false;
     int iLast;
     double[] depositState = {0.0,0.0,0.0,0.0,0.0,0.0};
     int depositDoing = 0;
@@ -184,9 +185,10 @@ public class Robot {
     {
         if(!coneRight) {
             lift.setManual((int) (-gamepad2.left_stick_y * 100));
-            double level;
-            if(grabliftled.grabbed())
-            {
+            double level= lift.doubleLastPlace;
+            if (grabliftled.isGrabbedUp()&&hasGrabbedUp){
+                level = 2.0;
+            } else if (grabliftled.isGrabbedUp()&&!hasGrabbedUp) {
                 level = lift.doubleLastPlace;
                 if(controller2.button(4, gamepad2.dpad_down))
                     level = 0.5; //1
@@ -205,12 +207,12 @@ public class Robot {
                     level = 24; //8
                 if(controller2.button(3, gamepad2.y))
                     level = 34; //9
-            }
-            else
-            {
+            }else if (!grabliftled.isGrabbedUp()) {
                 level = lift.doubleLastPlace;
-                level = 0.0;
+                level = 0;
             }
+            hasGrabbedUp = grabliftled.isGrabbedUp();
+
             lift.liftSet(level);
         }
     }
