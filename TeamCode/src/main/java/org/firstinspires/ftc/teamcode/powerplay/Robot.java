@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.powerplay;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.chKai.Grabliftled;
+
 
 /**
  * This class is an intermediary between the teleOp and autoOp classes and all the sub-assembly classes on the 2022-2023 powerplay robot.
@@ -15,10 +15,8 @@ public class Robot {
     //Variables
     boolean once = false;
     boolean coneRight = false;
-    boolean grabbed = false;
     boolean beaconed = false;
     boolean singlePlayer = false;
-    boolean hasGrabbedUp = false;
     int iLast;
     double[] depositState = {0.0,0.0,0.0,0.0,0.0,0.0};
     int depositDoing = 0;
@@ -38,7 +36,7 @@ public class Robot {
     Led led = new Led();
 
     ElapsedTime time = new ElapsedTime();
-    Grabliftled grabliftled = new Grabliftled();
+
 
     Controller controller1 = new Controller();
     Controller controller2 = new Controller();
@@ -52,6 +50,12 @@ public class Robot {
     Gamepad.LedEffect ledB;
     Gamepad.LedEffect ledC;
 
+    //stuff for autoGrab
+    boolean grabbable, grabbed, grabbedUp, hasGrabbedUp = false;
+    String s, s2 = "test";
+    ElapsedTime elapsedTime = new ElapsedTime();
+
+
     /**
      * Initializes all hardware in all subsystem classes.
      */
@@ -61,7 +65,6 @@ public class Robot {
         lift.initializeHardware(hardwareMap);
         grabber.initializeHardware(hardwareMap);
         mpcr.initializeHardware(hardwareMap);
-        grabliftled.initializeHardware(hardwareMap);
 
         cds.initializeHardware(hardwareMap);
         pablo.initializeHardware(hardwareMap);
@@ -138,21 +141,6 @@ public class Robot {
         liftControl(gamepad1);
         grabberControl(gamepad1);
 
-        if(time.time() > 12)
-        {
-            gamepad1.runLedEffect(ledB);
-            gamepad2.runLedEffect(ledB);
-            time.reset();
-        }
-
-        if(cds.getDistance() < 0.5 && !grabbed && lift.doubleLastPlace <= 2)
-        {
-            gamepad1.runRumbleEffect(rumbleB);
-            gamepad2.runRumbleEffect(rumbleB);
-            led.setLed("green");
-        }
-        else
-            led.setLed("violet");
 
         lift.liftSafetyCheck();
     }
@@ -182,44 +170,64 @@ public class Robot {
     }
 
     public void liftControl (Gamepad gamepad2)
-    {
+    {   double level = 0;
         if(!coneRight) {
-            lift.setManual((int) (-gamepad2.left_stick_y * 100));
-            double level= lift.doubleLastPlace;
-            if (grabliftled.isGrabbedUp()&&hasGrabbedUp){
-                level = 2.0;
-            } else if (grabliftled.isGrabbedUp()&&!hasGrabbedUp) {
-                level = lift.doubleLastPlace;
-                if(controller2.button(4, gamepad2.dpad_down))
-                    level = 0.5; //1
-                if(controller2.button(5, gamepad2.dpad_left))
-                    level = 4.25; //4
-                if(controller2.button(6, gamepad2.dpad_right))
-                    level = 3; //3
-                if(controller2.button(7, gamepad2.dpad_up))
-                    level = 5.5; //5
-
-                if(controller2.button(0, gamepad2.a))
-                    level = 1.75; //2
-                if(controller2.button(1, gamepad2.b))
-                    level = 14; //7
-                if(controller2.button(2, gamepad2.x))
-                    level = 24; //8
-                if(controller2.button(3, gamepad2.y))
-                    level = 34; //9
-            }else if (!grabliftled.isGrabbedUp()) {
-                level = lift.doubleLastPlace;
+            if(grabbed){
+                if (grabbedUp && !hasGrabbedUp){
+                    level = 2.0;
+                    hasGrabbedUp = true;
+                    s2 = "aslkjfkl";
+                }  else if (grabbedUp && hasGrabbedUp) {
+                    if (controller1.button(7, gamepad2.dpad_up)){level = 5.0;}
+                    else if (controller1.button(4, gamepad2.dpad_down)) {level = 0.0;}
+                    s2 = "poqweiurwioe";
+                }
+            }else {
                 level = 0;
+                hasGrabbedUp = false;
             }
-            hasGrabbedUp = grabliftled.isGrabbedUp();
 
+            if(grabbedUp && hasGrabbedUp)
+                if (controller1.button(7, gamepad2.dpad_up))
+                    level = 5.0;
+            if(grabbedUp && hasGrabbedUp)
+                if (controller1.button(4, gamepad2.dpad_down))
+                    level = 0.0;
             lift.liftSet(level);
         }
     }
 
     public void grabberControl(Gamepad gamepad2)
     {
-        grabliftled.autoGrab(controller2.button(11, gamepad2.right_bumper));
+
+        if (controller2.button(11, gamepad2.right_bumper)){
+            grabbable = !grabbable;
+        }
+
+        if (grabbable){
+            if (cds.getDistance() < 1){
+                grabbed = true;
+                grabber.grab(true,false);
+            }
+        }else {
+            grabbed = false;
+            grabber.grab(false,false);
+        }
+        if(!grabbable){
+            led.teamColors();
+            s = "not grabbable";
+        }else if(grabbable && !grabbed){
+            led.setLed("yellow");
+            s = "grabbable not grabbed";
+        } else if (grabbable && grabbed) {
+            led.poleCenter();
+            s = "grabbed";
+        }
+
+        if (grabbed && elapsedTime.milliseconds() > 500){
+            elapsedTime.reset();
+            grabbedUp = true;
+        }
 
     }
 
@@ -273,7 +281,10 @@ public class Robot {
         telemetryIn.addData( "change ", lift.liftChange);
         telemetryIn.addData( "manual ", lift.liftManual);
         telemetryIn.addData( "time ", time.time());
-        telemetryIn.addData("grabbed ", grabliftled.grabbed());
+        telemetryIn.addData("Meepus: ", grabbedUp );
+        telemetryIn.addData("Bleepus: ", hasGrabbedUp );
+        telemetryIn.addLine(s);
+        telemetryIn.addLine(s2);
 
         telemetryIn.update();
     }
