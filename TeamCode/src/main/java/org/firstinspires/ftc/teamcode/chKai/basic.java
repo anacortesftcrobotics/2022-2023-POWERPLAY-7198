@@ -21,6 +21,9 @@ public class basic extends LinearOpMode {
     private DcMotor leftFront;
     private Servo rightGrab;
     private Servo leftGrab;
+    private boolean hasTouched;
+    private  double xChange;
+    private double yChange;
 
     private ColorSensor color;
 
@@ -65,12 +68,10 @@ public class basic extends LinearOpMode {
         CDS cds = new CDS();
         Lift lift = new Lift();
         Grabber grabber = new Grabber();
-        Grabliftled grabliftled = new Grabliftled();
         grabber.initializeHardware(hardwareMap );
         led.initializeHardware(hardwareMap);
         cds.initializeHardware(hardwareMap);
         lift.initializeHardware(hardwareMap);
-        grabliftled.initializeHardware(hardwareMap);
         s.initializeHardware(hardwareMap);
 
         // Put initialization blocks here.
@@ -78,25 +79,28 @@ public class basic extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                leftFront.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x));
-                leftBack.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x));
-                rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x));
-                rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x));
-
-                grabliftled.autoGrab(gamepad1.right_bumper);
-                if (grabliftled.grabbed()){
-                    //do whatever lift thingy
-                    if (gamepad1.a){
-                        lift.liftSet(10.0);
-                    } else if (gamepad1.b) {
-                        lift.liftSet(1.0);
-                    }
-                }else {
-                    //make the lift go down
-                    lift.liftSet(0.0); 
+                double x = 0;
+                double y = 0;
+                if (gamepad1.touchpad_finger_1 && !hasTouched){
+                    xChange = gamepad1.touchpad_finger_1_x;
+                    yChange = gamepad1.touchpad_finger_1_y;
                 }
+                hasTouched = gamepad1.touchpad_finger_1;
+                if (gamepad1.touchpad_finger_1 && hasTouched){
+                    x = gamepad1.touchpad_finger_1_x - xChange;
+                    y = gamepad1.touchpad_finger_1_y - yChange;
+                }
+                if (!gamepad1.touchpad_finger_1){
+                    x = 0;
+                    y = 0;
+                }
+                y = -y;
+                leftFront.setPower((y - x - gamepad1.right_stick_x));
+                leftBack.setPower((y + x - gamepad1.right_stick_x));
+                rightFront.setPower((y + x + gamepad1.right_stick_x));
+                rightBack.setPower((y - x + gamepad1.right_stick_x));
+
                 telemetry.addLine(cds.colorTelemetry());
-                telemetry.addLine(grabliftled.state());
                 telemetry.addData("distance",cds.getDistance());
                 telemetry.addData("spedometer",spedometer());
                 telemetry.addData("speed",s.getSpeedY(1));

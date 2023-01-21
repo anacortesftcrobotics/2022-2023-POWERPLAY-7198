@@ -37,4 +37,5 @@ public class Heading
     {
         h = input;
     }
+    public double getH () {return h;}
 }

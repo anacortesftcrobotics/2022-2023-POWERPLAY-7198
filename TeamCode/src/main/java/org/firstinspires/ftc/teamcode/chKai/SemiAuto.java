@@ -31,8 +31,11 @@ public class SemiAuto implements SubsystemManager{
     private boolean YCing, XCing, RCing; //YCing = centering on a tile in the y-axis, etc. see Y, X, centerX, and centerY. not using RCing yet.
     private int xCounter, yCounter, rCounter; //these count how many tiles (or eighth-turns) you want to move in each axis. see check, setGoalY, setGoalX, and setGoalR.
     private double goalX, goalY, goalR; //these hold the current goal position (where the robot is trying to go) for each axis. see X, Y, R, setGoalY, setGoalX, and setGoalR.
+    private boolean x = false;
+    Gyro gyro = new Gyro();
+    Controller controller = new Controller();
     //odometry
-    FakeOdometry odo = new FakeOdometry();
+    Odometry odo = new Odometry();
     /**
     *initializes all the hardware needed
     *@param hardwareMap is the hardwareMap object you need to pass to it
@@ -48,6 +51,7 @@ public class SemiAuto implements SubsystemManager{
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        odo.initializeHardware(hardwareMap);
         encoderLeft = leftBack;
         encoderRight = rightBack;
         encoderBack = rightFront;
@@ -61,6 +65,9 @@ public class SemiAuto implements SubsystemManager{
 
         
         imu.initialize(parameters);
+    }
+    public double getR(){
+        return gyro.getHeading();
     }
     /**
     *call this method in your opMode loop to use this class
@@ -94,15 +101,39 @@ public class SemiAuto implements SubsystemManager{
         }
         odo.getX();
         odo.getY();
-        odo.getR();
+        odo.getOdoHeading();
+        odo.updatePosition();
         Y();
         X();
         R();
-        if (odo.getY() == goalY && odo.getX() == goalX && odo.getR() == goalR && !stickActive(gamepad1)){
+        if (odo.getY() == goalY && odo.getX() == goalX && getR() == goalR && !stickActive(gamepad1)){
             setMotors(1,0);
         }
 
     }
+    public String test(Gamepad gamepad1){
+        if (controller.button(7, gamepad1.dpad_up)){
+            yCounter ++;
+            setGoalY();
+            ok = true;
+        }else if (controller.button(4, gamepad1.dpad_down)){
+            yCounter --;
+            setGoalY();
+            ok = true;
+        }
+        odo.getX();
+        odo.getY();
+        odo.getOdoHeading();
+        odo.updatePosition();
+        Y();
+        X();
+        R();
+        if (odo.getY() == goalY && odo.getX() == goalX && getR() == goalR && !stickActive(gamepad1)){
+            setMotors(1,0);
+        }
+        return "counter- "+yCounter+" goal- "+goalY;
+    }
+
     /**
     *executes centerX, then moves the robot along the y-axis to within one inch of goalY
     *only moves if the robot is not in the process of x movement, r movement or non-auto movement
@@ -225,7 +256,7 @@ public class SemiAuto implements SubsystemManager{
     *determines the rotational axis goal and sets goalR based on the nearest 45* angle and rCounter
      */
     public void setGoalR(){
-        double near = (Math.round(odo.getR()/45))*45;
+        double near = (Math.round(getR()/45))*45;
         goalY = near + rCounter;
     }
 
@@ -244,7 +275,7 @@ public class SemiAuto implements SubsystemManager{
         if (stickActive){
             goalX=odo.getX();
             goalY=odo.getY();
-            goalR=odo.getR();
+            goalR=getR();
             yCounter = 0;
             xCounter = 0;
             rCounter = 0;
@@ -257,8 +288,6 @@ public class SemiAuto implements SubsystemManager{
     *can only be used for one key at a time; if multiple keys are dBounced at the same time, only the first one will be counted
     */
     public boolean dBounce(boolean input){
-
-        boolean x = false;
         if (input && !hasChanged){
             x = true;
         }else {
@@ -309,11 +338,11 @@ public class SemiAuto implements SubsystemManager{
         double a=0; //for FL and BR
         double b=0; //for FR and BL
         if (type == 1){
-            a = (power*Math.cos(odo.getR()-45));
-            b = -(power*Math.sin(odo.getR()-45));
+            a = (power*Math.cos(getR()-45));
+            b = -(power*Math.sin(getR()-45));
         }else if (type == 2){
-            a = (power*Math.sin(odo.getR()-45));
-            b = (power*Math.cos(odo.getR()-45));
+            a = (power*Math.sin(getR()-45));
+            b = (power*Math.cos(getR()-45));
         }
 
         double FL =(a);

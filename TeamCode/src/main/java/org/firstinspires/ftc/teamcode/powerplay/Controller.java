@@ -30,7 +30,7 @@ public class Controller {
     boolean[] hasChanged = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     Gamepad gamepad;
 
-    Controller()
+    public Controller()
     {
     }
     
