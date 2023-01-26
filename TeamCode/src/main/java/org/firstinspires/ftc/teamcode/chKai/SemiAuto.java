@@ -35,7 +35,7 @@ public class SemiAuto implements SubsystemManager{
     Gyro gyro = new Gyro();
     Controller controller = new Controller();
     //odometry
-    Odometry odo = new Odometry();
+    FakeOdometry odo = new FakeOdometry();
     /**
     *initializes all the hardware needed
     *@param hardwareMap is the hardwareMap object you need to pass to it
@@ -72,7 +72,7 @@ public class SemiAuto implements SubsystemManager{
     /**
     *call this method in your opMode loop to use this class
     *@param gamepad1 is the gamepad you want to use for chassis control
-     */
+     *//*
     public void check (Gamepad gamepad1){
         if (dBounce(gamepad1.dpad_up)){
             yCounter ++;
@@ -110,7 +110,7 @@ public class SemiAuto implements SubsystemManager{
             setMotors(1,0);
         }
 
-    }
+    }*/
     public String test(Gamepad gamepad1){
         if (controller.button(7, gamepad1.dpad_up)){
             yCounter ++;
@@ -123,15 +123,13 @@ public class SemiAuto implements SubsystemManager{
         }
         odo.getX();
         odo.getY();
-        odo.getOdoHeading();
-        odo.updatePosition();
         Y();
         X();
         R();
         if (odo.getY() == goalY && odo.getX() == goalX && getR() == goalR && !stickActive(gamepad1)){
             setMotors(1,0);
         }
-        return "counter- "+yCounter+" goal- "+goalY;
+        return "counter- "+yCounter+" goal- "+goalY+"\nstick active- "+stickActive(gamepad1)+"\nok- "+ok+"\nXing- "+Xing+"\nRing- "+Ring+"\nXcing- "+XCing;
     }
 
     /**
@@ -140,9 +138,9 @@ public class SemiAuto implements SubsystemManager{
      */
     public void Y(){
         double pwr=0;
-        if(Math.abs(goalY - odo.getY())<1 && !Xing && !Ring && ok){
+        if(Math.abs(goalY - odo.getY()) > 1 && !Xing && !Ring && ok){
             Ying = true;
-            centerX();
+            //centerX();
             if (!XCing){
                 pwr = (goalY - odo.getY())/12;
                 if (pwr > 0.5){
@@ -154,6 +152,7 @@ public class SemiAuto implements SubsystemManager{
             setHeadless(1,pwr);
         }else{
             Ying = false;
+            yCounter = 0;
         }
     }
     /**
@@ -243,7 +242,7 @@ public class SemiAuto implements SubsystemManager{
      */
     public void setGoalY(){
         double near = (Math.round(odo.getY()/24))*24;
-        goalY = near + yCounter;
+        goalY = near + yCounter*24;
     }
     /**
     *determines the x-axis goal and sets goalX based on the nearest path and xCounter
@@ -286,6 +285,7 @@ public class SemiAuto implements SubsystemManager{
     /**Takes a boolean key from the gamepad and only lets it "count" once.
     *@param input is the boolean key being used
     *can only be used for one key at a time; if multiple keys are dBounced at the same time, only the first one will be counted
+     *did not work, used controller.button instead.
     */
     public boolean dBounce(boolean input){
         if (input && !hasChanged){
@@ -330,11 +330,12 @@ public class SemiAuto implements SubsystemManager{
     *movements in relation to field, not robot heading. 
     *@param type is the type of movement, 1 for y-axis and 2 for x-axis
     *type 1: +forward/-back. type2: +right/-left
-    *@param power is the power you want it set at, from -1 to 1.
+    *@param Power is the power you want it set at, from -1 to 1.
     *only works if the opMode is initialized with the robot facing forwards
     *for turning, use setMotors
     */
-    public void setHeadless(int type, double power){
+    public void setHeadless(int type, double Power){
+        double power = -Power; //because it was going backwards
         double a=0; //for FL and BR
         double b=0; //for FR and BL
         if (type == 1){

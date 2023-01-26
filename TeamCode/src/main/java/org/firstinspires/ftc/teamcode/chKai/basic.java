@@ -37,6 +37,12 @@ public class basic extends LinearOpMode {
     private double servoSet;
     private double lastSpeed;
     private NeedForSpeed s = new NeedForSpeed();
+    private FakeOdometry f = new FakeOdometry();
+
+    int Xdisplay = 1;
+    int Ydisplay = 1;
+    boolean hasTouched2 = false;
+    boolean hasTouched3 = false;
 
     @Override
     public void runOpMode() {
@@ -73,13 +79,14 @@ public class basic extends LinearOpMode {
         cds.initializeHardware(hardwareMap);
         lift.initializeHardware(hardwareMap);
         s.initializeHardware(hardwareMap);
+        f.initializeHardware(hardwareMap);
 
         // Put initialization blocks here.
         waitForStart();
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                double x = 0;
+                /*double x = 0;
                 double y = 0;
                 if (gamepad1.touchpad_finger_1 && !hasTouched){
                     xChange = gamepad1.touchpad_finger_1_x;
@@ -100,16 +107,47 @@ public class basic extends LinearOpMode {
                 rightFront.setPower((y + x + gamepad1.right_stick_x));
                 rightBack.setPower((y - x + gamepad1.right_stick_x));
 
-                telemetry.addLine(cds.colorTelemetry());
-                telemetry.addData("distance",cds.getDistance());
-                telemetry.addData("spedometer",spedometer());
-                telemetry.addData("speed",s.getSpeedY(1));
+
+
+                telemetry.addData("y", f.getY());
+                telemetry.addData("x", f.getX());
+                */
+                touch(gamepad1);
+                telemetry.addData("XX", Xdisplay);
+                telemetry.addData("YY", Ydisplay);
                 telemetry.update();
             }
 
 
         }
 
+    }
+    public void touch (Gamepad gamepad1){
+        float firstTouchY=0;
+        float firstTouchX=0;
+        if (gamepad1.touchpad_finger_1 && !hasTouched2){
+            firstTouchY = gamepad1.touchpad_finger_1_y;
+            firstTouchX = gamepad1.touchpad_finger_1_x;
+        }
+        if (gamepad1.touchpad_finger_1 && !hasTouched3){
+            if(gamepad1.touchpad_finger_1_x - firstTouchX > 0.5){
+                Xdisplay ++;
+                hasTouched3 = true;
+            } else if (gamepad1.touchpad_finger_1_x - firstTouchX < -0.5) {
+                Xdisplay --;
+                hasTouched3 = true;
+            } else if (gamepad1.touchpad_finger_1_y - firstTouchY > 0.5) {
+                Ydisplay ++;
+                hasTouched3 = true;
+            } else if (gamepad1.touchpad_finger_1_y - firstTouchY < -0.5) {
+                Ydisplay --;
+                hasTouched3 = true;
+            }
+            if (!gamepad1.touchpad_finger_1){
+                hasTouched3 = false;
+            }
+        }
+        hasTouched2 = gamepad1.touchpad_finger_1;
     }
     public double spedometer(){
 
