@@ -121,6 +121,15 @@ public class SemiAuto implements SubsystemManager{
             setGoalY();
             ok = true;
         }
+        if (controller.button(5, gamepad1.dpad_right)){
+            xCounter ++;
+            setGoalX();
+            ok = true;
+        }else if (controller.button(6, gamepad1.dpad_left)){
+            xCounter --;
+            setGoalX();
+            ok = true;
+        }
         odo.getX();
         odo.getY();
         Y();
@@ -140,7 +149,7 @@ public class SemiAuto implements SubsystemManager{
         double pwr=0;
         if(Math.abs(goalY - odo.getY()) > 1 && !Xing && !Ring && ok){
             Ying = true;
-            //centerX();
+            centerX();
             if (!XCing){
                 pwr = (goalY - odo.getY())/12;
                 if (pwr > 0.5){
@@ -161,7 +170,7 @@ public class SemiAuto implements SubsystemManager{
      */
     public void X(){
         double pwr=0;
-        if(Math.abs(goalX - odo.getX())<1 && !Ying && !Ring && ok){
+        if(Math.abs(goalX - odo.getX()) > 1 && !Ying && !Ring && ok){
             Xing = true;
             centerY();
             if (!YCing){

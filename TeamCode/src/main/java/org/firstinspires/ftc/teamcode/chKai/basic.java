@@ -86,7 +86,7 @@ public class basic extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
-                /*double x = 0;
+                double x = 0;
                 double y = 0;
                 if (gamepad1.touchpad_finger_1 && !hasTouched){
                     xChange = gamepad1.touchpad_finger_1_x;
@@ -111,11 +111,17 @@ public class basic extends LinearOpMode {
 
                 telemetry.addData("y", f.getY());
                 telemetry.addData("x", f.getX());
-                */
-                touch(gamepad1);
-                telemetry.addData("XX", Xdisplay);
+                String[][] bloop = new String[][] {
+                        {"i", "i", "i", "i"},
+                        {"i", "i", "i", "i"},
+                        {"i", "i", "i", "i"},
+                        {"i", "i", "i", "i"}
+                };
+
+                //touch(gamepad1);
+                /*telemetry.addData("XX", Xdisplay);
                 telemetry.addData("YY", Ydisplay);
-                telemetry.update();
+                telemetry.update();*/
             }
 
 
