@@ -10,21 +10,19 @@ public class TheStuff extends LinearOpMode {
     public void runOpMode() {
         SemiAuto a = new SemiAuto();
         NeedForSpeed b = new NeedForSpeed();
+        Basic c = new Basic();
         a.initializeHardware(hardwareMap);
         b.initializeHardware(hardwareMap);
-        // Put initialization blocks here.
+        c.initializeHardware(hardwareMap);
         waitForStart();
         if (opModeIsActive()) {
-            // Put run blocks here.
             while (opModeIsActive()) {
-                a.test(gamepad1);
-                telemetry.addLine(a.test(gamepad1));
-                //b.check(gamepad1);
-                /*telemetry.addData("coefficient", b.getCoefficient());
-                telemetry.addData("speed y", b.getSpeedY(1));
-                telemetry.addData("speed x", b.getSpeedX(1));
-                telemetry.addData("speed r",b.getSpeedR(1));
-                telemetry.addLine(b.check(gamepad1));*/
+                if (! a.stickActive(gamepad1)) {
+                    a.test(gamepad1);
+                }else {
+                    c.go(gamepad1);
+                }
+                telemetry.addLine(a.telem(gamepad1));
                 telemetry.update();
             }
         }

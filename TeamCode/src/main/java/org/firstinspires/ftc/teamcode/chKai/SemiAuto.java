@@ -111,7 +111,7 @@ public class SemiAuto implements SubsystemManager{
         }
 
     }*/
-    public String test(Gamepad gamepad1){
+    public void test(Gamepad gamepad1){
         if (controller.button(7, gamepad1.dpad_up)){
             yCounter ++;
             setGoalY();
@@ -129,6 +129,10 @@ public class SemiAuto implements SubsystemManager{
             xCounter --;
             setGoalX();
             ok = true;
+        } else if (controller.button(8, gamepad1.left_stick_button)) {
+            centerX();
+            centerY();
+            ok = true;
         }
         odo.getX();
         odo.getY();
@@ -138,7 +142,19 @@ public class SemiAuto implements SubsystemManager{
         if (odo.getY() == goalY && odo.getX() == goalX && getR() == goalR && !stickActive(gamepad1)){
             setMotors(1,0);
         }
-        return "counter- "+yCounter+" goal- "+goalY+"\nstick active- "+stickActive(gamepad1)+"\nok- "+ok+"\nXing- "+Xing+"\nRing- "+Ring+"\nXcing- "+XCing;
+
+
+    }
+    public String telem(Gamepad gamepad1){
+        double near = (Math.round(odo.getX()/24))*24;
+        return "counter- "+yCounter+" goal- "+goalY+
+                "\nstick active- "+stickActive(gamepad1)+"" +
+                "\nok- "+ok+"" +
+                "\nXing- "+Xing+"" +
+                "\nRing- "+Ring+"" +
+                "\nx near"+near+
+                "\nx pos"+odo.getX()+
+                "\nXcing- "+XCing;
     }
 
     /**
@@ -215,10 +231,15 @@ public class SemiAuto implements SubsystemManager{
         double pwr = 0;
         if (Math.abs(odo.getX() - near)>1){
             XCing = true;
-            pwr = (near - odo.getX())/12;
+            /*pwr = (near - odo.getX())/12;
             if (pwr > 0.5){
                 pwr = 0.5;
             }else if(pwr < -0.5){
+                pwr = -0.5;
+            }*/
+            if(odo.getX()>near) {
+                pwr = 0.5;
+            }else{
                 pwr = -0.5;
             }
             setHeadless(2,pwr);
@@ -235,12 +256,18 @@ public class SemiAuto implements SubsystemManager{
         double pwr = 0;
         if (Math.abs(odo.getY() - near)>1){
             YCing = true;
-            pwr = (near - odo.getY())/12;
+            /*pwr = (near - odo.getY())/12;
             if (pwr > 0.5){
                 pwr = 0.5;
             }else if(pwr < -0.5){
                 pwr = -0.5;
+            }*/
+            if(odo.getY()>near) {
+                pwr = 0.5;
+            }else{
+                pwr = -0.5;
             }
+            pwr = 5.0;
             setHeadless(1,pwr);
         }else{
             YCing = false;

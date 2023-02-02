@@ -52,7 +52,7 @@ public class FakeOdometry {
     public double getY(){
         return -(encoderLeft.getCurrentPosition() - encoderRight.getCurrentPosition())/3750;
     }
-    public double getX(){ return -(encoderBack.getCurrentPosition())/3750; }
+    public double getX(){ return -(encoderBack.getCurrentPosition())/1875; }
     public double getR(){
         return 0;
     }

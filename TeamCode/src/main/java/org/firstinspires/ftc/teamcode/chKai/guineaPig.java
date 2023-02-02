@@ -10,8 +10,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@TeleOp(name = "basic")
-public class basic extends LinearOpMode {
+@TeleOp(name = "Guinea Pig")
+public class guineaPig extends LinearOpMode {
 
     BNO055IMU imu;
     Orientation angles;
