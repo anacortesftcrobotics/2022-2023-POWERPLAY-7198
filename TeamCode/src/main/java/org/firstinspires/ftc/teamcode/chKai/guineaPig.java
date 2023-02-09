@@ -10,6 +10,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
+
 @TeleOp(name = "Guinea Pig")
 public class guineaPig extends LinearOpMode {
 
@@ -43,6 +44,17 @@ public class guineaPig extends LinearOpMode {
     int Ydisplay = 1;
     boolean hasTouched2 = false;
     boolean hasTouched3 = false;
+    int currentX;
+    int currentY;
+    //JFrame frame = new JFrame("I hope this Works");
+    Controller controller = new Controller();
+
+    String[][] bloop = new String[][] {
+            {"i", "i", "i", "i"},
+            {"i", "i", "i", "i"},
+            {"i", "i", "i", "i"},
+            {"i", "i", "i", "i"}
+    };
 
     @Override
     public void runOpMode() {
@@ -106,27 +118,56 @@ public class guineaPig extends LinearOpMode {
                 leftBack.setPower((y + x - gamepad1.right_stick_x));
                 rightFront.setPower((y + x + gamepad1.right_stick_x));
                 rightBack.setPower((y - x + gamepad1.right_stick_x));
+                if(controller.button(7, gamepad1.dpad_up )){
+                    currentX--;
+                } else if (controller.button(4, gamepad1.dpad_down)) {
+                    currentX++;
+                }else if (controller.button(6, gamepad1.dpad_left)) {
+                    currentY--;
+                }else if (controller.button(5, gamepad1.dpad_right)) {
+                    currentY++;
+                }
+                if(currentX<0){
+                    currentX =0;
+                } else if (currentX>3) {
+                    currentX = 3;
+                }
+                if(currentY < 0){
+                    currentY = 0;
+                } else if (currentY>3) {
+                    currentY = 3;
+                }
 
-
-
+                set();
                 telemetry.addData("y", f.getY());
                 telemetry.addData("x", f.getX());
-                String[][] bloop = new String[][] {
-                        {"i", "i", "i", "i"},
-                        {"i", "i", "i", "i"},
-                        {"i", "i", "i", "i"},
-                        {"i", "i", "i", "i"}
-                };
-
+                telemetry.addData("currentX", currentX);
+                telemetry.addData("currentY", currentY);
+                telemetry.addLine(bloop[0][0]+" "+bloop[0][1]+" "+bloop[0][2]+" "+bloop[0][3]);
+                telemetry.addLine(bloop[1][0]+" "+bloop[1][1]+" "+bloop[1][2]+" "+bloop[1][3]);
+                telemetry.addLine(bloop[2][0]+" "+bloop[2][1]+" "+bloop[2][2]+" "+bloop[2][3]);
+                telemetry.addLine(bloop[3][0]+" "+bloop[3][1]+" "+bloop[3][2]+" "+bloop[3][3]);
                 //touch(gamepad1);
                 /*telemetry.addData("XX", Xdisplay);
-                telemetry.addData("YY", Ydisplay);
-                telemetry.update();*/
+                telemetry.addData("YY", Ydisplay);*/
+                telemetry.update();
             }
 
 
         }
 
+    }
+    public void set(){//true for up, false for down
+        for(int i = 0; i <= 3; i++){
+            for (int j = 0; j <= 3; j++){
+                if (i == currentX && j == currentY){
+                    bloop[i][j]="x";
+                }else{
+                    bloop[i][j] = "o";
+
+                }
+            }
+        }
     }
     public void touch (Gamepad gamepad1){
         float firstTouchY=0;

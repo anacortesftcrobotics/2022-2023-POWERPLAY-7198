@@ -32,6 +32,7 @@ public class SemiAuto implements SubsystemManager{
     private int xCounter, yCounter, rCounter; //these count how many tiles (or eighth-turns) you want to move in each axis. see check, setGoalY, setGoalX, and setGoalR.
     private double goalX, goalY, goalR; //these hold the current goal position (where the robot is trying to go) for each axis. see X, Y, R, setGoalY, setGoalX, and setGoalR.
     private boolean x = false;
+    private boolean centering = false;
     Gyro gyro = new Gyro();
     Controller controller = new Controller();
     //odometry
@@ -65,9 +66,6 @@ public class SemiAuto implements SubsystemManager{
 
         
         imu.initialize(parameters);
-    }
-    public double getR(){
-        return gyro.getHeading();
     }
     /**
     *call this method in your opMode loop to use this class
@@ -129,17 +127,32 @@ public class SemiAuto implements SubsystemManager{
             xCounter --;
             setGoalX();
             ok = true;
-        } else if (controller.button(8, gamepad1.left_stick_button)) {
+        } else if (controller.button(10, gamepad1.left_bumper)) {
             centerX();
-            centerY();
+            centering = XCing;
+            //centerY();
             ok = true;
+        }
+        if(centering){
+            centerX();
+        }
+        if(gamepad1.triangle){
+            setMotors(1,0.3);
+        } else if (gamepad1.cross) {
+            setMotors(1, -0.3);
+        } else if (gamepad1.square) {
+            setMotors(3, -0.3);
+        } else if (gamepad1.circle) {
+            setMotors(3, 0.3);
+        }else {
+            setMotors(1, 0);
         }
         odo.getX();
         odo.getY();
         Y();
         X();
         R();
-        if (odo.getY() == goalY && odo.getX() == goalX && getR() == goalR && !stickActive(gamepad1)){
+        if (odo.getY() == goalY && odo.getX() == goalX && odo.getR() == goalR && !stickActive(gamepad1)){
             setMotors(1,0);
         }
 
@@ -173,8 +186,9 @@ public class SemiAuto implements SubsystemManager{
                 }else if(pwr < -0.5){
                     pwr = -0.5;
                 }
+                setMotors(1,pwr);
             }
-            setHeadless(1,pwr);
+
         }else{
             Ying = false;
             yCounter = 0;
@@ -229,20 +243,16 @@ public class SemiAuto implements SubsystemManager{
     public void centerX(){
         double near = (Math.round(odo.getX()/24))*24;
         double pwr = 0;
-        if (Math.abs(odo.getX() - near)>1){
+        double diff = odo.getX() - near;
+        if (Math.abs(diff)>1){
             XCing = true;
-            /*pwr = (near - odo.getX())/12;
-            if (pwr > 0.5){
-                pwr = 0.5;
-            }else if(pwr < -0.5){
-                pwr = -0.5;
-            }*/
-            if(odo.getX()>near) {
+
+            if(diff < 0) {
                 pwr = 0.5;
             }else{
                 pwr = -0.5;
             }
-            setHeadless(2,pwr);
+            setMotors(2,pwr);
         }else{
             XCing = false;
         }
@@ -256,12 +266,6 @@ public class SemiAuto implements SubsystemManager{
         double pwr = 0;
         if (Math.abs(odo.getY() - near)>1){
             YCing = true;
-            /*pwr = (near - odo.getY())/12;
-            if (pwr > 0.5){
-                pwr = 0.5;
-            }else if(pwr < -0.5){
-                pwr = -0.5;
-            }*/
             if(odo.getY()>near) {
                 pwr = 0.5;
             }else{
@@ -271,6 +275,24 @@ public class SemiAuto implements SubsystemManager{
             setHeadless(1,pwr);
         }else{
             YCing = false;
+        }
+    }
+
+    public void centerR(){
+        double near = (Math.round(odo.getR()/45))*45;
+        double pwr = 0;
+        double diff = odo.getX() - near;
+        if (Math.abs(diff)>1){
+            RCing = true;
+
+            if(diff < 0) {
+                pwr = -0.5;
+            }else{
+                pwr = 0.5;
+            }
+            setHeadless(2,pwr);
+        }else{
+            RCing = false;
         }
     }
     /**
@@ -291,7 +313,7 @@ public class SemiAuto implements SubsystemManager{
     *determines the rotational axis goal and sets goalR based on the nearest 45* angle and rCounter
      */
     public void setGoalR(){
-        double near = (Math.round(getR()/45))*45;
+        double near = (Math.round(odo.getR()/45))*45;
         goalY = near + rCounter;
     }
 
@@ -310,7 +332,7 @@ public class SemiAuto implements SubsystemManager{
         if (stickActive){
             goalX=odo.getX();
             goalY=odo.getY();
-            goalR=getR();
+            goalR=odo.getR();
             yCounter = 0;
             xCounter = 0;
             rCounter = 0;
@@ -345,20 +367,20 @@ public class SemiAuto implements SubsystemManager{
     public void setMotors(int type, double power){
         //type 1 is +forward/-back, 2 is strafe -left/+right, 3 is turn -left/+right
         if (type==1){
-            leftBack.setPower(power);
-            rightBack.setPower(power);
-            leftFront.setPower(power);
-            rightFront.setPower(power);
+            leftBack.setPower(-power);
+            rightBack.setPower(-power);
+            leftFront.setPower(-power);
+            rightFront.setPower(-power);
         }else if (type==2){
             leftBack.setPower(power);
             rightBack.setPower(-power);
             leftFront.setPower(-power);
             rightFront.setPower(power);
         }else if (type==3){
-            leftBack.setPower(power);
-            rightBack.setPower(-power);
-            leftFront.setPower(power);
-            rightFront.setPower(-power);
+            leftBack.setPower(-power);
+            rightBack.setPower(power);
+            leftFront.setPower(-power);
+            rightFront.setPower(power);
         }
 
     }
@@ -375,11 +397,11 @@ public class SemiAuto implements SubsystemManager{
         double a=0; //for FL and BR
         double b=0; //for FR and BL
         if (type == 1){
-            a = (power*Math.cos(getR()-45));
-            b = -(power*Math.sin(getR()-45));
+            a = (power*Math.cos(odo.getR()-45));
+            b = -(power*Math.sin(odo.getR()-45));
         }else if (type == 2){
-            a = (power*Math.sin(getR()-45));
-            b = (power*Math.cos(getR()-45));
+            a = (power*Math.sin(odo.getR()-45));
+            b = (power*Math.cos(odo.getR()-45));
         }
 
         double FL =(a);
