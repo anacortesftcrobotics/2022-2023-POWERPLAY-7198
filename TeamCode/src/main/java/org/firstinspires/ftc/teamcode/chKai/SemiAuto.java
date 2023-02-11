@@ -32,6 +32,8 @@ public class SemiAuto implements SubsystemManager{
     private int xCounter, yCounter, rCounter; //these count how many tiles (or eighth-turns) you want to move in each axis. see check, setGoalY, setGoalX, and setGoalR.
     private double goalX, goalY, goalR; //these hold the current goal position (where the robot is trying to go) for each axis. see X, Y, R, setGoalY, setGoalX, and setGoalR.
     private boolean x = false;
+    private int yi, xi, ri =0;
+    private double yPower, xPower, rPower;
     private boolean centering = false;
     Gyro gyro = new Gyro();
     Controller controller = new Controller();
@@ -114,11 +116,14 @@ public class SemiAuto implements SubsystemManager{
             yCounter ++;
             setGoalY();
             ok = true;
+            yi = 1;
         }else if (controller.button(4, gamepad1.dpad_down)){
             yCounter --;
             setGoalY();
             ok = true;
+            yi = 1;
         }
+        /*
         if (controller.button(5, gamepad1.dpad_right)){
             xCounter ++;
             setGoalX();
@@ -132,25 +137,12 @@ public class SemiAuto implements SubsystemManager{
             centering = XCing;
             //centerY();
             ok = true;
-        }
-        if(centering){
-            centerX();
-        }
-        if(gamepad1.triangle){
-            setMotors(1,0.3);
-        } else if (gamepad1.cross) {
-            setMotors(1, -0.3);
-        } else if (gamepad1.square) {
-            setMotors(3, -0.3);
-        } else if (gamepad1.circle) {
-            setMotors(3, 0.3);
-        }else {
-            setMotors(1, 0);
-        }
+        }*/
+
         odo.getX();
         odo.getY();
         Y();
-        X();
+        //X();
         R();
         if (odo.getY() == goalY && odo.getX() == goalX && odo.getR() == goalR && !stickActive(gamepad1)){
             setMotors(1,0);
@@ -167,7 +159,8 @@ public class SemiAuto implements SubsystemManager{
                 "\nRing- "+Ring+"" +
                 "\nx near"+near+
                 "\nx pos"+odo.getX()+
-                "\nXcing- "+XCing;
+                "\nXcing- "+XCing+
+                "\nYcing- "+YCing;
     }
 
     /**
@@ -175,6 +168,35 @@ public class SemiAuto implements SubsystemManager{
     *only moves if the robot is not in the process of x movement, r movement or non-auto movement
      */
     public void Y(){
+        double pwr=0;
+        switch (yi) {
+            case 0:
+                Ying = false;
+                yCounter = 0;
+                break;
+            case 1:
+                centerR();
+                break;
+            case 2:
+                centerX();
+                break;
+            case 3:
+                pwr = (goalY - odo.getY()) / 12;
+                if (pwr > 0.5) {
+                    pwr = 0.5;
+                } else if (pwr < -0.5) {
+                    pwr = -0.5;
+                }
+                if (pwr == 0){
+                    yi =0;
+                }else {
+                    setMotors(1, pwr);
+                }
+                break;
+        }
+    }
+
+    public void Y2(){
         double pwr=0;
         if(Math.abs(goalY - odo.getY()) > 1 && !Xing && !Ring && ok){
             Ying = true;
@@ -198,7 +220,7 @@ public class SemiAuto implements SubsystemManager{
     *executes centerY, then moves the robot along the x-axis to within one inch of goalX
     *only moves if the robot is not in the process of y movement, r movement or non-auto movement
      */
-    public void X(){
+    /*public void X(){
         double pwr=0;
         if(Math.abs(goalX - odo.getX()) > 1 && !Ying && !Ring && ok){
             Xing = true;
@@ -215,7 +237,7 @@ public class SemiAuto implements SubsystemManager{
         }else{
             Xing = false;
         }
-    }
+    }*/
     /**
     *turns the robot to within three degrees of goalR
     *only moves if the robot is not in the process of y movement, x movement or non-auto movement
@@ -246,15 +268,16 @@ public class SemiAuto implements SubsystemManager{
         double diff = odo.getX() - near;
         if (Math.abs(diff)>1){
             XCing = true;
-
-            if(diff < 0) {
+            pwr = (near - odo.getX());
+            if (pwr > 0.5){
                 pwr = 0.5;
-            }else{
+            }else if(pwr < -0.5){
                 pwr = -0.5;
             }
             setMotors(2,pwr);
         }else{
             XCing = false;
+            yi = 2;
         }
     }
     /**
@@ -279,9 +302,9 @@ public class SemiAuto implements SubsystemManager{
     }
 
     public void centerR(){
-        double near = (Math.round(odo.getR()/45))*45;
+        double near = (Math.round(odo.getR()/45.0))*45.0;
         double pwr = 0;
-        double diff = odo.getX() - near;
+        double diff = odo.getR() - near;
         if (Math.abs(diff)>1){
             RCing = true;
 
@@ -290,9 +313,10 @@ public class SemiAuto implements SubsystemManager{
             }else{
                 pwr = 0.5;
             }
-            setHeadless(2,pwr);
+            setMotors(3, pwr);
         }else{
             RCing = false;
+            yi = 3;
         }
     }
     /**
@@ -340,24 +364,7 @@ public class SemiAuto implements SubsystemManager{
         }
         return stickActive;
     }
-    /**Takes a boolean key from the gamepad and only lets it "count" once.
-    *@param input is the boolean key being used
-    *can only be used for one key at a time; if multiple keys are dBounced at the same time, only the first one will be counted
-     *did not work, used controller.button instead.
-    */
-    public boolean dBounce(boolean input){
-        if (input && !hasChanged){
-            x = true;
-        }else {
-            x = false;
-        }
-        if(input){
-            hasChanged = true;
-        }else{
-            hasChanged = false;
-        }
-        return x;
-    }
+
     /**
     *sets motors to drive, strafe, or turn. 
     *@param type is the type of movement, 1 for driving, 2 for strafing, and 3 for turning.
