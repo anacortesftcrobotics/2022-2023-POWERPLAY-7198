@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class FakeOdometry {
     DcMotor leftFront, rightFront, leftBack, rightBack, encoderLeft, encoderRight, encoderBack;
-    BNO055IMU imu;
-    Orientation angles;
+    Gyro gyro = new Gyro();
     public void initializeHardware(HardwareMap hardwareMap){
         //leftBack
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
@@ -55,14 +54,6 @@ public class FakeOdometry {
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit =BNO055IMU.AngleUnit.DEGREES;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-
-        imu=hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
     }
 
     public double getY(){
@@ -70,6 +61,7 @@ public class FakeOdometry {
     }
     public double getX(){ return -(encoderBack.getCurrentPosition())/1875; }
     public double getR(){
-        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        gyro.updateHeading();
+        return gyro.getHeading();
     }
 }

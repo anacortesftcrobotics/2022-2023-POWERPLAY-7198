@@ -159,6 +159,7 @@ public class SemiAuto implements SubsystemManager{
                 "\nRing- "+Ring+"" +
                 "\nx near"+near+
                 "\nx pos"+odo.getX()+
+                "\nr pos"+odo.getR()+
                 "\nXcing- "+XCing+
                 "\nYcing- "+YCing;
     }
@@ -370,6 +371,7 @@ public class SemiAuto implements SubsystemManager{
     *@param type is the type of movement, 1 for driving, 2 for strafing, and 3 for turning.
     *type 1: +forward/-back. types 2 and 3: +right/-left
     *@param power is the power you want it set at, from -1 to 1.
+     *@deprecated
     */
     public void setMotors(int type, double power){
         //type 1 is +forward/-back, 2 is strafe -left/+right, 3 is turn -left/+right
@@ -400,7 +402,7 @@ public class SemiAuto implements SubsystemManager{
     *for turning, use setMotors
     */
     public void setHeadless(int type, double Power){
-        double power = -Power; //because it was going backwards
+        /*double power = -Power; //because it was going backwards
         double a=0; //for FL and BR
         double b=0; //for FR and BL
         if (type == 1){
@@ -409,12 +411,31 @@ public class SemiAuto implements SubsystemManager{
         }else if (type == 2){
             a = (power*Math.sin(odo.getR()-45));
             b = (power*Math.cos(odo.getR()-45));
+        }*/
+        double y = 0;
+        double x = 0;
+        double r = 0;
+
+        switch (type){
+            case 1:
+                y = Power;
+
         }
 
-        double FL =(a);
-        double FR =(b);
-        double BL =(b);
-        double BR =(a);
+        double angle = Math.toRadians(odo.getR());
+        double x1=(x * Math.sin(angle)); //sideways movement for FL and BR
+        double x2=(x * Math.cos(angle)); //sideways movement for FR and BL
+
+        double y1=(y * Math.cos(angle)); //foreward movement for FL and BR
+        double y2=-(y * Math.sin(angle)); //foreward movement for FR and BL
+
+        double FL =(x1 + y1 + r);
+
+        double FR =(x2 + y2 - r);
+
+        double BL =(x2 + y2 + r);
+
+        double BR =(x1 + y1 - r);
 
         double maxPower=Math.max(Math.max(FL,FR),Math.max(BL,BR));
         if (maxPower > 1){
@@ -423,13 +444,5 @@ public class SemiAuto implements SubsystemManager{
             BL=BL/maxPower;
             BR=BR/maxPower;
         }
-
-        leftFront.setPower(FL);
-
-        rightFront.setPower(FR);
-
-        leftBack.setPower(BL);
-
-        rightBack.setPower(BR);
     }
 }
