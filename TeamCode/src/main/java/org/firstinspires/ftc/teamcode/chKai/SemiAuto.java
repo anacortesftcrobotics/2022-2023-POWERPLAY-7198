@@ -33,7 +33,7 @@ public class SemiAuto implements SubsystemManager{
     private double goalX, goalY, goalR; //these hold the current goal position (where the robot is trying to go) for each axis. see X, Y, R, setGoalY, setGoalX, and setGoalR.
     private boolean x = false;
     private int yi, xi, ri =0;
-    private double yPower, xPower, rPower;
+    private double FR, FL, BR, BL =0;
     private boolean centering = false;
     Gyro gyro = new Gyro();
     Controller controller = new Controller();
@@ -393,13 +393,22 @@ public class SemiAuto implements SubsystemManager{
         }
 
     }
+    public int nearX(){
+        return (int)(Math.round(odo.getX()/24))*24;
+    }
+    public int nearY(){
+        return (int)(Math.round(odo.getY()/24))*24;
+    }
+    public int nearR(){
+        return (int)(Math.round(odo.getR()/90))*90;
+    }
+
     /**
     *movements in relation to field, not robot heading. 
     *@param type is the type of movement, 1 for y-axis and 2 for x-axis
     *type 1: +forward/-back. type2: +right/-left
     *@param Power is the power you want it set at, from -1 to 1.
     *only works if the opMode is initialized with the robot facing forwards
-    *for turning, use setMotors
     */
     public void setHeadless(int type, double Power){
         /*double power = -Power; //because it was going backwards
@@ -419,7 +428,19 @@ public class SemiAuto implements SubsystemManager{
         switch (type){
             case 1:
                 y = Power;
-
+                x = (nearX() - odo.getX())/10;
+                r = (nearR() - odo.getR())/10;
+                break;
+            case 2:
+                y = (nearY() - odo.getY())/10;
+                x = Power;
+                r = (nearR() - odo.getR())/10;
+                break;
+            case 3:
+                y = (nearY() - odo.getY())/10;
+                x = (nearX() - odo.getX())/10;
+                r = Power;
+                break;
         }
 
         double angle = Math.toRadians(odo.getR());
@@ -429,13 +450,13 @@ public class SemiAuto implements SubsystemManager{
         double y1=(y * Math.cos(angle)); //foreward movement for FL and BR
         double y2=-(y * Math.sin(angle)); //foreward movement for FR and BL
 
-        double FL =(x1 + y1 + r);
+        FL =(x1 + y1 + r);
 
-        double FR =(x2 + y2 - r);
+        FR =(x2 + y2 - r);
 
-        double BL =(x2 + y2 + r);
+        BL =(x2 + y2 + r);
 
-        double BR =(x1 + y1 - r);
+        BR =(x1 + y1 - r);
 
         double maxPower=Math.max(Math.max(FL,FR),Math.max(BL,BR));
         if (maxPower > 1){
@@ -445,4 +466,17 @@ public class SemiAuto implements SubsystemManager{
             BR=BR/maxPower;
         }
     }
+    public double getFR(){
+        return FR;
+    }
+    public double getFL(){
+        return FL;
+    }
+    public double getBR(){
+        return BR;
+    }
+    public double getBL(){
+        return BL;
+    }
+
 }

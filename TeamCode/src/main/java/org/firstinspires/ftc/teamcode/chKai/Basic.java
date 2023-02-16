@@ -32,5 +32,12 @@ public class Basic implements SubsystemManager{
                 leftBack.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x));
                 rightFront.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x));
                 rightBack.setPower((gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x));
-            }
     }
+
+    public void goPlus(double FL, double FR, double BL, double BR) {
+        leftFront.setPower(FL);
+        leftBack.setPower(BL);
+        rightFront.setPower(FR);
+        rightBack.setPower(BR);
+    }
+}
