@@ -447,13 +447,11 @@ public class SemiAuto implements SubsystemManager{
                 break;
         }
 
-        double angle = Math.toRadians(odo.getR());
-        double x1=(x * Math.sin(angle)); //sideways movement for FL and BR
-        double x2=(x * Math.cos(angle)); //sideways movement for FR and BL
-
-        double y1=(y * Math.cos(angle)); //foreward movement for FL and BR
-        double y2=-(y * Math.sin(angle)); //foreward movement for FR and BL
-
+        double x1 = x * BistroMathics.FLBRx(imu); //sideways movement for FL and BR
+        double x2 = x * BistroMathics.FRBLx(imu); //sideways movement for FR and BL
+ 
+        double y1 = y * BistroMathics.FLBRy(imu); //foreward movement for FL and BR
+        double y2 = y * BistroMathics.FRBLy(imu); //foreward movement for FR and BL
         FL =(x1 + y1 + r);
 
         FR =(x2 + y2 - r);
