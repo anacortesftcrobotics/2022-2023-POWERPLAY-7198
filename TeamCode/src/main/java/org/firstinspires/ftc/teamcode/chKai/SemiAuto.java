@@ -145,7 +145,10 @@ public class SemiAuto implements SubsystemManager{
         //X();
         R();
         if (odo.getY() == goalY && odo.getX() == goalX && odo.getR() == goalR && !stickActive(gamepad1)){
-            setMotors(1,0);
+            FR = 0;
+            FL = 0;
+            BR = 0;
+            BL = 0;
         }
 
 
@@ -191,12 +194,12 @@ public class SemiAuto implements SubsystemManager{
                 if (pwr == 0){
                     yi =0;
                 }else {
-                    setMotors(1, pwr);
+                    setHeadless(1, pwr);
                 }
                 break;
         }
     }
-
+/*
     public void Y2(){
         double pwr=0;
         if(Math.abs(goalY - odo.getY()) > 1 && !Xing && !Ring && ok){
@@ -216,7 +219,7 @@ public class SemiAuto implements SubsystemManager{
             Ying = false;
             yCounter = 0;
         }
-    }
+    }*/
     /**
     *executes centerY, then moves the robot along the x-axis to within one inch of goalX
     *only moves if the robot is not in the process of y movement, r movement or non-auto movement
@@ -254,7 +257,7 @@ public class SemiAuto implements SubsystemManager{
                 pwr = -0.5;
             }
             
-            setMotors(3,pwr);
+            setHeadless(3,pwr);
         }else{
             Ring = false;
         }
@@ -275,7 +278,7 @@ public class SemiAuto implements SubsystemManager{
             }else if(pwr < -0.5){
                 pwr = -0.5;
             }
-            setMotors(2,pwr);
+            setHeadless(2,pwr);
         }else{
             XCing = false;
             yi = 2;
@@ -314,7 +317,7 @@ public class SemiAuto implements SubsystemManager{
             }else{
                 pwr = 0.5;
             }
-            setMotors(3, pwr);
+            setHeadless(3, pwr);
         }else{
             RCing = false;
             yi = 3;
@@ -362,6 +365,7 @@ public class SemiAuto implements SubsystemManager{
             xCounter = 0;
             rCounter = 0;
             ok = false;
+            yi = 0;
         }
         return stickActive;
     }
