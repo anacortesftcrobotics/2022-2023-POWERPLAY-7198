@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 
 public class BistroMathics{
-    private double angle(BNO055IMU imu){
+    private static double angle(BNO055IMU imu){
         double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         angle += 45;
         if(angle < 0){angle += 360;}
