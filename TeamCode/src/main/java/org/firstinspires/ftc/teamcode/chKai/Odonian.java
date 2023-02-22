@@ -1,3 +1,13 @@
+package org.firstinspires.ftc.teamcode.chKai;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.chKai.BistroMathics;
+import org.firstinspires.ftc.teamcode.powerplay.Gyro;
+
 public class Odonian {
     DcMotor leftFront, rightFront, leftBack, rightBack;
      //imu
@@ -46,11 +56,11 @@ public class Odonian {
         lastBL = leftBack.getCurrentPosition();
         lastBR = rightBack.getCurrentPosition();
 
-        x += BistroMath.FLBRx(imu) * (fl + br);
-        x += BistroMath.FRBLx(imu) * (fr + bl);
+        x += BistroMathics.FLBRx(imu) * (fl + br);
+        x += BistroMathics.FRBLx(imu) * (fr + bl);
 
-        y += BistroMath.FLBRy(imu) * (fl + br);
-        y += BistroMath.FRBLy(imu) * (fr + bl);
+        y += BistroMathics.FLBRy(imu) * (fl + br);
+        y += BistroMathics.FRBLy(imu) * (fr + bl);
 
         gyro.updateHeading();
     }
