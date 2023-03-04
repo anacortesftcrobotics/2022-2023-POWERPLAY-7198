@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.teamcode.powerplay.Gyro;
 
 @TeleOp(name = "Turret Test")
 public class TurretTest extends LinearOpMode{
@@ -16,10 +18,15 @@ public class TurretTest extends LinearOpMode{
 
     DcMotorSimple turnTable;
     Basic basic = new Basic();
-
+    Gyro gyro = new Gyro();
     BNO055IMU imu, imu2;
     Orientation angles;
     Acceleration gravity;
+    int lastT1, lastT2;
+    double  lastTable;
+    ElapsedTime tTable = new ElapsedTime();
+    ElapsedTime tT1 = new ElapsedTime();
+    ElapsedTime tT2 = new ElapsedTime();
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     public void runOpMode() {
         turret1 = hardwareMap.get(DcMotor.class, "turret1");
@@ -43,6 +50,7 @@ public class TurretTest extends LinearOpMode{
         parameters.loggingTag          = "IMU";
         imu.initialize(parameters);
         imu2.initialize(parameters);
+        gyro.initializeHardware(hardwareMap);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -69,6 +77,9 @@ public class TurretTest extends LinearOpMode{
                     turret2.setPower(0);
                     turnTable.setPower(0);
                 }
+                getTableVelo();
+                getT1Velo();
+                getT2Velo();
                 telemetry.addData("turret2 position", turret2.getCurrentPosition());
                 telemetry.addData("worm position", turret1.getCurrentPosition());
                 telemetry.addData("imu", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
@@ -76,6 +87,27 @@ public class TurretTest extends LinearOpMode{
                 telemetry.update();
             }
         }
+    }
+    public double getTableVelo(){
+        double x = (getTablePos() - lastTable)/tTable.milliseconds();
+        lastTable = getTablePos();
+        tTable.reset();
+        return x;
+    }
+    public double getT1Velo(){
+        double x = (turret1.getCurrentPosition()-lastT1)/tT1.milliseconds();
+        lastT1 = turret1.getCurrentPosition();
+        tT1.reset();
+        return x;
+    }
+    public double getT2Velo(){
+        double x = (turret2.getCurrentPosition()-lastT2)/tT2.milliseconds();
+        lastT2 = turret2.getCurrentPosition();
+        tT2.reset();
+        return x;
+    }
+    public double getTablePos(){
+        return gyro.getHeading() -gyro.getHeading2();
     }
 }
 
