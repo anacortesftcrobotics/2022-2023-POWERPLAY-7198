@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.archive.Odo1Offset;
+import org.firstinspires.ftc.teamcode.kaicode.Odo1;
+import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
 
 @Disabled
 @Autonomous(name = "LemAutoOpMinimal", group = "Autonomous")

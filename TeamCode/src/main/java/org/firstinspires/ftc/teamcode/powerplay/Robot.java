@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.teamcode.archive.Odo2;
 import org.firstinspires.ftc.teamcode.kaicode.*;
 
 /**

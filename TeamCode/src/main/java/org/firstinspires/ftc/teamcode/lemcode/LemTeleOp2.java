@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.archive.Odo2;
+import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
+import org.firstinspires.ftc.teamcode.kaicode.Odo2;
 
 /**
  * This class is the primary teleOp for the 2022-2023 power-play season.
