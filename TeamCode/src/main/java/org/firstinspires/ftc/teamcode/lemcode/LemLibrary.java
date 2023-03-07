@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.kaicode.Odo1;
-import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
+import org.firstinspires.ftc.teamcode.archive.Odo1Offset;
 
 @Disabled
 public class LemLibrary

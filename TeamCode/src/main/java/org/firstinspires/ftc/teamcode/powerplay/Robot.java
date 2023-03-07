@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.teamcode.archive.Odo2;
 import org.firstinspires.ftc.teamcode.kaicode.*;
 
 /**
@@ -303,10 +304,6 @@ public class Robot {
         int i = 0;
         Heading temp = odometry.convertToHeading(odometry.getX(), odometry.getY(), gyro.getHeading());
 
-        odo1.setEncoderPos((int)odometry.getLeft(), (int)-odometry.getRight(), (int)odometry.getBack());
-        telemetryIn.addData("1x",  odo1.getX());
-        telemetryIn.addData("1y",  odo1.getY());
-        telemetryIn.addData("1h",  odo1.getHDeg());
         odo3.setEncoderPos((int)odometry.getLeft(), (int)-odometry.getRight(), (int)odometry.getBack());
         telemetryIn.addData("3x",  odo3.getX());
         telemetryIn.addData("3y",  odo3.getY());
