@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevSPARKMini;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,11 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 @TeleOp(name = "Turret Test")
-public class TurretTest extends LinearOpMode {
+public class TurretTest extends LinearOpMode{
     DcMotor turret1;
     DcMotor turret2;
 
@@ -25,10 +22,6 @@ public class TurretTest extends LinearOpMode {
     Acceleration gravity;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     public void runOpMode() {
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-
         turret1 = hardwareMap.get(DcMotor.class, "turret1");
         turret2 = hardwareMap.get(DcMotor.class, "turret2");
         turnTable = hardwareMap.get(DcMotorSimple.class, "turnTable");
@@ -45,7 +38,7 @@ public class TurretTest extends LinearOpMode {
         imu2 = hardwareMap.get(BNO055IMU.class, "imu2");
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample  opmode
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         imu.initialize(parameters);
@@ -85,3 +78,7 @@ public class TurretTest extends LinearOpMode {
         }
     }
 }
+
+
+
+
