@@ -37,7 +37,7 @@ public class PIDFArmController extends PIDController {
         this.correction = update(targetAngleRad, angleRad, systemTime);
         if(super.isInitiated())
             this.correction += kG*Math.abs(Math.cos(angleRad))     //gravity feedforward for weight of controlled arm.
-                    + kG2*(Math.abs(Math.cos(angleRad))-Math.abs(Math.cos(angle2Rad)));
+                    + kG2*(2*Math.abs(Math.cos(angleRad))-Math.abs(Math.cos(angle2Rad)));
         //gravity feedforward for weight of arm immediately above the controlled arm.
         return correction;
     }
