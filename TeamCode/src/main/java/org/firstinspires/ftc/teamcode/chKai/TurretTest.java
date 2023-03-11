@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.chKai;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevSPARKMini;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,6 +24,8 @@ public class TurretTest extends LinearOpMode{
     Acceleration gravity;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     public void runOpMode() {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         turret1 = hardwareMap.get(DcMotor.class, "turret1");
         turret2 = hardwareMap.get(DcMotor.class, "turret2");
         turnTable = hardwareMap.get(DcMotorSimple.class, "turnTable");
@@ -73,9 +77,14 @@ public class TurretTest extends LinearOpMode{
                 telemetry.addData("worm position", turret1.getCurrentPosition());
                 telemetry.addData("imu", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 telemetry.addData("imu2", imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                telemetry.addData("angle", angle1());
                 telemetry.update();
             }
         }
+    }
+    //turret2 is 70 ticks for 90 degrees.
+    public double angle1(){
+        return Math.toRadians((turret1.getCurrentPosition()/2.222222222222)+5);
     }
 }
 
