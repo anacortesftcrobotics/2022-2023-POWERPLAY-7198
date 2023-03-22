@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.powerplay.*;
 import org.firstinspires.ftc.teamcode.pidclasses.*;
 
 public class Arm implements SubsystemManager {
+    private final double DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO = 5;
+    private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
     DcMotor elbow1, elbow2;
     LimitSwitch zero1, zero2;
     PIDFArmController pid1 = new PIDFArmController(0,0,0,0,0,0);
@@ -43,9 +45,9 @@ public class Arm implements SubsystemManager {
         elbow2.setPower(pwr2);
     }
     public double angle1(){
-        return Math.toRadians((elbow1.getCurrentPosition()/2.222222222222)+5);
+        return Math.toRadians((elbow1.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES) + DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO);
     }
     public double angle2(){
-        return Math.toRadians((elbow2.getCurrentPosition()/2.222222222222)+5 - angle1());
+        return Math.toRadians((elbow2.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES) + DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO - angle1());
     }
 }
