@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.pidclasses;
 
-//There are now changes
-public class PIDFArmController extends PIDController {
+public class PIDFArmController extends PIDFController {
     private double correction;
-    private double kV;
     private double kG;
     private double kG2;
 
@@ -18,38 +16,59 @@ public class PIDFArmController extends PIDController {
      * @param kG    coefficient for torque applied from the controlled arm
      * @param kG2   coefficient the arm immediately above the controlled arm in radians
      */
-    public PIDFArmController(double kP, double kI, double kD, double kV, double kG, double kG2) {
-        super(kP, kI, kD, kV);
-        this.kV = kV;
+    public PIDFArmController(double kP, double kI, double kD, double kV, double kA, double kG, double kG2) {
+        super(kP, kI, kD, kV, kA);
         this.kG = kG;
         this.kG2 = kG2;
     }
 
     /**
-     *
-     * @param angleRad              the angle of the controlled arm in radians, relative to the x-axis.
-     * @param angle2Rad             the angle of the arm immediately above the controlled arm in radians,
-     *                              relative to the x-axis.
-     * @param systemTime            the current system time, in milliseconds.
+     * Updates variables and calculates a correction value based on a current and expected state.
+     * Method will force launch() and return 0.0 if super.launched = false.
+     * @param targetAngleRad    target angle of the controlled arm in radians.
+     * @param angleRad          the angle of the controlled arm in radians, relative to the x-axis.
+     * @param angle2Rad         the angle of the arm immediately above the controlled arm in radians,
+     *                                  relative to the x-axis.
+     * @param systemTime        the current system time, in milliseconds.
      * @return
      */
     public double updateArm(double targetAngleRad, double angleRad, double angle2Rad, double systemTime) {
+        if(!super.isLaunched()) {
+            launch(angleRad, systemTime);
+            return 0.0;
+        }
+
         this.correction = update(targetAngleRad, angleRad, systemTime);
-        if(super.isInitiated())
-            this.correction += kG*Math.abs(Math.cos(angleRad))     //gravity feedforward for weight of controlled arm.
-                    + kG2*(Math.abs(Math.cos(angleRad))-Math.abs(Math.cos(angle2Rad)));
+        this.correction += kG * Math.abs(Math.cos(angleRad))     //gravity feedforward for weight of controlled arm.
+                + kG2 * (Math.abs(Math.cos(angleRad)) - Math.abs(Math.cos(angle2Rad)));
         //gravity feedforward for weight of arm immediately above the controlled arm.
         return correction;
     }
 
+    /**
+     * Updates variables and calculates a correction value based on a current and expected state with clamping.
+     * setInputClamping() and setOutputClamping() determine clamping limits for both targetPosition and correction.
+     * Method will force launch() and return 0.0 if super.launched = false.
+     * @param targetAngleRad    target angle of the controlled arm in radians.
+     * @param angleRad          the angle of the controlled arm in radians, relative to the x-axis.
+     * @param angle2Rad         the angle of the arm immediately above the controlled arm in radians,
+     *                                  relative to the x-axis.
+     * @param systemTime        the current system time, in milliseconds.
+     * @return
+     */
     public double updateArmClamped(double targetAngleRad, double angleRad, double angle2Rad, double systemTime) {
-        return clampOutput(
+        correction = clampOutput(
                 updateArm(targetAngleRad, clampInput(angleRad), angle2Rad, systemTime)
         );
+        return correction;
     }
 
+    /**
+     * Returns the most recent calculated output.
+     * @return  most recent calculated output.
+     */
     @Override
     public double getCorrection() {
-        return correction;
+        return this.correction;
     }
 }

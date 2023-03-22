@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Grabber implements SubsystemManager{
 
+    /**
+     * Empty constructor
+     */
     public Grabber ()
     {
 
@@ -41,17 +44,20 @@ public class Grabber implements SubsystemManager{
         {
             if(!beacon)
             {
+                //Closed to regular grabbing position.
                 leftGrab.setPosition(0.46 - grabberShift);
                 rightGrab.setPosition(0.54 - grabberShift);
             }
             else
             {
+                //Closed to beacon grabbing position
                 leftGrab.setPosition(0.54 - grabberShift);
                 rightGrab.setPosition(0.46 - grabberShift);
             }
         }
         else
         {
+            //Open position
             leftGrab.setPosition(0.58);
             rightGrab.setPosition(0.3);
         }

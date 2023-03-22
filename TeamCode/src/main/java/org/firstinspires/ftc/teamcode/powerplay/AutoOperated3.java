@@ -1,32 +1,23 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.*;
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
- * This was the first AutoOp made. It functioned, but became broken after changes were made elsewhere in the code.
- * This class is non-operational, and should not be run.
+ * This was the AutoOp used at inter-leagues. It worked well, and should still work.
  * @author      Lemon
  */
 
-@Disabled
-@Autonomous (name = "AutoOp", group = "Autonomous")
+@Autonomous (name = "This one", group = "Autonomous")
 
-public class AutoOperated extends OpMode {
+public class AutoOperated3 extends OpMode {
     int i = 0;
     Heading temp = new Heading();
     Robot powerplay = new Robot();
     double liftHeight = 0;
     int pos;
     double storage;
-    boolean once;
+    boolean once = false;
     public void init()
     {
         powerplay.initializeHardware(hardwareMap);
@@ -34,7 +25,7 @@ public class AutoOperated extends OpMode {
     public void start()
     {
         powerplay.robotDefaultState();
-        powerplay.chassis.setSpeedCoefficient(0.3);
+        powerplay.chassis.setSpeedCoefficient(0.35);
         powerplay.cds.onOffLED(false);
         powerplay.time.reset();
     }
@@ -44,27 +35,36 @@ public class AutoOperated extends OpMode {
         powerplay.odometry.updatePosition();
         powerplay.robotTelemetry(telemetry);
         temp = powerplay.odometry.convertToHeading(powerplay.odometry.getX(), powerplay.odometry.getY(), powerplay.gyro.getHeading());
+        powerplay.lift.liftSet(liftHeight);
         switch(i) {
             case 0:
-                powerplay.led.setLed("black");
-                powerplay.grabber.grab(true, false);
-                if(powerplay.time.time() > 2)
+                powerplay.grabber.grab(true,false);
+                if(powerplay.time.time() > 0.5)
                     i++;
                 break;
             case 1:
-                powerplay.led.setLed("black");
-                liftHeight = 14;
-                i++;
-                break;
-            case 2:
-                once = false;
-                powerplay.led.setLed("black");
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(20.5, 0, 0, temp))
+                liftHeight = 15;
+                if(powerplay.chassis.move(19.5,0,0,temp))
                     i++;
                 break;
+            case 2:
+            case 5:
+            case 7:
+            case 10:
+                if(!once)
+                {
+                    storage = powerplay.time.time();
+                    once = !once;
+                    powerplay.chassis.brake();
+                }
+                if(powerplay.time.time() - storage > 0.75 ){
+                    once = false;
+                    i++;
+                }
+                break;
             case 3:
-                if(once)
+                if(!once)
                 {
                     storage = powerplay.time.time();
                     powerplay.cds.onOffLED(true);
@@ -91,37 +91,57 @@ public class AutoOperated extends OpMode {
                     powerplay.led.setLed("white");
                     pos = 2;
                 }
-                if(powerplay.time.time() - storage > 5) {
+                if(powerplay.time.time() - storage > 1) {
                     powerplay.cds.onOffLED(false);
+                    once = false;
                     i++;
                 }
                 break;
             case 4:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(20, 0, 0, temp))
+                if(powerplay.chassis.move(24,0,0,temp))
                     i++;
                 break;
-            case 5:
             case 6:
                 powerplay.resetOdoButOnlyLikeOnce(i);
-                if(powerplay.chassis.move(-8.5, 1, 0, temp))
+                powerplay.led.setLed("white");
+                if(powerplay.chassis.move(-19,-2,0,temp))
                     i++;
                 break;
-            case 7:
+            case 8:
                 powerplay.resetOdoButOnlyLikeOnce(i);
                 if(pos == 1)
-                    if(powerplay.chassis.move(4, -25, 0, temp))
+                    if(powerplay.chassis.move(3, -24, 0, temp))
                         i++;
                 if(pos == 2)
                     i++;
                 if(pos == 3)
-                    if(powerplay.chassis.move(1, 25, 0, temp))
+                    if(powerplay.chassis.move(3, 24, 0, temp))
                         i++;
                 break;
-            case 8:
+            case 9:
                 liftHeight = 0;
-                if((powerplay.lift.leftLift.getCurrentPosition() + powerplay.lift.liftChange + powerplay.lift.liftManual + 10) < 20)
-                    i++;
+                break;
+            case 11:
+                i++;
+                break;
+            case 12:
+                i++;
+                break;
+            case 13:
+                i++;
+                break;
+            case 14:
+                i++;
+                break;
+            case 15:
+                i++;
+                break;
+            case 16:
+                i++;
+                break;
+            case 17:
+                i++;
                 break;
             default:
                 powerplay.led.setLed("black");

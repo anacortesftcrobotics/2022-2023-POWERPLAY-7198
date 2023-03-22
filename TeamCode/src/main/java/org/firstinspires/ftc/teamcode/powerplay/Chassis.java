@@ -13,6 +13,9 @@ import static java.lang.Thread.sleep;
 
 public class Chassis
 {
+    /**
+     * Empty constructor.
+     */
     public Chassis ()
     {
 
@@ -139,7 +142,12 @@ public class Chassis
 
         if(!doneYet)
         {
-            xyrMovement(restrict(Math.cbrt(yError)), restrict(Math.cbrt(xError)), restrict(-hError / 10));
+            //xyrMovement(restrict(yError), restrict(xError), restrict(-hError / 10));
+            double yMin = restrictSet(((yError - 1) / 8), -0.4, -0.3);
+            double yMax = restrictSet(((yError - 1) / 8), 0.3, 0.4);
+            double xMin = restrictSet(((xError - 1) / 22), -0.4, -0.15);
+            double xMax = restrictSet(((xError - 1) / 22), 0.15, 0.4);
+            xyrMovement(restrictSet(yError,yMin, yMax), restrictSet(xError,xMin, xMax), restrict(-hError / 10));
         }
 
         if(doneYet)
@@ -156,109 +164,10 @@ public class Chassis
     }
 
     /**
-     * This function tells the robot to move left or right a certain amount of inches.
-     * It is specially designed to be called in a certain type of control loop.
-     * @param dist is the amount of inches to move.
-     * @param heading is an object that tells the robot where it is, so it can change the motor power values to course correct.
-     * @return a boolean that says if the robot has reached its destination yet.
-     */
-    public boolean strafe(double dist, Heading heading)
-    {
-        boolean doneYet = false;
-
-        if(!inLoop)
-        {
-            saveState(heading.x, heading.y, heading.h);
-            inLoop = true;
-        }
-
-        double xEndState = dist * Math.cos(Math.toRadians(saveState[2]));
-        double yEndState = dist * Math.sin(Math.toRadians(saveState[2]));
-        double hEndState = saveState[2];
-
-        double xError = xEndState - heading.x;
-        double yError = yEndState - heading.y;
-        double hError = hEndState - heading.h;
-
-        double trackError = Math.abs(dist) - Math.sqrt(Math.pow((heading.x), 2) + Math.pow((heading.y), 2));
-        double translatedError = Math.max(-1, Math.min(1, Math.cbrt(trackError) * (1 / 3)));
-        double correction = hError / 50;
-
-        if(Math.abs(xError) < 0.5 && Math.abs(yError) < 0.5 && Math.abs(hError) < 5)
-        {
-            doneYet = true;
-        }
-
-        if(!doneYet)
-        {
-            leftBack.setPower(-translatedError - correction);
-            rightBack.setPower(translatedError + correction);
-            leftFront.setPower(translatedError - correction);
-            rightFront.setPower(-translatedError + correction);
-        }
-
-        if(doneYet)
-        {
-            inLoop = false;
-            brake();
-        }
-        return doneYet;
-    }
-
-    /**
-     * This function tells the robot to turn a certain amount of degrees.
-     * It is specially designed to be called in a certain type of control loop.
-     * @param degree is the amount of degrees to turn.
-     * @param heading is an object that tells the robot where it is, so it can change the motor power values to course correct.
-     * @return a boolean that says if the robot has reached its destination yet.
-     */
-    public boolean turn(double degree, Heading heading)
-    {
-        boolean doneYet = false;
-
-        if(!inLoop)
-        {
-            saveState(heading.x, heading.y, heading.h);
-            inLoop = true;
-        }
-
-        double xEndState = saveState[0];
-        double yEndState = saveState[1];
-        double hEndState = saveState[2] + degree;
-
-        double xError = xEndState - heading.x;
-        double yError = yEndState - heading.y;
-        double hError = hEndState - heading.h;
-
-        double trackError = hError;
-        double translatedError = Math.max(-1, Math.min(1, Math.cbrt(trackError) * (1 / 3)));
-
-        if(Math.abs(xError) < 0.5 && Math.abs(yError) < 0.5 && Math.abs(hError) < 5)
-        {
-            doneYet = true;
-        }
-
-        if(!doneYet)
-        {
-            leftBack.setPower(translatedError);
-            rightBack.setPower(translatedError);
-            leftFront.setPower(-translatedError);
-            rightFront.setPower(-translatedError);
-        }
-
-        if(doneYet)
-        {
-            inLoop = false;
-            brake();
-        }
-        return doneYet;
-    }
-
-    /**
      * This function takes in positional data and saves it to a local storage array for easy access.
-     * @param x
-     * @param y
-     * @param h
+     * @param x is the x position given to the function.
+     * @param y is the y position given to the function.
+     * @param h is the heading, in degrees given to the function.
      */
     public void saveState(double x, double y, double h)
     {
@@ -322,9 +231,27 @@ public class Chassis
             return input;
         }
     }
+
+    /**
+     * Restricts a value to between -1 and 1.
+     * @param input is the value to be restricted.
+     * @return the value after being restricted.
+     */
     public double restrict(double input)
     {
         return Math.max(-1, Math.min(1, input));
+    }
+
+    /**
+     * This function will restrict a value between a given minimum and maximum.
+     * @param input is the input value that is being processed.
+     * @param min is the allowed minimum.
+     * @param max is the allowed maximum.
+     * @return the input value after being restricted.
+     */
+    public double restrictSet(double input, double min, double max)
+    {
+        return Math.max(min, Math.min(max, input));
     }
 
     /**

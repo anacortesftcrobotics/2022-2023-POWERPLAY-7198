@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MPCR implements SubsystemManager{
 
+    /**
+     * Empty constructor.
+     */
     public MPCR ()
     {
 
