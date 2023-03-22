@@ -12,8 +12,8 @@ public class Arm implements SubsystemManager {
     private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
     DcMotor elbow1, elbow2;
     LimitSwitch zero1, zero2;
-    PIDFArmController pid1 = new PIDFArmController(0,0,0,0,0,0);
-    PIDFArmController pid2 = new PIDFArmController(0,0,0,0,0,0);
+    PIDFArmController pid1 = new PIDFArmController(0,0,0,0,0,0,0);
+    PIDFArmController pid2 = new PIDFArmController(0,0,0,0,0,0,0);
     ElapsedTime time = new ElapsedTime();
     @Override
     public void initializeHardware(HardwareMap hardwareMap) {
@@ -26,8 +26,8 @@ public class Arm implements SubsystemManager {
         elbow2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         time.reset();
-        pid1.initiate(elbow1.getCurrentPosition(), time.milliseconds());
-        pid2.initiate(elbow2.getCurrentPosition(), time.milliseconds());
+        pid1.launch(elbow1.getCurrentPosition(), time.milliseconds());
+        pid2.launch(elbow2.getCurrentPosition(), time.milliseconds());
 
         pid1.setOutputClamping(-1, 1);
         pid2.setOutputClamping(-1, 1);
