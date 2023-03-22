@@ -32,13 +32,13 @@ public class Arm implements SubsystemManager {
         pid1.setOutputClamping(-1, 1);
         pid2.setOutputClamping(-1, 1);
 
-        //zero1 = hardwareMap.get(LimitSwitch.class, "");
-        //zero2 = hardwareMap.get(LimitSwitch.class, "");
+        zero1 = hardwareMap.get(LimitSwitch.class, "");
+        zero2 = hardwareMap.get(LimitSwitch.class, "");
     }
     public void update(double target1, double target2){
         double pwr1, pwr2 = 0;
-        pwr1 = (pid1.updateArmClamped(Math.toRadians(target1), angle1(), angle2(), time.milliseconds()));
-        pwr2 = (pid2.updateArmClamped(Math.toRadians(target2), angle2(), 0, time.milliseconds()));
+        pwr1 = pid1.updateArmClamped(Math.toRadians(target1), angle1(), angle2(), time.milliseconds());
+        pwr2 = pid2.updateArmClamped(Math.toRadians(target2), angle2(), 0, time.milliseconds());
         if (zero1.isPressed()){elbow1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); pwr1 = 0;}
         if (zero2.isPressed()){elbow2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); pwr1 = 0;}
         elbow1.setPower(pwr1);

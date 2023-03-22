@@ -148,15 +148,15 @@ public class Robot {
     public void driveControl (Gamepad gamepad1)
     {
         chassis.xyrMovement(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-        if(controller1.button(15,(gamepad1.left_trigger > 0.5)))
+        if(controller1.button(15))
             chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient - 0.25)));
-        if(controller1.button(16,(gamepad1.right_trigger > 0.5)))
+        if(controller1.button(16))
             chassis.setSpeedCoefficient(Math.max(-1, Math.min(1, chassis.speedCoefficient + 0.25)));
     }
 
     public void MPCRControl (Gamepad gamepad1)
     {
-        if(controller1.button(10,gamepad1.left_bumper))
+        if(controller1.button(10)
             coneRight = !coneRight;
         if(coneRight)
         {
@@ -178,8 +178,8 @@ public class Robot {
                     hasGrabbedUp = true;
                     s2 = "aslkjfkl";
                 }  else if (grabbedUp && hasGrabbedUp) {
-                    if (controller1.button(7, gamepad2.dpad_up)){level = 5.0;}
-                    else if (controller1.button(4, gamepad2.dpad_down)) {level = 0.0;}
+                    if (controller1.button(7)){level = 5.0;}
+                    else if (controller1.button(4)) {level = 0.0;}
                     s2 = "poqweiurwioe";
                 }
             }else {
@@ -188,10 +188,10 @@ public class Robot {
             }
 
             if(grabbedUp && hasGrabbedUp)
-                if (controller1.button(7, gamepad2.dpad_up))
+                if (controller1.button(7))
                     level = 5.0;
             if(grabbedUp && hasGrabbedUp)
-                if (controller1.button(4, gamepad2.dpad_down))
+                if (controller1.button(4))
                     level = 0.0;
             lift.liftSet(level);
         }
@@ -200,7 +200,7 @@ public class Robot {
     public void grabberControl(Gamepad gamepad2)
     {
 
-        if (controller2.button(11, gamepad2.right_bumper)){
+        if (controller2.button(11)){
             grabbable = !grabbable;
         }
 

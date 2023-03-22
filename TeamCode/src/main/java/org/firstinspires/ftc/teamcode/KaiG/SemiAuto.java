@@ -1,17 +1,9 @@
-package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.KaiG;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 
 public class SemiAuto implements SubsystemManager{
@@ -112,12 +104,12 @@ public class SemiAuto implements SubsystemManager{
 
     }*/
     public void test(Gamepad gamepad1){
-        if (controller.button(7, gamepad1.dpad_up)){
+        if (controller.button(7)){
             yCounter ++;
             setGoalY();
             ok = true;
             yi = 1;
-        }else if (controller.button(4, gamepad1.dpad_down)){
+        }else if (controller.button(4)){
             yCounter --;
             setGoalY();
             ok = true;

@@ -11,8 +11,8 @@ public class Hand implements SubsystemManager{
     Servo grab;
     DcMotor wrist;
     public void initializeHardware(HardwareMap hardwareMap){
-        //grab = hardwareMap.get(Servo.class, "grabber");
-        //wrist = hardwareMap.get(DcMotor.class, "wrist");
+        grab = hardwareMap.get(Servo.class, "grabber");
+        wrist = hardwareMap.get(DcMotor.class, "wrist");
         wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
