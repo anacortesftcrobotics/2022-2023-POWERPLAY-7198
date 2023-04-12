@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "The Stuff")

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.lemcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.kaicode.Odo1Offset;
 
+@Disabled
 @Autonomous(name = "LemAutoOpBP1", group = "Blue Position 1")
 
 public class LemAutoOp2 extends LinearOpMode

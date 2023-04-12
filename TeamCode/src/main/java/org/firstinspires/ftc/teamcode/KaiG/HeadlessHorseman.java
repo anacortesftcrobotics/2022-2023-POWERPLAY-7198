@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.lemcode.LemTeleOp2;
 import org.firstinspires.ftc.teamcode.lemcode.LemTeleOp2Player;
 
 @TeleOp(name = "HeadlessHorseman")

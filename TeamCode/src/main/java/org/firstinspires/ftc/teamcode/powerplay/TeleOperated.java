@@ -7,6 +7,11 @@ import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+/**
+ * This is the TeleOp for the 2022-2023 powerplay season.
+ * @author      Lemon
+ */
+
 @TeleOp (name = "TeleOp", group = "TeleOp")
 
 public class TeleOperated extends OpMode

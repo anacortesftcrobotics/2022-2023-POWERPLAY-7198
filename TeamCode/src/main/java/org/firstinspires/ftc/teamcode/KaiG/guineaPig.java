@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
@@ -118,13 +118,13 @@ public class guineaPig extends LinearOpMode {
                 leftBack.setPower((y + x - gamepad1.right_stick_x));
                 rightFront.setPower((y + x + gamepad1.right_stick_x));
                 rightBack.setPower((y - x + gamepad1.right_stick_x));
-                if(controller.button(7, gamepad1.dpad_up )){
+                if(controller.button(7)){
                     currentX--;
-                } else if (controller.button(4, gamepad1.dpad_down)) {
+                } else if (controller.button(4)) {
                     currentX++;
-                }else if (controller.button(6, gamepad1.dpad_left)) {
+                }else if (controller.button(6)) {
                     currentY--;
-                }else if (controller.button(5, gamepad1.dpad_right)) {
+                }else if (controller.button(5)) {
                     currentY++;
                 }
                 if(currentX<0){

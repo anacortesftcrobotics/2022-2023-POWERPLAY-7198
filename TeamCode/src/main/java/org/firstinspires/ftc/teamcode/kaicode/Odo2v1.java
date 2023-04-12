@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.kaicode;
-import java.lang.Math.*;
 
 /**
  * This class provides odometry tracking for an FTC Robot
  * @author      Kai Wallis
  * @version     %I%, %G%
  */
-public class Odo1Offset {
+public class Odo2v1 {
 
     private double x = 0;     //x Position on field in cm
     private double y = 0;     //y Position on field in cm
@@ -19,10 +18,11 @@ public class Odo1Offset {
     private double deltaX;
     private double deltaY;
     private double deltaHRad;
-    public double distanceLtoC = 18.25117;
-    private double distanceRtoC = 17.145;
-    private double forwardOffset = 18.0975;
+
+    private double distanceLtoR = 11.0;
+    private double forwardOffset = 17.83;
     private double encoderDiameter = 3.5;
+    private double centerOfRotOffset = 0;
     private int ticksPerRev = 8192;
     private double cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
 
@@ -30,46 +30,49 @@ public class Odo1Offset {
     /**
      * Class constructor using default encoder distances & dimensions.
      */
-    public Odo1Offset() {}
+    public Odo2v1() {}
 
     /**
-     * Class constructor using custom encoder distances & dimensions. Some encoder values may need to be multiplied by -1.
-     * @param disLtoC       the distance between left encoder and line of symmetry in cm.
-     * @param disRtoC       the distance between right encoder and line of symmetry in cm.
+     * Class constructor using custom encoder distances & dimensions.
+     * @param disLtoR       the distance between left and right encoders in cm.
      * @param disMidtoC     the distance between midpoint of the left & right encoders and center encoder in cm. Should be (-) if in front.
-     * @param diameter      the radius of encoder wheels in cm.
+     * @param centerOfRotOff    distance l&r encoders are forward from center of rotation
+     * @param diameter      the diameter of encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1Offset(double disLtoC, double disRtoC, double disMidtoC, double diameter, int ticksPerRevolution) {
-        distanceLtoC = disLtoC;
-        distanceRtoC = disRtoC;
+    public Odo2v1(double disLtoR, double disMidtoC, double centerOfRotOff, double diameter, int ticksPerRevolution) {
+        distanceLtoR = disLtoR;
         forwardOffset = disMidtoC;
+        centerOfRotOffset = centerOfRotOff;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
     }
-    
+
     /**
-     * Class constructor using the encoder outputs after being spun counterclockwise 10 times. 
+     * Class constructor using the encoder outputs after being spun counterclockwise 10 times.
      *      If not in range, input negative values into the code when running.
-     * @param leftEncoder       (+/-) ticks traveled by the left encoder.
-     * @param rightEncoder      (+/-) ticks traveled by the right encoder.
+     * @param rightEncoder      (+) ticks traveled by the right encoder.
+     * @param leftEncoder       (-) ticks traveled by the left encoder.
      * @param centerEncoder     (+/-) ticks traveled by the center encoder.
+     * @param centerOfRotOff    distance l&r encoders are forward from center of rotation
      * @param diameter          the diameter of the encoder wheels in cm.
      * @param ticksPerRevolution    the encoder ticks per revolution.
      */
-    public Odo1Offset(int leftEncoder, int rightEncoder, int centerEncoder, double diameter, int ticksPerRevolution) {
+    public Odo2v1(int leftEncoder, int rightEncoder, int centerEncoder, double centerOfRotOff, double diameter, int ticksPerRevolution) {
+        centerOfRotOffset = centerOfRotOff;
         encoderDiameter = diameter;
         ticksPerRev = ticksPerRevolution;
         cmPerTick = encoderDiameter * Math.PI/ticksPerRev;
+
+        distanceLtoR = Math.abs(cmFromCenter(rightEncoder, cmPerTick))
+            + Math.abs(cmFromCenter(leftEncoder, cmPerTick));
         
-        distanceLtoC = cmFromCenter(leftEncoder, cmPerTick);
-        distanceRtoC = cmFromCenter(rightEncoder, cmPerTick);
-        forwardOffset = cmFromCenter(centerEncoder, cmPerTick);
+        forwardOffset = cmFromCenter(centerEncoder, ticksPerRevolution);
     }
 
     private static double cmFromCenter(int ticks, double cmPerTick) {
-        return ticks/10.0*cmPerTick/2.0/Math.PI;
+        return ticks/10.0/cmPerTick/2.0/Math.PI;
     }
 
     /**
@@ -179,19 +182,11 @@ public class Odo1Offset {
      * Resets field coords, encoder history & delta values.
      */
     public void resetAll() {
+        reset();
+
         x = 0;
         y = 0;
         hRad = 0;
-
-        for (int i = 2; i >= 0; i--) {
-            encodersLast[i] = 0.0;
-            encoders[i] = 0.0;
-            deltaEncoders[i] = 0.0;
-        }
-
-        deltaX = 0.0;
-        deltaY = 0.0;
-        deltaHRad = 0.0;
     }
 
     /**
@@ -213,20 +208,18 @@ public class Odo1Offset {
      * @param eCenter   new tick position of the center encoder, (+) when strafing right.
      */
     public void setEncoderPos(int eLeft, int eRight, int eCenter) {
-        for (int i = 2; i >= 0; i--)
-            encodersLast[i] = encoders[i];
+        encodersLast = encoders;
 
         encoders[0] = cmPerTick * eLeft;
         encoders[1] = cmPerTick * eRight;
         encoders[2] = cmPerTick * eCenter;
-
+ 
         for (int i = 2; i >= 0; i--)
             deltaEncoders[i] =  encoders[i] - encodersLast[i];
         
-        //deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
-        deltaHRad = (deltaEncoders[0] / distanceLtoC) - (deltaEncoders[1] / distanceRtoC);
+        deltaHRad = (deltaEncoders[0] - deltaEncoders[1]) / distanceLtoR;
         double deltaF = (deltaEncoders[1] + deltaEncoders[0]) / 2.0;
-        double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad;
+        double deltaR = deltaEncoders[2] - forwardOffset * deltaHRad + centerOfRotOffset * deltaHRad;
 
         deltaX = deltaF * Math.cos(hRad) - deltaR * Math.sin(hRad);
         deltaY = deltaF * Math.sin(hRad) + deltaR * Math.cos(hRad);
