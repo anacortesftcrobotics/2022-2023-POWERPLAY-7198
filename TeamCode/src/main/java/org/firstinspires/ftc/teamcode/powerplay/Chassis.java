@@ -21,22 +21,22 @@ public class Chassis
 
     }
 
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftBack;
-    DcMotor rightBack;
+    public DcMotor leftFront;
+    public DcMotor rightFront;
+    public DcMotor leftBack;
+    public DcMotor rightBack;
 
-    boolean inLoop = false;
-    double speedCoefficient = 0.5;
+    public boolean inLoop = false;
+    public double speedCoefficient = 0.5;
     // 0 : X Position
     // 1 : Y Position
     // 2 : Heading
     // 3 : Distance Traveling
-    double[] saveState = {0.0,0.0,0.0,0.0};
+    public double[] saveState = {0.0,0.0,0.0,0.0};
 
-    double xEndState = 0.0;
-    double yEndState = 0.0;
-    double hEndState = 0.0;
+    public double xEndState = 0.0;
+    public double yEndState = 0.0;
+    public double hEndState = 0.0;
 
     /**
      * This method registers the hardware used by this class.

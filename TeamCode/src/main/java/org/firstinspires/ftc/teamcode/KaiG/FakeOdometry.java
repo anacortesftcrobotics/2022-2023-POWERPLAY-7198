@@ -3,7 +3,7 @@ import org.firstinspires.ftc.teamcode.powerplay.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class FakeOdometry {
+public class  FakeOdometry {
     DcMotor leftFront, rightFront, leftBack, rightBack, encoderLeft, encoderRight, encoderBack;
     Gyro gyro = new Gyro();
     public void initializeHardware(HardwareMap hardwareMap){

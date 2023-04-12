@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chKai;
+package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.pidclasses.PIDFArmController;
 
+
 @TeleOp(name = "Turret Test")
 public class TurretTest extends LinearOpMode{
     DcMotor turret1;
@@ -25,7 +26,7 @@ public class TurretTest extends LinearOpMode{
     Orientation angles;
     Acceleration gravity;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-    PIDFArmController control = new PIDFArmController(0, 0, 0, 0, 0, 0);
+    PIDFArmController control = new PIDFArmController(0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0);
     ElapsedTime systemTime = new ElapsedTime();
     double targetPos = 0;
     public void runOpMode() {
@@ -52,7 +53,7 @@ public class TurretTest extends LinearOpMode{
         parameters.loggingTag          = "IMU";
         imu.initialize(parameters);
         imu2.initialize(parameters);
-        control.initiate(turret1.getCurrentPosition(), systemTime.milliseconds());
+        control.launch(turret1.getCurrentPosition(), systemTime.milliseconds());
         control.setOutputClamping(-1, 1);
         waitForStart();
         if (opModeIsActive()) {
