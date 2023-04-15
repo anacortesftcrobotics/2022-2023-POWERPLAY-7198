@@ -5,6 +5,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.powerplay.*;
+import org.firstinspires.ftc.teamcode.powerplay.PP2.Chassis2;
 
 public class SemiAuto implements SubsystemManager{
     //hardware stuff
@@ -30,7 +31,7 @@ public class SemiAuto implements SubsystemManager{
     Gyro gyro = new Gyro();
     Controller controller = new Controller();
     //odometry
-    FakeOdometry odo = new FakeOdometry();
+    Chassis2.FakeOdometry odo = new Chassis2.FakeOdometry();
     /**
     *initializes all the hardware needed
     *@param hardwareMap is the hardwareMap object you need to pass to it

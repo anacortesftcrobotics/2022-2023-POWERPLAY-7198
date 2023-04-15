@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
+import org.firstinspires.ftc.teamcode.powerplay.PP2*;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import org.firstinspires.ftc.teamcode.powerplay.PP2.Chassis2;
 
 
 @TeleOp(name = "Guinea Pig")
@@ -38,7 +40,7 @@ public class guineaPig extends LinearOpMode {
     private double servoSet;
     private double lastSpeed;
     private NeedForSpeed s = new NeedForSpeed();
-    private FakeOdometry f = new FakeOdometry();
+    private Odo2 f = new Odo2();
 
     int Xdisplay = 1;
     int Ydisplay = 1;

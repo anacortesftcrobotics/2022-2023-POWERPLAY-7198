@@ -59,4 +59,6 @@ public class Heading
         h = input;
     }
     public double getH () {return h;}
+    public double getX () {return x;}
+    public double getY () {return y;}
 }
