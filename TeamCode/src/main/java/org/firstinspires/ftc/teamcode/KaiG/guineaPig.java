@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
-import org.firstinspires.ftc.teamcode.powerplay.PP2*;
+import org.firstinspires.ftc.teamcode.powerplay.PP2.*;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
