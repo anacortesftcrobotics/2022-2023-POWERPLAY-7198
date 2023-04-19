@@ -18,6 +18,9 @@ public class Chassis2 extends Chassis {
             double rx = imu.getHeading();
             super.xyrMovement(x,y,rx);
     }
+    public boolean toPos(double xGoal, double yGoal, Heading heading){
+        return super.toPos(xGoal, yGoal, imu.getHeading(), heading);
+    }
 
 
 }

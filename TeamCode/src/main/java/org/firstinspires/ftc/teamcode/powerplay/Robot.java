@@ -156,7 +156,7 @@ public class Robot {
 
     public void MPCRControl (Gamepad gamepad1)
     {
-        if(controller1.button(10)
+        if(controller1.button(10))
             coneRight = !coneRight;
         if(coneRight)
         {
