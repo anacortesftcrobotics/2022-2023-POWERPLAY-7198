@@ -12,7 +12,7 @@ public class Arm implements SubsystemManager {
     private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
     DcMotor elbow1, elbow2;
     LimitSwitch zero1, zero2;
-    PIDFArmController pid1 = new PIDFArmController(0,0,0,0,0,0,0);
+    PIDFArmController pid1 = new PIDFArmController(1,0,0,0,0,0,0);
     PIDFArmController pid2 = new PIDFArmController(0,0,0,0,0,0,0);
     ElapsedTime time = new ElapsedTime();
     @Override
