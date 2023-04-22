@@ -46,7 +46,7 @@ public class Pablo implements SubsystemManager{
      * This function reads the distance sensors and spits out a direction to turn the robot in, to center the grabber on the junction
      * @return a double value to be added to the rx value in movement calculations
      */
-    public double poleCenter() {
+    public double poleCenterRough() {
         double leftDist = leftDistance.getDistance(DistanceUnit.CM);
         double rightDist = rightDistance.getDistance(DistanceUnit.CM);
         if (leftDist < rightDist && leftDist < 18)
@@ -54,5 +54,12 @@ public class Pablo implements SubsystemManager{
         if (rightDist < leftDist && rightDist < 18)
             return -0.05;
         return 0;
+    }
+    public double poleCenter(){
+        double left = getLeftDistance();
+        double right = getRightDistance();
+        double diff = left - right;//distance side/side
+        double idealDiff = 5.2;
+        return diff - idealDiff;
     }
 }

@@ -21,14 +21,18 @@ public class Gyro implements SubsystemManager{
     }
 
     //variables
-    double a = 0;
-    double deltaA = 0;
-    double h = 0;
+    public double a = 0;
+    public double deltaA = 0;
+    public double h = 0;
+
 
     //hardware
-    BNO055IMU imu;
+    public BNO055IMU imu;
+
     Orientation angles;
+
     Acceleration gravity;
+    public BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
     /**
      * The method in all subsystem classes to register the hardware that this class uses.
@@ -36,15 +40,13 @@ public class Gyro implements SubsystemManager{
      */
     public void initializeHardware(HardwareMap hardwareMap)
     {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
         imu.initialize(parameters);
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     /**

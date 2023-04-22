@@ -26,17 +26,17 @@ public class Chassis
     DcMotor leftBack;
     DcMotor rightBack;
 
-    boolean inLoop = false;
-    double speedCoefficient = 0.5;
+    public boolean inLoop = false;
+    public double speedCoefficient = 0.5;
     // 0 : X Position
     // 1 : Y Position
     // 2 : Heading
     // 3 : Distance Traveling
-    double[] saveState = {0.0,0.0,0.0,0.0};
+    public double[] saveState = {0.0,0.0,0.0,0.0};
 
-    double xEndState = 0.0;
-    double yEndState = 0.0;
-    double hEndState = 0.0;
+    public double xEndState = 0.0;
+    public double yEndState = 0.0;
+    public double hEndState = 0.0;
 
     /**
      * This method registers the hardware used by this class.
@@ -161,6 +161,45 @@ public class Chassis
             return true;
         }
         return false;
+    }
+
+    /**
+     * This is the same as move(), but takes goal positions instead of distances to move
+     * @param xGoal goal x position to move to
+     * @param yGoal goal y position to move to
+     * @param rGoal goal r position to move to
+     * @param heading heading object that represents the robot's position
+     * @return if the robot is at the required position
+     */
+    public boolean toPos(double xGoal, double yGoal, double rGoal, Heading heading)
+    {
+        boolean doneYet = false;
+
+        double xError = (xGoal) - (heading.getX());
+        double yError = (yGoal) - (heading.getY());
+        double hError = (rGoal) - (heading.getH());
+
+        if(Math.abs(xError) < 0.5 && Math.abs(yError) < 0.5 && Math.abs(hError) < 5)
+        {
+            doneYet = true;
+        }
+
+        if(!doneYet)
+        {
+            //xyrMovement(restrict(yError), restrict(xError), restrict(-hError / 10));
+            double yMin = restrictSet(((yError - 1) / 8), -0.4, -0.3);
+            double yMax = restrictSet(((yError - 1) / 8), 0.3, 0.4);
+            double xMin = restrictSet(((xError - 1) / 22), -0.4, -0.15);
+            double xMax = restrictSet(((xError - 1) / 22), 0.15, 0.4);
+            xyrMovement(restrictSet(yError,yMin, yMax), restrictSet(xError,xMin, xMax), restrict(-hError / 10));
+        }
+
+        if(doneYet)
+        {
+            inLoop = false;
+            brake();
+            return true;
+        }else {return false;}
     }
 
     /**
