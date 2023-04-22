@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * @author      Lemon
  */
 
-@TeleOp (name = "OdoTesting", group = "TeleOp")
+@TeleOp (name = "TeleWallis", group = "TeleOp")
 
 public class TeleOperated extends OpMode
 {

@@ -305,9 +305,9 @@ public class Robot {
         telemetryIn.addData("LE: ", odoController.left);
         telemetryIn.addData("CE: ", odoController.back);
 
-        telemetryIn.addData("x: ", odometry.getX());
-        telemetryIn.addData("y: ", odometry.getY());
-        telemetryIn.addData("h: ", odometry.getHeading());
+        telemetryIn.addData("x: ", odoController.getX());
+        telemetryIn.addData("y: ", odoController.getY());
+        telemetryIn.addData("h: ", odoController.getHeading());
 
         telemetryIn.addData("l1: ", Logger.getLine1());
         telemetryIn.addData("l2: ", Logger.getLine2());
