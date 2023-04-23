@@ -31,11 +31,19 @@ public class Controller {
     boolean[] hasChanged = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
     boolean[] values = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 
+    /**
+     * Empty constructor
+     */
+    public Controller()
+    {
 
-    public Controller() {
     }
 
-    public void initializeHardware() {
+    /**
+     * Empty hardware initialization because the previous version was non functional.
+     */
+    public void initializeHardware()
+    {
 
     }
 
