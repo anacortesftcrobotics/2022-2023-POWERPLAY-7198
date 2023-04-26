@@ -36,7 +36,7 @@ public class Controller {
     }
 
     public void initializeHardware() {
-
+        update();
     }
 
     /**
@@ -45,12 +45,27 @@ public class Controller {
     public void setGamepad(Gamepad gamepadX)
     {
         gamepad = gamepadX;
-        //values = {gamepad.a, gamepad.b, gamepad.x, gamepad.y, gamepad.dpad_down, gamepad.dpad_right, gamepad.dpad_left, gamepad.dpad_up, gamepad.left_stick_button, gamepad.right_stick_button, gamepad.left_bumper, gamepad.right_bumper, gamepad.back, gamepad.start, gamepad.guide, (gamepad.left_trigger>0.5), (gamepad.right_trigger>0.5)};
+        update();
     }
 
     public void update(){
         values [0] = gamepad.a;
         values[1]= gamepad.b;
+        values[2] = gamepad.b;
+        values[3] = gamepad.x;
+        values[4] = gamepad.dpad_down;
+        values[5] = gamepad.dpad_left;
+        values[6] = gamepad.dpad_right;
+        values[7] = gamepad.dpad_up;
+        values[8] = gamepad.left_stick_button;
+        values[9] = gamepad.right_stick_button;
+        values[10] = gamepad.left_bumper;
+        values[11] = gamepad.right_bumper;
+        values[12] = gamepad.back;
+        values[13] = gamepad.start;
+        values[14] = gamepad.guide;
+        values[15] = gamepad.left_trigger>0.5;
+        values[16] = gamepad.right_trigger>0.5;
     }
 
     /**
@@ -85,7 +100,7 @@ public class Controller {
      */
     public boolean button (int button)
     {
-
+        update();
         if(values[button])
         {
             if(!hasChanged[button])
