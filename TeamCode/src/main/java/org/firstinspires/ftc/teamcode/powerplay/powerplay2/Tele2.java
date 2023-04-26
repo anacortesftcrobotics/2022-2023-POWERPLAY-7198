@@ -1,13 +1,7 @@
-package org.firstinspires.ftc.teamcode.powerplay.PP2;
+package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.mentorcode.LimitSwitch;
 import org.firstinspires.ftc.teamcode.powerplay.*;
-import org.firstinspires.ftc.teamcode.pidclasses.*;
+
 public class Tele2 extends LinearOpMode {
     TurnTable table = new TurnTable();
     Arm arm = new Arm();

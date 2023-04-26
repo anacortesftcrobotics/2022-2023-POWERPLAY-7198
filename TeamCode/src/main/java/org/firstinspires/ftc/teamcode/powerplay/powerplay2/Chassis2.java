@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.powerplay.PP2;
+package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.powerplay.Chassis;
 import org.firstinspires.ftc.teamcode.powerplay.Gyro;

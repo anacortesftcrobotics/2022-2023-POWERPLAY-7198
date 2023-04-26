@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.KaiG;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.powerplay.*;
-import org.firstinspires.ftc.teamcode.powerplay.PP2.*;
+import org.firstinspires.ftc.teamcode.powerplay.powerplay2.*;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import org.firstinspires.ftc.teamcode.powerplay.PP2.Chassis2;
 
 
 @TeleOp(name = "Guinea Pig")

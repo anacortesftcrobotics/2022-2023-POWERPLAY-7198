@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplay.PP2;
+package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
