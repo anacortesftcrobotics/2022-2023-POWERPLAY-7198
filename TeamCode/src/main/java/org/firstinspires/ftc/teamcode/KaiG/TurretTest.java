@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcode.KaiG;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevSPARKMini;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.pidclasses.PIDFArmController;
@@ -60,6 +58,7 @@ public class TurretTest extends LinearOpMode{
             while (opModeIsActive()) {
                 if(gamepad1.dpad_up){targetPos = 15;}
                 if(gamepad1.dpad_down){targetPos =0;}
+
                 control.updateArmClamped(Math.toRadians(targetPos), getRads(), 0, systemTime.milliseconds());
                 basic.go(gamepad1);
                 telemetry.addData("turret2 position", turret2.getCurrentPosition());

@@ -29,24 +29,28 @@ public class Controller {
      */
     Gamepad gamepad;
     boolean[] hasChanged = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-    boolean[] values ={gamepad.a, gamepad.b, gamepad.x, gamepad.y, gamepad.dpad_down, gamepad.dpad_right, gamepad.dpad_left, gamepad.dpad_up, gamepad.left_stick_button, gamepad.right_stick_button, gamepad.left_bumper, gamepad.right_bumper, gamepad.back, gamepad.start, gamepad.guide, (gamepad.left_trigger>0.5), (gamepad.right_trigger>0.5)};
+    boolean[] values = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 
 
-    public Controller()
-    {
+    public Controller() {
     }
-    
-    public void initializeHardware()
-    {
+
+    public void initializeHardware() {
 
     }
 
     /**
      * changes the gamepad assigned to a controller object.
      */
-    public void setGamepad (Gamepad gamepadX)
+    public void setGamepad(Gamepad gamepadX)
     {
         gamepad = gamepadX;
+        //values = {gamepad.a, gamepad.b, gamepad.x, gamepad.y, gamepad.dpad_down, gamepad.dpad_right, gamepad.dpad_left, gamepad.dpad_up, gamepad.left_stick_button, gamepad.right_stick_button, gamepad.left_bumper, gamepad.right_bumper, gamepad.back, gamepad.start, gamepad.guide, (gamepad.left_trigger>0.5), (gamepad.right_trigger>0.5)};
+    }
+
+    public void update(){
+        values [0] = gamepad.a;
+        values[1]= gamepad.b;
     }
 
     /**
