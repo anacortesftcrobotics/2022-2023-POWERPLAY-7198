@@ -5,7 +5,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.powerplay.*;
-import org.firstinspires.ftc.teamcode.powerplay.PP2.Odo2;
+import org.firstinspires.ftc.teamcode.powerplay.powerplay2.Odo2;
 
 public class SemiAuto implements SubsystemManager{
     //hardware stuff
