@@ -52,7 +52,7 @@ public class Grabliftled {
             s = "notGrabbable";
         } else if (grabbable) {
             if (grabbed){
-                led.poleCenter();
+                //led.poleCenter();
                 s="grabbed";
             } else if (!grabbed) {
                 led.setLed("yellow");
