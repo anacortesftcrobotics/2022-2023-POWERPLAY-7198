@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.mentorcode.LimitSwitch;
 import org.firstinspires.ftc.teamcode.powerplay.*;
@@ -11,7 +12,7 @@ public class Arm implements SubsystemManager {
     private final double DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO = 5;
     private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
     DcMotor elbow1, elbow2;
-    LimitSwitch zero1, zero2;
+    TouchSensor zero1, zero2;
     PIDFArmController pid1 = new PIDFArmController(1,0,0,0,0,0,0);
     PIDFArmController pid2 = new PIDFArmController(0,0,0,0,0,0,0);
     ElapsedTime time = new ElapsedTime();
@@ -32,8 +33,8 @@ public class Arm implements SubsystemManager {
         pid1.setOutputClamping(-1, 1);
         pid2.setOutputClamping(-1, 1);
 
-        zero1 = hardwareMap.get(LimitSwitch.class, "");
-        zero2 = hardwareMap.get(LimitSwitch.class, "");
+        zero1 = hardwareMap.get(TouchSensor.class, "zero1");
+        zero2 = hardwareMap.get(TouchSensor.class, "zero2");
     }
     public void update(double target1, double target2){
         double pwr1, pwr2 = 0;

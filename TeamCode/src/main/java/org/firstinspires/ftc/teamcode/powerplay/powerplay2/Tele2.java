@@ -1,20 +1,13 @@
 package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.mentorcode.LimitSwitch;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 
 @TeleOp (name = "tele2")
 public class Tele2 extends LinearOpMode {
-    TurnTable table = new TurnTable();
+
+    // TurnTable table = new TurnTable();
     Arm arm = new Arm();
     Hand hand = new Hand();
     Chassis chassis = new Chassis();
@@ -27,16 +20,18 @@ public class Tele2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         initializeHardware();
+        waitForStart();
         while (opModeIsActive()) {
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
             //chassis
             //chassis.xyrMovement(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             //turntable
             //        table.setPower(gamepad2.right_stick_x);
 
             //arm
-            target2 += gamepad2.left_stick_x * .02;
+            target2 += gamepad2.left_stick_x * .2;
             arm.update(0, target2);
 
             //arm
@@ -51,15 +46,16 @@ public class Tele2 extends LinearOpMode {
 
             telemetry.addData("elbow 1 position rads", arm.angle1());
             telemetry.addData("elbow 2 position rads", arm.angle2());
+            telemetry.update();
         }
     }
 
     public void initializeHardware(){
         control1.setGamepad(gamepad1);
         control2.setGamepad(gamepad2);
-        table.initializeHardware(hardwareMap);
+        //table.initializeHardware(hardwareMap);
         arm.initializeHardware(hardwareMap);
-        hand.initializeHardware(hardwareMap);
-        chassis.initializeHardware(hardwareMap);
+        //hand.initializeHardware(hardwareMap);
+        //chassis.initializeHardware(hardwareMap);
     }
 }
