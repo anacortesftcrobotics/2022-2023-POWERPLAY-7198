@@ -16,7 +16,7 @@ public class Tele2 extends LinearOpMode {
 
     double iElbow1, iElbow2 = 0;
     boolean open;
-    double target2 = 0;
+    double target1, target2 = 0;
 
     @Override
     public void runOpMode() {
@@ -31,8 +31,8 @@ public class Tele2 extends LinearOpMode {
             //        table.setPower(gamepad2.right_stick_x);
 
             //arm
-            target2 += gamepad2.left_stick_x * .2;
-            arm.update(0, target2);
+            target1 += gamepad2.left_stick_x * .2;
+            arm.update(0, target1);
 
             //arm
             /*if(gamepad2.dpad_up){iElbow1 += 0.1;}
@@ -46,6 +46,11 @@ public class Tele2 extends LinearOpMode {
 
             telemetry.addData("elbow 1 position rads", arm.angle1());
             telemetry.addData("elbow 2 position rads", arm.angle2());
+            telemetry.addData("1 pos deg", arm.degrees1());
+            telemetry.addData("2 pos deg", arm.degrees2());
+            telemetry.addData("target2", target2);
+            telemetry.addData("power2", arm.getPwr2(target2));
+            telemetry.addData("power1", arm.getPwr1(target1));
             telemetry.update();
         }
     }

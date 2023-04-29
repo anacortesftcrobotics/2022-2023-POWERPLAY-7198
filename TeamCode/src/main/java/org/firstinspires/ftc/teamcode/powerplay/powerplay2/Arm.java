@@ -13,8 +13,8 @@ public class Arm implements SubsystemManager {
     private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
     DcMotor elbow1, elbow2;
     TouchSensor zero1, zero2;
-    PIDFArmController pid1 = new PIDFArmController(1,0,0,0,0,0,0);
-    PIDFArmController pid2 = new PIDFArmController(0,0,0,0,0,0,0);
+    PIDFArmController pid1 = new PIDFArmController(0.1,0,0,0,0,0,0);
+    PIDFArmController pid2 = new PIDFArmController(0.1,0,0,0,0,0,0);
     ElapsedTime time = new ElapsedTime();
     @Override
     public void initializeHardware(HardwareMap hardwareMap) {
@@ -45,10 +45,22 @@ public class Arm implements SubsystemManager {
         elbow1.setPower(pwr1);
         elbow2.setPower(pwr2);
     }
+    public double getPwr2(double target2){
+        return pid2.getCorrection();
+    }
+    public double getPwr1(double target1){
+        return pid1.getCorrection();
+    }
     public double angle1(){
-        return Math.toRadians((elbow1.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES) + DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO);
+        return Math.toRadians((elbow1.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES));
     }
     public double angle2(){
         return Math.toRadians((elbow2.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES) + DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO - angle1());
+    }
+    public double degrees1(){
+        return (elbow1.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES);
+    }
+    public double degrees2(){
+        return (elbow2.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES) + DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO - angle1();
     }
 }
