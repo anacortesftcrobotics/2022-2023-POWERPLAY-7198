@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.powerplay.*;
 
 public class Auto2 extends OpMode {
     Heading head = new Heading();
-    Chassis2 chas = new Chassis2();
+    Chassis2 chas = new Chassis2(gamepad1, hardwareMap);
     Odo2 odo = new Odo2();
     Gyro2 imu = new Gyro2();
     CDS cds = new CDS();
@@ -14,7 +14,6 @@ public class Auto2 extends OpMode {
 
     @Override
     public void init() {
-        chas.initializeHardware(hardwareMap);
         odo.initializeHardware(hardwareMap);
         imu.initializeHardware(hardwareMap);
         cds.initializeHardware(hardwareMap);

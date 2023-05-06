@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.mentorcode.LimitSwitch;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 import org.firstinspires.ftc.teamcode.pidclasses.*;
 
-public class Arm implements SubsystemManager {
+public class Arm2 implements SubsystemManager {
     private final double DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO = 5;
     private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
     DcMotor elbow1, elbow2;
@@ -16,6 +16,12 @@ public class Arm implements SubsystemManager {
     PIDFArmController pid1 = new PIDFArmController(0.1,0,0,0,0,0,0);
     PIDFArmController pid2 = new PIDFArmController(0.1,0,0,0,0,0,0);
     ElapsedTime time = new ElapsedTime();
+    double pwrTest;
+    Gamepad gamepad;
+    public Arm2(Gamepad g, HardwareMap h){
+        gamepad = g;
+        initializeHardware(h);
+    }
     @Override
     public void initializeHardware(HardwareMap hardwareMap) {
         elbow1 = hardwareMap.get(DcMotor.class, "turret1");
@@ -40,15 +46,16 @@ public class Arm implements SubsystemManager {
         double pwr1, pwr2 = 0;
         pwr1 = pid1.updateArmClamped(Math.toRadians(target1), angle1(), angle2(), time.milliseconds());
         pwr2 = pid2.updateArmClamped(Math.toRadians(target2), angle2(), 0, time.milliseconds());
+        pwrTest = pwr2;
         if (zero1.isPressed()){elbow1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); pwr1 = 0;}
-        if (zero2.isPressed()){elbow2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); pwr1 = 0;}
+        if (zero2.isPressed()){elbow2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); pwr2 = 0;}
+
         elbow1.setPower(pwr1);
         elbow2.setPower(pwr2);
     }
-    public double getPwr2(double target2){
-        return pid2.getCorrection();
-    }
-    public double getPwr1(double target1){
+    public double getPwrTest(){return pwrTest;}
+    public double getPwr2(){return pid2.getCorrection();}
+    public double getPwr1(){
         return pid1.getCorrection();
     }
     public double angle1(){

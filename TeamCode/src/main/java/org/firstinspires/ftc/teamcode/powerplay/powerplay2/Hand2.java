@@ -1,12 +1,18 @@
 package org.firstinspires.ftc.teamcode.powerplay.powerplay2;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.powerplay.*;
 
-public class Hand implements SubsystemManager{
+public class Hand2 implements SubsystemManager{
     Servo grab;
     DcMotor wrist;
+    Gamepad gamepad;
+    public Hand2(Gamepad g, HardwareMap h){
+        gamepad = g;
+        initializeHardware(h);
+    }
     public void initializeHardware(HardwareMap hardwareMap){
         grab = hardwareMap.get(Servo.class, "grabber");
         wrist = hardwareMap.get(DcMotor.class, "wrist");
