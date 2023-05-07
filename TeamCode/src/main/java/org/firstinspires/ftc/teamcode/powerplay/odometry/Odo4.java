@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.powerplay.odometry;
 
-import org.firstinspires.ftc.teamcode.powerplay.Logger;
-
 /**
  * This class provides odometry tracking for an FTC Robot
  * @author      Kai Wallis
@@ -10,59 +8,60 @@ import org.firstinspires.ftc.teamcode.powerplay.Logger;
 public class Odo4 {
 
     private final double diagonal; //distance between the center of rotation and a forward encoder.
-    private final double rotationalConstant;
-    private final double backEncoderOffset;
+    private final double rotationalConstant; //constant which corrects for forward encoder angles.
+    private final double centerEncoderOffset;
     private final double distancePerTick;
-    //kai: 0.001342233189
-    //liam: 0.0013
-    private Logger logger = Logger.getInstance();
-    private double hRad = 0;
 
     /**
-     * Class constructor for centered encoders. Uses custom encoder distances & dimensions.
-     * Some encoder values may need to be multiplied by -1 when using getDeltaPos().
+     * Class constructor using custom encoder distances & dimensions.
      *
-     * @param distanceLtoR       the distance between left and right encoders.
-     * @param backEncoderOffset  the distance between the center of rotation and the encoder. Should be (+) if in front.
-     * @param frontEncoderOffset the distance between midpoint of the left & right encoders and center of rotation. Should be (+) if in back.
-     * @param encoderDiameter    the radius of encoder wheels.
-     * @param ticksPerRev        the encoder ticks per revolution.
+     * @param distanceLtoR          the distance between the left and right encoders.
+     * @param centerEncoderOffset   the distance the center encoder is behind the center of rotation.
+     * @param frontEncodersOffset   the distance the left & right encoders are forward of the center of rotation.
+     * @param encoderDiameter       the radius of the encoder wheels.
+     * @param ticksPerRev           the encoder's ticks per revolution.
      */
-    public Odo4(double distanceLtoR, double frontEncoderOffset, double backEncoderOffset, double encoderDiameter, int ticksPerRev) {
-        this.diagonal = Math.sqrt(frontEncoderOffset * frontEncoderOffset + distanceLtoR * distanceLtoR / 4.0);
-        this.backEncoderOffset = backEncoderOffset;
-        this.rotationalConstant = Math.atan(Math.cos(2 * frontEncoderOffset / distanceLtoR));
+    public Odo4(double distanceLtoR, double frontEncodersOffset, double centerEncoderOffset,
+                double encoderDiameter, int ticksPerRev) {
+        this.diagonal = Math.sqrt(frontEncodersOffset * frontEncodersOffset + distanceLtoR * distanceLtoR / 4.0);
+        this.centerEncoderOffset = centerEncoderOffset;
+        this.rotationalConstant = 1.0 / Math.cos(Math.atan(frontEncodersOffset / distanceLtoR * 2.0));
         this.distancePerTick = encoderDiameter * Math.PI / ticksPerRev;
     }
 
     /**
-     * returns the object's new position relative to its last. Faces positive x-axis.
+     * Returns the object's change in position based on the change in encoder position.
      *
      * @param leftEncoder   change in tick position of the left encoder, (+) when moving forward.
      * @param rightEncoder  change in tick position of the right encoder, (+) when moving forward.
-     * @param centerEncoder change in tick position of the center encoder, (+) when strafing left.
-     * @return
+     * @param centerEncoder change in tick position of the center encoder, (+) when strafing right.
+     * @return              the object's pose relative to last position, the origin representing the last position.
+     *                          forward movement is (+) in the y-axis, right strafing is (+) in the x-axis, and
+     *                          heading is (+) when turning counterclockwise.
      */
     public Pose2D getRelativePose(int leftEncoder, int rightEncoder, int centerEncoder) {
         double left = distancePerTick * leftEncoder;
-//        Logger.setLine1(Double.toString(left));
         double right = distancePerTick * rightEncoder;
-//        Logger.setLine2(Double.toString(right));
         double center = distancePerTick * centerEncoder;
-//        Logger.setLine3(Double.toString(center));
 
-        double deltaHRad = (right - left) / 2.0 * rotationalConstant / diagonal;
-//        Logger.setLine1(Double.toString(deltaHRad));
+        double deltaHRad = (right - left) * rotationalConstant * 0.5 / diagonal;
         double forward = (left + right) / 2.0;
-        double strafe = center - deltaHRad * backEncoderOffset;
+        double strafe = center - deltaHRad * centerEncoderOffset;
 
-        hRad += deltaHRad;
-        Logger.setLine1(Double.toString(Math.toDegrees(hRad)));
-        Logger.setLine2(Double.toString(hRad));
-
-        return new Pose2D(forward, strafe, deltaHRad);
+        return new Pose2D(strafe, forward, deltaHRad);
     }
 
+    /**
+     * Returns the object's position on the field based on the change in encoder position and the last field position.
+     *
+     * @param lastPose      Pose2D representing the object's position before the object changed position.
+     * @param leftEncoder   change in tick position of the left encoder, (+) when moving forward.
+     * @param rightEncoder  change in tick position of the right encoder, (+) when moving forward.
+     * @param centerEncoder change in tick position of the center encoder, (+) when strafing right.
+     * @return              the object's pose relative to last position, the origin representing the last position.
+     *                          forward movement is (+) in the y-axis, right strafing is (+) in the x-axis, and
+     *                          heading is (+) when turning counterclockwise.
+     */
     public Pose2D getFieldPose(Pose2D lastPose, int leftEncoder, int rightEncoder, int centerEncoder) {
         return lastPose.move(getRelativePose(leftEncoder, rightEncoder, centerEncoder));
     }
