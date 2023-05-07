@@ -49,14 +49,14 @@ public class OdoController {
     }
 
     public double getX() {
-        return pose.getX();
+        return pose.x;
     }
 
     public double getY() {
-        return pose.getY();
+        return pose.y;
     }
 
     public double getHeading() {
-        return Math.toDegrees(pose.getHeadingRad());
+        return Math.toDegrees(pose.headingRad);
     }
 }
