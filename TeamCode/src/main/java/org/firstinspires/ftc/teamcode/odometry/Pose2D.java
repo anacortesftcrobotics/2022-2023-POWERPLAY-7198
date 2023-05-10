@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplay.odometry;
+package org.firstinspires.ftc.teamcode.odometry;
 
 /**
  * @author kaiwallis

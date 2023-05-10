@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.powerplay.odometry;
+package org.firstinspires.ftc.teamcode.odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.powerplay.Logger;
 
 /**
  * @author kaiwallis
@@ -10,7 +9,8 @@ import org.firstinspires.ftc.teamcode.powerplay.Logger;
 public class OdoController {
     public OdoController() {}
 
-    Odo4 odo = new Odo4(40, 2.5, 15, 5, 8192); //created in cm
+    Odo4 odo = new Odo4(39, 2.35, 14.8, 5, 8192); //created in cm
+    //39, 2.5, 15, 5, 8192
     Pose2D pose = new Pose2D();
 
     public DcMotor encoderLeft, encoderRight, encoderBack;
@@ -31,7 +31,7 @@ public class OdoController {
 
     public void update() {
         updateEncoders();
-        pose = odo.getFieldPose(pose, lastLeft-left, lastRight-right, lastBack-back);
+        pose = odo.getPose(pose, left-lastLeft, right-lastRight, back-lastBack);
     }
 
     private void updateEncoders() {

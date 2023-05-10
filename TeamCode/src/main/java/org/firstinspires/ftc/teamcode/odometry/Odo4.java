@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplay.odometry;
+package org.firstinspires.ftc.teamcode.odometry;
 
 /**
  * This class provides odometry tracking for an FTC Robot
@@ -8,7 +8,10 @@ package org.firstinspires.ftc.teamcode.powerplay.odometry;
 public class Odo4 {
 
     private final double diagonal; //distance between the center of rotation and a forward encoder.
-    private final double rotationalConstant; //constant which corrects for forward encoder angles.
+    private final double rotationalConstant;
+            // rotationalConstant is a constant which when multiplied with forward encoder values gives an approximated
+            // distance traveled along an arc with the focus as the center of rotation. Value assumes movement is
+            // purely rotational and non-rotational movement is canceled out by other encoders.
     private final double centerEncoderOffset;
     private final double distancePerTick;
 
@@ -39,7 +42,7 @@ public class Odo4 {
      *                          forward movement is (+) in the y-axis, right strafing is (+) in the x-axis, and
      *                          heading is (+) when turning counterclockwise.
      */
-    public Pose2D getRelativePose(int leftEncoder, int rightEncoder, int centerEncoder) {
+    public Pose2D getMovement(int leftEncoder, int rightEncoder, int centerEncoder) {
         double left = distancePerTick * leftEncoder;
         double right = distancePerTick * rightEncoder;
         double center = distancePerTick * centerEncoder;
@@ -62,7 +65,7 @@ public class Odo4 {
      *                          forward movement is (+) in the y-axis, right strafing is (+) in the x-axis, and
      *                          heading is (+) when turning counterclockwise.
      */
-    public Pose2D getFieldPose(Pose2D lastPose, int leftEncoder, int rightEncoder, int centerEncoder) {
-        return lastPose.move(getRelativePose(leftEncoder, rightEncoder, centerEncoder));
+    public Pose2D getPose(Pose2D lastPose, int leftEncoder, int rightEncoder, int centerEncoder) {
+        return lastPose.move(getMovement(leftEncoder, rightEncoder, centerEncoder));
     }
 }

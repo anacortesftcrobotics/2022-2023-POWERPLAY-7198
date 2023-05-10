@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.teamcode.powerplay.odometry.OdoController;
+import org.firstinspires.ftc.teamcode.odometry.*;
 
 /**
  * This class is an intermediary between the teleOp and autoOp classes and all the sub-assembly classes on the 2022-2023 powerplay robot.
@@ -93,9 +93,9 @@ public class Robot {
         telemetryIn.addData("RE: ", odometry.encoderRight.getCurrentPosition());
         telemetryIn.addData("LE: ", odometry.encoderLeft.getCurrentPosition());
         telemetryIn.addData("CE: ", odometry.encoderBack.getCurrentPosition());
-        telemetryIn.addData("RE: ", odometry.right);
-        telemetryIn.addData("LE: ", odometry.left);
-        telemetryIn.addData("CE: ", odometry.back);
+        telemetryIn.addData("R: ", odometry.right);
+        telemetryIn.addData("L: ", odometry.left);
+        telemetryIn.addData("B: ", odometry.back);
 
         telemetryIn.addData("x: ", odometry.getX());
         telemetryIn.addData("y: ", odometry.getY());
