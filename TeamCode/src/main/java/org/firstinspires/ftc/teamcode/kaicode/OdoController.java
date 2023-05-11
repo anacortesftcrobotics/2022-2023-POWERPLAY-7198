@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.odometry;
+package org.firstinspires.ftc.teamcode.kaicode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.kaicode.Odo4;
+import org.firstinspires.ftc.teamcode.kaicode.Pose2D;
 
 /**
  * @author kaiwallis
@@ -10,7 +12,6 @@ public class OdoController {
     public OdoController() {}
 
     Odo4 odo = new Odo4(39, 2.35, 14.8, 5, 8192); //created in cm
-    //39, 2.5, 15, 5, 8192
     Pose2D pose = new Pose2D();
 
     public DcMotor encoderLeft, encoderRight, encoderBack;

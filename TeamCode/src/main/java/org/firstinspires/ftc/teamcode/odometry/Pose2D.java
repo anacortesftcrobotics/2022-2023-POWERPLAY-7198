@@ -1,43 +1,88 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
-/**
- * @author kaiwallis
- */
-public class Pose2D {
-    public final double x;
-    public final double y;
-    public final double headingRad;
+import org.firstinspires.ftc.teamcode.kinematics.Vector2D;
 
-    /**
-     * Creates a default Pose2D object, the position being at the origin with a heading of 0.
-     */
+public class Pose2D extends Vector2D {
+    private double headingRad;
+
     public Pose2D() {
-        this.x = 0.0;
-        this.y = 0.0;
+        super();
         this.headingRad = 0.0;
     }
 
-    /**
-     * Creates a Pose2D object based on x, y, and heading values.
-     * @param x             x coordinate.
-     * @param y             y coordinate.
-     * @param headingRad    heading in radians, (+) being counterclockwise.
-     */
     public Pose2D(double x, double y, double headingRad) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.headingRad = headingRad;
     }
 
+    public Pose2D(Vector2D vector, double headingRad) {
+        super(vector.getX(), vector.getY());
+        this.headingRad = headingRad;
+    }
+
+    public Pose2D(Pose2D pose) {
+        super(pose.getX(), pose.getY());
+        this.headingRad = pose.getHeadingRad();
+    }
+
     /**
-     * @param relativePose  a Pose representing the object's movement relative to this Pose, the origin
-     *                          representing the object's Pose specified by this Pose. (inc. heading)
-     * @return              a Pose representing the object's new Pose including the movement from relativePose.
+     * Returns the heading in radians.
+     * @return  heading in radians.
      */
-    public Pose2D move(Pose2D relativePose) {
-        double x = relativePose.x * Math.cos(this.headingRad) - relativePose.y * Math.sin(this.headingRad);
-        double y = relativePose.x * Math.sin(this.headingRad) + relativePose.y * Math.cos(this.headingRad);
-        return new Pose2D(this.x + x, this.y + y, this.headingRad + relativePose.headingRad);
+    public double getHeadingRad() {
+        return headingRad;
+    }
+
+    public void turnRad(double deltaHeadingRad) {
+        this.headingRad += deltaHeadingRad;
+    }
+
+    public Pose2D plus(Pose2D otherPose) {
+        return new Pose2D(super.plus(otherPose.getVector()), headingRad + otherPose.headingRad);
+    }
+
+    public Pose2D minus(Pose2D otherPose) {
+        return new Pose2D(super.minus(otherPose.getVector()), headingRad - otherPose.headingRad);
+    }
+
+    /**
+     * Adds otherPose to this (modifies this).
+     * @param otherPose other Pose2D object.
+     */
+    public void add(Pose2D otherPose) {
+        super.add(otherPose.getVector());
+        this.headingRad += otherPose.headingRad;
+    }
+
+    /**
+     * Subtracts otherPose from this (modifies this).
+     * @param otherPose other Pose2D object.
+     */
+    public void subtract(Pose2D otherPose) {
+        super.subtract(otherPose.getVector());
+        this.headingRad -= otherPose.headingRad;
+    }
+
+    @Override
+    public Pose2D getRevolvedRad(double angleRad) {
+        return new Pose2D(super.getVector(), headingRad + angleRad);
+    }
+
+    @Override
+    public void revolveRad(double angleRad) {
+        super.revolveRad(angleRad);
+        turnRad(angleRad);
+    }
+
+    public void move(Pose2D action) {
+        double x = action.getX() * Math.cos(this.headingRad)
+                - action.getY() * Math.sin(this.headingRad);
+
+        double y = action.getX() * Math.sin(this.headingRad)
+                + action.getY() * Math.cos(this.headingRad);
+
+        super.setCoords(x, y);
+        turnRad(action.headingRad);
     }
 
     /**
@@ -47,8 +92,8 @@ public class Pose2D {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() +
-                "{x=" + x +
-                ", y=" + y +
+                "{x=" + super.getX() +
+                ", y=" + super.getY() +
                 ", headingRad= " + headingRad + "}";
     }
 }
