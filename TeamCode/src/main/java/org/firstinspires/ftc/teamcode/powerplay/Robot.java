@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.teamcode.odometry.*;
+import org.firstinspires.ftc.teamcode.kaicode.OdoController;
 
 /**
  * This class is an intermediary between the teleOp and autoOp classes and all the sub-assembly classes on the 2022-2023 powerplay robot.
@@ -83,27 +83,21 @@ public class Robot {
     public void robotTelemetry(Telemetry telemetryIn) {
         int i = 0;
 
-        telemetryIn.addData("LF",  chassis.leftFront.getPower());
-        telemetryIn.addData("LB",  chassis.leftBack.getPower());
-        telemetryIn.addData("RF",  chassis.rightFront.getPower());
-        telemetryIn.addData("RB",  chassis.rightBack.getPower());
+//        telemetryIn.addData("LF",  chassis.leftFront.getPower());
+//        telemetryIn.addData("LB",  chassis.leftBack.getPower());
+//        telemetryIn.addData("RF",  chassis.rightFront.getPower());
+//        telemetryIn.addData("RB",  chassis.rightBack.getPower());
         telemetryIn.addData( "Speed Coefficient: ", chassis.speedCoefficient);
         telemetryIn.addData( "IMU Heading: ", gyro.getHeading());
         telemetryIn.addData( "time ", time.time());
-        telemetryIn.addData("RE: ", odometry.encoderRight.getCurrentPosition());
-        telemetryIn.addData("LE: ", odometry.encoderLeft.getCurrentPosition());
-        telemetryIn.addData("CE: ", odometry.encoderBack.getCurrentPosition());
-        telemetryIn.addData("R: ", odometry.right);
-        telemetryIn.addData("L: ", odometry.left);
-        telemetryIn.addData("B: ", odometry.back);
 
         telemetryIn.addData("x: ", odometry.getX());
         telemetryIn.addData("y: ", odometry.getY());
         telemetryIn.addData("h: ", odometry.getHeading());
 
-        telemetryIn.addData("l1: ", Logger.getLine1());
-        telemetryIn.addData("l2: ", Logger.getLine2());
-        telemetryIn.addData("l3: ", Logger.getLine3());
+//        telemetryIn.addData("l1: ", Logger.getLine1());
+//        telemetryIn.addData("l2: ", Logger.getLine2());
+//        telemetryIn.addData("l3: ", Logger.getLine3());
     }
 
     public void sleep(int input) {
