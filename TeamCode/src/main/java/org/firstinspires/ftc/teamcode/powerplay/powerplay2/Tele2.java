@@ -35,6 +35,8 @@ public class Tele2 extends LinearOpMode {
             telemetry.addData("target2", target2);
             telemetry.addData("power2", arm.getPwr2());
             telemetry.addData("power1", arm.getPwr1());
+            telemetry.addData("correct1", arm.pid1.getCorrection());
+            telemetry.addData("correct2", arm.pid2.getCorrection());
             telemetry.update();
         }
     }

@@ -11,10 +11,11 @@ import org.firstinspires.ftc.teamcode.pidclasses.*;
 public class Arm2 implements SubsystemManager {
     private final double DIFFERENCE_BETWEEN_LIMIT_SWITCH_AND_ACTUAL_ZERO = 5;
     private  final double CHANGING_ENCODER_TICKS_INTO_DEGREES = 2+2/9;
+    double pwr1, pwr2 = 0;
     DcMotor elbow1, elbow2;
     TouchSensor zero1, zero2;
-    PIDFArmController pid1 = new PIDFArmController(0.1,0,0,0,0,0,0);
-    PIDFArmController pid2 = new PIDFArmController(0.1,0,0,0,0,0,0);
+    public PIDFArmController pid1 = new PIDFArmController(0.1,0,0,0,0,0,0);
+    public PIDFArmController pid2 = new PIDFArmController(0.1,0,0,0,0,0,0);
     ElapsedTime time = new ElapsedTime();
     double pwrTest;
     Gamepad gamepad;
@@ -43,7 +44,6 @@ public class Arm2 implements SubsystemManager {
         zero2 = hardwareMap.get(TouchSensor.class, "zero2");
     }
     public void update(double target1, double target2){
-        double pwr1, pwr2 = 0;
         pwr1 = pid1.updateArmClamped(Math.toRadians(target1), angle1(), angle2(), time.milliseconds());
         pwr2 = pid2.updateArmClamped(Math.toRadians(target2), angle2(), 0, time.milliseconds());
         pwrTest = pwr2;
@@ -54,9 +54,9 @@ public class Arm2 implements SubsystemManager {
         elbow2.setPower(pwr2);
     }
     public double getPwrTest(){return pwrTest;}
-    public double getPwr2(){return pid2.getCorrection();}
+    public double getPwr2(){return pwr2;}
     public double getPwr1(){
-        return pid1.getCorrection();
+        return pwr1;
     }
     public double angle1(){
         return Math.toRadians((elbow1.getCurrentPosition()/CHANGING_ENCODER_TICKS_INTO_DEGREES));
