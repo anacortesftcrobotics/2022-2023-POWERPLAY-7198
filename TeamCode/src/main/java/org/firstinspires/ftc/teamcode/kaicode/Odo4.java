@@ -42,7 +42,7 @@ public class Odo4 {
      *                          forward movement is (+) in the y-axis, right strafing is (+) in the x-axis, and
      *                          heading is (+) when turning counterclockwise.
      */
-    public Pose2D getMovement(int leftEncoder, int rightEncoder, int centerEncoder) {
+    public OldPose2D getMovement(int leftEncoder, int rightEncoder, int centerEncoder) {
         double left = distancePerTick * leftEncoder;
         double right = distancePerTick * rightEncoder;
         double center = distancePerTick * centerEncoder;
@@ -51,7 +51,7 @@ public class Odo4 {
         double forward = (left + right) / 2.0;
         double strafe = center - deltaHRad * centerEncoderOffset;
 
-        return new Pose2D(strafe, forward, deltaHRad);
+        return new OldPose2D(strafe, forward, deltaHRad);
     }
 
     /**
@@ -65,7 +65,7 @@ public class Odo4 {
      *                          forward movement is (+) in the y-axis, right strafing is (+) in the x-axis, and
      *                          heading is (+) when turning counterclockwise.
      */
-    public Pose2D getPose(Pose2D lastPose, int leftEncoder, int rightEncoder, int centerEncoder) {
+    public OldPose2D getPose(OldPose2D lastPose, int leftEncoder, int rightEncoder, int centerEncoder) {
         return lastPose.move(getMovement(leftEncoder, rightEncoder, centerEncoder));
     }
 }

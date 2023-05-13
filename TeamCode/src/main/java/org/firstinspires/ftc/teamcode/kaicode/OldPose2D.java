@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.kaicode;
 /**
  * @author kaiwallis
  */
-public class Pose2D {
+public class OldPose2D {
     public final double x;
     public final double y;
     public final double headingRad;
@@ -11,7 +11,7 @@ public class Pose2D {
     /**
      * Creates a default Pose2D object, the position being at the origin with a heading of 0.
      */
-    public Pose2D() {
+    public OldPose2D() {
         this.x = 0.0;
         this.y = 0.0;
         this.headingRad = 0.0;
@@ -23,7 +23,7 @@ public class Pose2D {
      * @param y             y coordinate.
      * @param headingRad    heading in radians, (+) being counterclockwise.
      */
-    public Pose2D(double x, double y, double headingRad) {
+    public OldPose2D(double x, double y, double headingRad) {
         this.x = x;
         this.y = y;
         this.headingRad = headingRad;
@@ -34,10 +34,10 @@ public class Pose2D {
      *                          representing the object's Pose specified by this Pose. (inc. heading)
      * @return              a Pose representing the object's new Pose including the movement from relativePose.
      */
-    public Pose2D move(Pose2D relativePose) {
+    public OldPose2D move(OldPose2D relativePose) {
         double x = relativePose.x * Math.cos(this.headingRad) - relativePose.y * Math.sin(this.headingRad);
         double y = relativePose.x * Math.sin(this.headingRad) + relativePose.y * Math.cos(this.headingRad);
-        return new Pose2D(this.x + x, this.y + y, this.headingRad + relativePose.headingRad);
+        return new OldPose2D(this.x + x, this.y + y, this.headingRad + relativePose.headingRad);
     }
 
     /**
