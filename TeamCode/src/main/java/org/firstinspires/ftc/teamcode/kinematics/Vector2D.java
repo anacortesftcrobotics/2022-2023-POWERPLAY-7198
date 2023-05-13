@@ -44,18 +44,35 @@ public class Vector2D {
         return y;
     }
 
+    /**
+     * Returns a double array representing the x & y dimensions of the vector
+     * @return      double[] being equal to {x, y}
+     */
     public double[] getCoords() {
         return new double[] {x, y};
     }
 
+    /**
+     * Changes the x dimension of the vector.
+     * @param x     new x value.
+     */
     public void setX(double x) {
         this.x = x;
     }
 
+    /**
+     * Changes the y dimension of the vector.
+     * @param y     new y value.
+     */
     public void setY(double y) {
         this.y = y;
     }
 
+    /**
+     * Changes the x & y dimensions of the vector
+     * @param x     new x value.
+     * @param y     new y value.
+     */
     public void setCoords(double x, double y) {
         this.x = x;
         this.y = y;
@@ -138,10 +155,19 @@ public class Vector2D {
         this.y = Math.sin(newAngleRad) * magnitude;
     }
 
+    /**
+     * Returns this Vector2D object
+     * @return      this Vector2D.
+     */
     public Vector2D getVector() {
         return this;
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * @param o     the reference object with which to compare
+     * @return      true if this object is the same as the obj argument; false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -150,6 +176,10 @@ public class Vector2D {
         return Double.compare(vector2D.x, x) == 0 && Double.compare(vector2D.y, y) == 0;
     }
 
+    /**
+     * Returns a string representation of the object.
+     * @return  a string representation of the object.
+     */
     @Override
     public String toString() {
         return this.getClass().getSimpleName() +

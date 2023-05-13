@@ -91,9 +91,9 @@ public class Robot {
         telemetryIn.addData( "IMU Heading: ", gyro.getHeading());
         telemetryIn.addData( "time ", time.time());
 
-        telemetryIn.addData("x: ", odometry.getX());
-        telemetryIn.addData("y: ", odometry.getY());
-        telemetryIn.addData("h: ", odometry.getHeading());
+        telemetryIn.addData("x: ", "%.4f", odometry.getX());
+        telemetryIn.addData("y: ", "%.4f", odometry.getY());
+        telemetryIn.addData("h:  ", "%.4f", odometry.getHeading());
 
 //        telemetryIn.addData("l1: ", Logger.getLine1());
 //        telemetryIn.addData("l2: ", Logger.getLine2());

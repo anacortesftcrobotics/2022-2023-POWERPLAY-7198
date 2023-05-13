@@ -78,15 +78,34 @@ public class Odo5 implements Odometry {
         return fieldPose;
     }
 
+    /**
+     * Returns the object's current pose on the field.
+     * @return  Pose2D object representing the object's current position & heading.
+     */
     public Pose2D getFieldPose() {
         return new Pose2D(fieldPose);
     }
 
+    /**
+     * Returns the latest change in the object's pose on the field
+     * @return  Pose2D object representing the object's change in position & heading.
+     */
     public Pose2D getDeltaPose() {
         return new Pose2D(deltaPose);
     }
 
+    /**
+     * Resets the object's pose on the field to a specified pose.
+     * @param newPose   Pose2D object representing the object's new position & heading.
+     */
     public void setFieldPose(Pose2D newPose) {
         this.fieldPose = new Pose2D(newPose);
+    }
+
+    /**
+     * Resets the object's pose on the field, with the x, y, & heading being equal to 0.0.
+     */
+    public void setFieldPose() {
+        this.fieldPose = new Pose2D();
     }
 }
