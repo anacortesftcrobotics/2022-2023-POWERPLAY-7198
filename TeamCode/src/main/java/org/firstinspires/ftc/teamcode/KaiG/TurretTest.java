@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.pidclasses.PIDFArmController;
+import org.firstinspires.ftc.teamcode.powerplay.Chassis;
+import org.firstinspires.ftc.teamcode.powerplay.Controller;
 
 
 @TeleOp(name = "Turret Test")
@@ -22,7 +24,7 @@ public class TurretTest extends LinearOpMode{
     double htarg;
 
     DcMotorSimple turnTable;
-    Basic basic = new Basic();
+    Chassis chassis = new Chassis();
 
     BNO055IMU imu, imu2;
     Orientation angles;
@@ -30,6 +32,8 @@ public class TurretTest extends LinearOpMode{
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     PIDFArmController control = new PIDFArmController(0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0);
     ElapsedTime systemTime = new ElapsedTime();
+    Controller controller1 = new Controller();
+    Controller controller2 = new Controller();
     double targetPos = 0;
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -38,11 +42,15 @@ public class TurretTest extends LinearOpMode{
         turret1 = hardwareMap.get(DcMotor.class, "turret1");
         turret2 = hardwareMap.get(DcMotor.class, "turret2");
         hand = hardwareMap.get(Servo.class, "grabber");
+        chassis.initializeHardware(hardwareMap);
 
-        //turnTable = hardwareMap.get(DcMotorSimple.class, "turnTable");
+        turnTable = hardwareMap.get(DcMotorSimple.class, "turnTable");
         turret1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turret2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        controller1.setGamepad(gamepad1);
+        controller2.setGamepad(gamepad2);
 
         turret2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -66,21 +74,19 @@ public class TurretTest extends LinearOpMode{
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                chassis.xyrMovement(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-                turret1.setPower(0.3*gamepad1.left_stick_x);
-                turret2.setPower(0.3*gamepad1.left_stick_y);
-                wrist.setPower(0.3*gamepad1.right_stick_y);
-                if (gamepad1.right_bumper){hand.setPosition(0);}
-                if (gamepad1.left_bumper){hand.setPosition(0.3);}
+                if (gamepad2.right_bumper){turnTable.setPower(-0.5);}
+                else if (gamepad2.left_bumper){turnTable.setPower(0.5);}
+                else turnTable.setPower(0);
 
+                if (gamepad2.a){
+                    hand.setPosition(0);
+                }
+                if (gamepad2.b){
+                    hand.setPosition(0.5);
+                }
 
-                //control.updateArmClamped(Math.toRadians(targetPos), getRads(), 0, systemTime.milliseconds());
-                //basic.go(gamepad1);
-                telemetry.addData("turret2 position", turret2.getCurrentPosition());
-                telemetry.addData("worm position", turret1.getCurrentPosition());
-                //telemetry.addData("imu", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                //telemetry.addData("imu2", imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                //telemetry.addData("rad", getRads());
                 telemetry.update();
 
             }
