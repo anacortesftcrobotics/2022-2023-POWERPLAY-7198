@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.pidclasses.PIDFArmController;
@@ -21,7 +22,13 @@ public class TurretTest extends LinearOpMode{
     DcMotor turret2;
     DcMotor wrist;
     Servo hand;
+    TouchSensor zero1, zero2;
+    boolean lim1, lim2;
     double htarg;
+    double j1Coefficient = 0.6;
+    double j2Coefficient = 0.4;
+    double wristCoefficient = 0.6;
+
 
     DcMotorSimple turnTable;
     Chassis chassis = new Chassis();
@@ -44,6 +51,9 @@ public class TurretTest extends LinearOpMode{
         hand = hardwareMap.get(Servo.class, "grabber");
         chassis.initializeHardware(hardwareMap);
 
+        zero1 = hardwareMap.get(TouchSensor.class, "zero1");
+        zero2 = hardwareMap.get(TouchSensor.class, "zero2");
+
         turnTable = hardwareMap.get(DcMotorSimple.class, "turnTable");
         turret1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turret2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,6 +68,8 @@ public class TurretTest extends LinearOpMode{
         turret1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         //basic.initializeHardware(hardwareMap);
 
 //        imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -87,6 +99,22 @@ public class TurretTest extends LinearOpMode{
                     hand.setPosition(0.5);
                 }
 
+//                if(!zero1.isPressed() || gamepad2.right_stick_y > 0) {
+//                    turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
+//                }
+
+//                turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
+                turret2.setPower(-j2Coefficient * gamepad2.left_stick_y);
+//                wrist.setPower(-wristCoefficient * gamepad2.left_stick_x);
+
+                if (gamepad2.dpad_up){wrist.setPower(0.5);}
+                else if (gamepad2.dpad_down){wrist.setPower(-0.5);}
+                else wrist.setPower(0);
+
+                //zero1.isPressed();
+
+//                telemetry.addData("zero1", zero1.isPressed());
+//                telemetry.addData("zero2", zero2.isPressed());
                 telemetry.update();
 
             }
