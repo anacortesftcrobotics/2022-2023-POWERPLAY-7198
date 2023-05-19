@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.kaicode;
 
 /**
+ * Old Pose2D Class, do not use :)
  * @author kaiwallis
  */
 public class OldPose2D {

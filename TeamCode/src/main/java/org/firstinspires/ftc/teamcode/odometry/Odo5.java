@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
 /**
- * This class provides odometry tracking for an FTC Robot
+ * This Odometry class provides tracking for an FTC Robot on the field.
  * @author      Kai Wallis
  * @version     %I%, %G%
  */

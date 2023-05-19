@@ -2,9 +2,21 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.kaicode.OldOdoController;
+import org.firstinspires.ftc.teamcode.powerplay.Chassis;
+import org.firstinspires.ftc.teamcode.powerplay.Controller;
+import org.firstinspires.ftc.teamcode.powerplay.Gyro;
+import org.firstinspires.ftc.teamcode.powerplay.Logger;
 
-public class AutoController {
-    public AutoController() {}
+/**
+ * Feeds data from encoders to an Odometry class.
+ * @author      kaiwallis
+ * @version     %I%, %G%
+ */
+public class OdoController {
+
+    public OdoController() {}
 
     Odometry odo = new Odo5(39, 2.35, 14.8, 5, 8192); //created in cm
 

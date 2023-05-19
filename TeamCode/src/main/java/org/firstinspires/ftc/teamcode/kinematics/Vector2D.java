@@ -6,7 +6,6 @@ import java.util.Objects;
  * This class represents a 2-dimensional vector.
  * @author      Kai Wallis
  * @version     %I%, %G%
- * @
  */
 public class Vector2D {
 

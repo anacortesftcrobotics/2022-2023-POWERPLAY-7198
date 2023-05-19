@@ -4,10 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
+ * Feeds and stores data from the outdated Odo4 class, do not use :)
  * @author kaiwallis
  */
-public class OdoController {
-    public OdoController() {}
+public class OldOdoController {
+    public OldOdoController() {}
 
     Odo4 odo = new Odo4(39, 2.35, 14.8, 5, 8192); //created in cm
     OldPose2D pose = new OldPose2D();

@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+/**
+ * This interface defines the methods an Odometry class needs.
+ * @author      Kai Wallis
+ * @version     %I%, %G%
+ */
 public interface Odometry{
     /**
      * Updates the object's position on the field based on the change in encoder positions then returns the updated
