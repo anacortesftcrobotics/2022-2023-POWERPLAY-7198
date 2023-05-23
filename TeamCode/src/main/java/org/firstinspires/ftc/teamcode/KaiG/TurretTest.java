@@ -25,12 +25,13 @@ public class TurretTest extends LinearOpMode{
     TouchSensor zero1, zero2;
     boolean lim1, lim2;
     double htarg;
-    double j1Coefficient = 0.6;
+    double j1Coefficient = 0.4;
     double j2Coefficient = 0.4;
     double wristCoefficient = 0.6;
 
 
     DcMotorSimple turnTable;
+
     Chassis chassis = new Chassis();
 
     BNO055IMU imu, imu2;
@@ -99,9 +100,8 @@ public class TurretTest extends LinearOpMode{
                     hand.setPosition(0.5);
                 }
 
-//                if(!zero1.isPressed() || gamepad2.right_stick_y > 0) {
-//                    turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
-//                }
+//                if(!zero1.isPressed() || gamepad2.right_stick_y > 0)                }
+                turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
 
 //                turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
                 turret2.setPower(-j2Coefficient * gamepad2.left_stick_y);
