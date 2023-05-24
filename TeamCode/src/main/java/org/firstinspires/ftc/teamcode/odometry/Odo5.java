@@ -39,6 +39,7 @@ public class Odo5 implements Odometry {
     /**
      * Class constructor using custom encoder distances & dimensions.
      *
+     * @param startingPose          Pose2D object representing the object's current position & heading.
      * @param distanceLtoR          the distance between the left and right encoders.
      * @param centerEncoderOffset   the distance the center encoder is behind the center of rotation.
      * @param frontEncodersOffset   the distance the left & right encoders are forward of the center of rotation.
