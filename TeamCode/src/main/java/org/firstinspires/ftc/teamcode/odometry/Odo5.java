@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 /**
  * This Odometry class provides tracking for an FTC Robot on the field.
+ *
  * @author      Kai Wallis
  * @version     %I%, %G%
  */
@@ -24,7 +25,7 @@ public class Odo5 implements Odometry {
      * @param distanceLtoR          the distance between the left and right encoders.
      * @param centerEncoderOffset   the distance the center encoder is behind the center of rotation.
      * @param frontEncodersOffset   the distance the left & right encoders are forward of the center of rotation.
-     * @param encoderDiameter       the radius of the encoder wheels.
+     * @param encoderDiameter       the diameter of the encoder wheels.
      * @param ticksPerRev           the encoder's ticks per revolution.
      */
     public Odo5(double distanceLtoR, double frontEncodersOffset, double centerEncoderOffset,
@@ -43,7 +44,7 @@ public class Odo5 implements Odometry {
      * @param distanceLtoR          the distance between the left and right encoders.
      * @param centerEncoderOffset   the distance the center encoder is behind the center of rotation.
      * @param frontEncodersOffset   the distance the left & right encoders are forward of the center of rotation.
-     * @param encoderDiameter       the radius of the encoder wheels.
+     * @param encoderDiameter       the diameter of the encoder wheels.
      * @param ticksPerRev           the encoder's ticks per revolution.
      */
     public Odo5(Pose2D startingPose, double distanceLtoR, double frontEncodersOffset, double centerEncoderOffset,
