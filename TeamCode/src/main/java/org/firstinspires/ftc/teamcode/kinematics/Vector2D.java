@@ -135,10 +135,8 @@ public class Vector2D {
      * @return              Vector2D rotated angleRad radians.
      */
     public Vector2D getRevolvedRad(double angleRad) {
-        double newAngleRad = this.getAngleRad() + angleRad;
-        double magnitude = this.getMagnitude();
-        double localX = Math.cos(newAngleRad) * magnitude;
-        double localY = Math.sin(newAngleRad) * magnitude;
+        double localX = x * Math.cos(angleRad) + y * Math.sin(angleRad);
+        double localY = x * Math.sin(angleRad) + y * Math.cos(angleRad);
 
         return new Vector2D(localX, localY);
     }
@@ -148,10 +146,11 @@ public class Vector2D {
      * @param angleRad      radians to rotate by.
      */
     public void revolveRad(double angleRad) {
-        double newAngleRad = this.getAngleRad() + angleRad;
-        double magnitude = this.getMagnitude();
-        this.x = Math.cos(newAngleRad) * magnitude;
-        this.y = Math.sin(newAngleRad) * magnitude;
+        double localX = x * Math.cos(angleRad) + y * Math.sin(angleRad);
+        double localY = x * Math.sin(angleRad) + y * Math.cos(angleRad);
+
+        this.x = localX;
+        this.y = localY;
     }
 
     /**
