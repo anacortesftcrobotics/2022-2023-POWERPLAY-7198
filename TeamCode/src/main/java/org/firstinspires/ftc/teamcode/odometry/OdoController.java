@@ -2,12 +2,6 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.kaicode.OldOdoController;
-import org.firstinspires.ftc.teamcode.powerplay.Chassis;
-import org.firstinspires.ftc.teamcode.powerplay.Controller;
-import org.firstinspires.ftc.teamcode.powerplay.Gyro;
-import org.firstinspires.ftc.teamcode.powerplay.Logger;
 
 /**
  * Feeds data from encoders to an Odometry class.
@@ -15,10 +9,25 @@ import org.firstinspires.ftc.teamcode.powerplay.Logger;
  * @version     %I%, %G%
  */
 public class OdoController {
-
     public OdoController() {}
 
-    Odometry odo = new Odo5(39, 2.35, 14.8, 5, 8192); //created in cm
+    // facing y-axis
+    Odometry odo = new Odo6(
+            new Pose2D(-19.67, 2.39, Math.toRadians(90)),
+            new Pose2D(19.67, 2.39, Math.toRadians(90)),
+            new Pose2D(0, -14.91, Math.toRadians(180)),
+            5,
+            8192
+    );
+
+    // facing x-axis
+//    Odometry odo = new Odo6(
+//            new Pose2D(2.39, 19.67, Math.toRadians(0)),
+//            new Pose2D(2.39, -19.67, Math.toRadians(0)),
+//            new Pose2D(-14.91, 0, Math.toRadians(90)),
+//            5,
+//            8192
+//    );
 
     private DcMotor encoderLeft, encoderRight, encoderBack;
 
@@ -54,7 +63,7 @@ public class OdoController {
 
         left = encoderLeft.getCurrentPosition();
         right = encoderRight.getCurrentPosition();
-        back = encoderBack.getCurrentPosition();
+        back = -encoderBack.getCurrentPosition();
     }
 
     /**
