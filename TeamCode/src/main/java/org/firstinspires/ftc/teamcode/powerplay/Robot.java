@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -27,7 +28,8 @@ public class Robot {
     Controller controller1 = new Controller();
     Controller controller2 = new Controller();
 
-    Logger logger = Logger.getInstance();
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
 
     /**
@@ -73,6 +75,7 @@ public class Robot {
     public void dataLoop() {
         gyro.updateHeading();
         odometry.update();
+        dashboardTelemetry.update();
     }
 
     /**
@@ -93,6 +96,10 @@ public class Robot {
         telemetryIn.addData("x: ", "%.4f", odometry.getX());
         telemetryIn.addData("y: ", "%.4f", odometry.getY());
         telemetryIn.addData("h:  ", "%.4f", odometry.getHeadingDeg());
+
+        dashboardTelemetry.addData("_x: ", "%.4f", odometry.getX());
+        dashboardTelemetry.addData("_y: ", "%.4f", odometry.getY());
+        dashboardTelemetry.addData("_h:  ", "%.4f", odometry.getHeadingDeg());
 
 //        telemetryIn.addData("l1: ", Logger.getLine1());
 //        telemetryIn.addData("l2: ", Logger.getLine2());
