@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 import org.firstinspires.ftc.teamcode.kinematics.Vector2D;
 
-import java.util.Objects;
-
 public class Pose2D extends Vector2D {
     private double headingRad;
 
@@ -98,17 +96,17 @@ public class Pose2D extends Vector2D {
     }
 
     /**
-     * Returns a Pose 2D object equivalent to this object if it was rotated around the origin angleRad degrees.
+     * Returns a Pose2D object equivalent to this object if it was rotated around the origin angleRad degrees.
      * @param angleRad      degrees to rotate, (+) being counterclockwise.
      * @return              a new Pose2D object representing this object rotated around the origin
      */
     @Override
     public Pose2D getRevolvedRad(double angleRad) {
-        return new Pose2D(super.getVector(), headingRad + angleRad);
+        return new Pose2D(super.getRevolvedRad(angleRad), headingRad + angleRad);
     }
 
     /**
-     * Rotates the Pose 2D object around the origin angleRad degrees.
+     * Rotates the Pose2D object around the origin angleRad degrees.
      * @param angleRad      degrees to rotate, (+) being counterclockwise.
      */
     @Override
@@ -118,21 +116,24 @@ public class Pose2D extends Vector2D {
     }
 
     /**
-     * Do not use! Uses inefficient math. Use this.add(action.getRevolvedRad(this.headingRad)) instead.
-     * @param action        a Pose representing the object's movement relative to this Pose, the origin
-     *                          representing the object's Pose specified by this Pose. (inc. heading)
-     * @return              a Pose representing the object's new Pose including the movement from relativePose.
+     * Returns a Pose2D object equivalent to relativePose added to this,
+     * with relativePose having an origin at this object's pose.
+     * @param relativePose      a Pose relative to this object's pose, with an origin in line with this object's pose.
      */
-    @Deprecated
-    public void move(Pose2D action) {
-        double x = action.getX() * Math.cos(this.headingRad)
-                - action.getY() * Math.sin(this.headingRad);
+    public void addRelativePose(Pose2D relativePose) {
+        this.add((Vector2D) relativePose.getRevolvedRad(this.headingRad));
+        this.headingRad += relativePose.headingRad;
+    }
 
-        double y = action.getX() * Math.sin(this.headingRad)
-                + action.getY() * Math.cos(this.headingRad);
-
-        super.setCoords(x, y);
-        turnRad(action.headingRad);
+    /**
+     * Adds a Pose2D object to this, with relativePose having an origin at this object's pose.
+     * @param relativePose      a Pose relative to this object's pose, with an origin in line with this object's pose.
+     * @return                  a new Pose2D object representing this object rotated around the origin.
+     */
+    public Pose2D plusRelativePose(Pose2D relativePose) {
+        return new Pose2D(
+                super.plus(relativePose.getRevolvedRad(this.headingRad)),
+                this.headingRad + relativePose.headingRad);
     }
 
     /**

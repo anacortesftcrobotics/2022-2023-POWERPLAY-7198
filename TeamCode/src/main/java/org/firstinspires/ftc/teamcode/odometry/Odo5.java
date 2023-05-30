@@ -74,8 +74,9 @@ public class Odo5 implements Odometry {
         double strafe = center - deltaHRad * centerEncoderOffset;
 
         Pose2D lastMove = new Pose2D(strafe, forward, deltaHRad);
-        deltaPose = lastMove.getRevolvedRad(fieldPose.getHeadingRad());
-        fieldPose.add(deltaPose);
+//        deltaPose = lastMove.getRevolvedRad(fieldPose.getHeadingRad());
+//        fieldPose.add(deltaPose);
+        fieldPose.addRelativePose(lastMove);
 
         return fieldPose;
     }
