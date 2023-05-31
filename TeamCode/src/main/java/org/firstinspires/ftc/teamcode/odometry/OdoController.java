@@ -13,18 +13,18 @@ public class OdoController {
 
     // facing y-axis
     Odometry odo = new Odo6(
-            new Pose2D(-19.67, 2.39, Math.toRadians(90)),
-            new Pose2D(19.67, 2.39, Math.toRadians(90)),
-            new Pose2D(0, -14.91, Math.toRadians(180)),
+            new Pose2D(-19.64, 2.37, Math.toRadians(90)),
+            new Pose2D(19.64, 2.37, Math.toRadians(90)),
+            new Pose2D(0, -14.93, Math.toRadians(180)),
             5,
             8192
     );
 
     // facing x-axis
 //    Odometry odo = new Odo6(
-//            new Pose2D(2.39, 19.67, Math.toRadians(0)),
-//            new Pose2D(2.39, -19.67, Math.toRadians(0)),
-//            new Pose2D(-14.91, 0, Math.toRadians(90)),
+//            new Pose2D(2.37, 19.64, Math.toRadians(0)),
+//            new Pose2D(2.37, -19.64, Math.toRadians(0)),
+//            new Pose2D(-14.93, 0, Math.toRadians(90)),
 //            5,
 //            8192
 //    );
