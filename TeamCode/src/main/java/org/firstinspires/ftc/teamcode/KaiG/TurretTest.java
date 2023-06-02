@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.pidclasses.PIDFArmController;
 import org.firstinspires.ftc.teamcode.powerplay.Chassis;
@@ -28,6 +29,12 @@ public class TurretTest extends LinearOpMode{
     double j1Coefficient = 0.4;
     double j2Coefficient = 0.4;
     double wristCoefficient = 0.6;
+    final double maxTurntableSpeed = 0.5;
+    final double turntableAcceleration = 4;
+    double turntableSpeed = 0;
+    double time;
+
+    double lastTime;
 
 
     DcMotorSimple turnTable;
@@ -42,6 +49,9 @@ public class TurretTest extends LinearOpMode{
     ElapsedTime systemTime = new ElapsedTime();
     Controller controller1 = new Controller();
     Controller controller2 = new Controller();
+
+    Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
+
     double targetPos = 0;
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -87,11 +97,12 @@ public class TurretTest extends LinearOpMode{
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                lastTime = time;
+                time = systemTime.seconds();
+
                 chassis.xyrMovement(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-                if (gamepad2.right_bumper){turnTable.setPower(-0.5);}
-                else if (gamepad2.left_bumper){turnTable.setPower(0.5);}
-                else turnTable.setPower(0);
+                updateTurntable();
 
                 if (gamepad2.a){
                     hand.setPosition(0);
@@ -120,6 +131,25 @@ public class TurretTest extends LinearOpMode{
             }
         }
     }
+
+    private void updateTurntable() {
+        if (gamepad2.right_bumper){
+            turntableSpeed += -turntableAcceleration * (time-lastTime);
+            if (turntableSpeed < -maxTurntableSpeed) turntableSpeed = -maxTurntableSpeed;
+        } else if (gamepad2.left_bumper) {
+            turntableSpeed += turntableAcceleration * (time-lastTime);
+            if (turntableSpeed > maxTurntableSpeed) turntableSpeed = maxTurntableSpeed;
+        } else if (turntableSpeed > 0) {
+            turntableSpeed += -turntableAcceleration * (time-lastTime);
+            if (turntableSpeed < 0) turntableSpeed = 0;
+        } else if (turntableSpeed < 0) {
+            turntableSpeed += turntableAcceleration * (time-lastTime);
+            if (turntableSpeed > 0) turntableSpeed = 0;
+        }
+        turnTable.setPower(turntableSpeed);
+        dashboardTelemetry.addData("tt speed", turntableSpeed);
+    }
+
     public double getRads(){
         return Math.toRadians((turret1.getCurrentPosition()+20)/2.222222);
     }
