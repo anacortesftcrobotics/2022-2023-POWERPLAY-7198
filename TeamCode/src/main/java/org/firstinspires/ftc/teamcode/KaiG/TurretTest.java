@@ -35,6 +35,8 @@ public class TurretTest extends LinearOpMode{
     double time;
 
     double lastTime;
+    boolean lastXY = false;
+    boolean armEnabled = false;
 
 
     DcMotorSimple turnTable;
@@ -111,12 +113,20 @@ public class TurretTest extends LinearOpMode{
                     hand.setPosition(0.5);
                 }
 
-//                if(!zero1.isPressed() || gamepad2.right_stick_y > 0)                }
-                turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
+                if(gamepad2.x && gamepad2.y) {
+                    if(!lastXY) armEnabled = !armEnabled;
+                    lastXY = true;
+                } else {
+                    lastXY = false;
+                }
 
-//                turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
-                turret2.setPower(-j2Coefficient * gamepad2.left_stick_y);
-//                wrist.setPower(-wristCoefficient * gamepad2.left_stick_x);
+                telemetry.addData("armEnabled", armEnabled);
+                dashboardTelemetry.addData("armEnabled", armEnabled);
+
+                if(armEnabled) {
+                    turret1.setPower(-j1Coefficient * gamepad2.right_stick_y);
+                    turret2.setPower(-j2Coefficient * gamepad2.left_stick_y);
+                }
 
                 if (gamepad2.dpad_up){wrist.setPower(0.5);}
                 else if (gamepad2.dpad_down){wrist.setPower(-0.5);}
