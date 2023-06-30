@@ -134,8 +134,8 @@ public class TurretTest extends LinearOpMode{
 
                 //zero1.isPressed();
 
-//                telemetry.addData("zero1", zero1.isPressed());
-//                telemetry.addData("zero2", zero2.isPressed());
+                telemetry.addData("zero1", zero1.isPressed());
+                telemetry.addData("zero2", zero2.isPressed());
                 telemetry.update();
 
             }
