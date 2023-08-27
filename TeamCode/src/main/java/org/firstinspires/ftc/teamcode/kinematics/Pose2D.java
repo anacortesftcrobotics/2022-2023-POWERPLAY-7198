@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.odometry;
-
-import org.firstinspires.ftc.teamcode.kinematics.Vector2D;
+package org.firstinspires.ftc.teamcode.kinematics;
 
 public class Pose2D extends Vector2D {
     private double headingRad;

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import org.firstinspires.ftc.teamcode.kinematics.Pose2D;
+
 /**
  * This Odometry class provides tracking for an FTC Robot on the field.
  *
  * @author      Kai Wallis
  * @version     %I%, %G%
+ * @deprecated
  */
 public class Odo5 implements Odometry {
 

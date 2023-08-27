@@ -4,6 +4,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
+import org.firstinspires.ftc.teamcode.kinematics.Pose2D;
 
 /**
  * This Odometry class provides tracking for an FTC Robot on the field.
@@ -97,9 +98,12 @@ public class Odo6 implements Odometry{
     /**
      * Updates the object's position on the field based on the change in encoder positions then returns the updated
      * field position.
-     * @param encoder1      change in tick position of the left encoder, (+) when moving forward.
-     * @param encoder2      change in tick position of the right encoder, (+) when moving forward.
-     * @param encoder3      change in tick position of the center encoder, (+) when strafing right.
+     * @param encoder1      change in tick position of the first encoder,
+     *                      (+) when traveling towards the (+) x-axis if encoder1Pose heading is 0.
+     * @param encoder2      change in tick position of the second encoder,
+     *                      (+) when traveling towards the (+) x-axis if encoder1Pose heading is 0.
+     * @param encoder3      change in tick position of the third encoder,
+     *                      (+) when traveling towards the (+) x-axis if encoder1Pose heading is 0.
      * @return              the object's current pose on the field.
      */
     public Pose2D update(int encoder1, int encoder2, int encoder3) {

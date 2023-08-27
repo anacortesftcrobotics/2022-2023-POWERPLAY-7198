@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.kinematics.Pose2D;
 
 /**
  * Feeds data from encoders to an Odometry class.
@@ -31,8 +32,8 @@ public class OdoController {
 
     private DcMotor encoderLeft, encoderRight, encoderBack;
 
-    private int left, right, back;
-    private int lastLeft, lastRight, lastBack;
+    private int encoder1, encoder2, encoder3;
+    private int lastEncoder1, lastEncoder2, lastEncoder3;
 
     /**
      * Initializes the three odometry wheels
@@ -50,20 +51,24 @@ public class OdoController {
      */
     public void update() {
         updateEncoders();
-        odo.update(left-lastLeft, right-lastRight, back-lastBack);
+        odo.update(
+                encoder1 - lastEncoder1,
+                encoder2 - lastEncoder2,
+                encoder3 - lastEncoder3
+        );
     }
 
     /**
      * Updates the values stored representing encoder postions.
      */
     private void updateEncoders() {
-        lastLeft = left;
-        lastRight = right;
-        lastBack = back;
+        lastEncoder1 = encoder1;
+        lastEncoder2 = encoder2;
+        lastEncoder3 = encoder3;
 
-        left = encoderLeft.getCurrentPosition();
-        right = encoderRight.getCurrentPosition();
-        back = -encoderBack.getCurrentPosition();
+        encoder1 = encoderLeft.getCurrentPosition();
+        encoder2 = encoderRight.getCurrentPosition();
+        encoder3 = -encoderBack.getCurrentPosition();
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import org.firstinspires.ftc.teamcode.kinematics.Pose2D;
+
 /**
  * This interface defines the methods an Odometry class needs.
  * @author      Kai Wallis
@@ -9,12 +11,12 @@ public interface Odometry{
     /**
      * Updates the object's position on the field based on the change in encoder positions then returns the updated
      * field position.
-     * @param leftEncoder   change in tick position of the left encoder, (+) when moving forward.
-     * @param rightEncoder  change in tick position of the right encoder, (+) when moving forward.
-     * @param centerEncoder change in tick position of the center encoder, (+) when strafing right.
+     * @param encoder1      change in tick position of the first encoder.
+     * @param encoder2      change in tick position of the second encoder.
+     * @param encoder3      change in tick position of the third encoder.
      * @return              the object's current pose on the field.
      */
-    public Pose2D update(int leftEncoder, int rightEncoder, int centerEncoder);
+    public Pose2D update(int encoder1, int encoder2, int encoder3);
 
     /**
      * Returns the object's current pose on the field.
